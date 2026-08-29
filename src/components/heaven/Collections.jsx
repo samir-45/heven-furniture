@@ -65,12 +65,12 @@ export default function Collections() {
           >
             <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-sand">
               <div className="absolute inset-0 transition-transform duration-1100 ease-out group-hover:scale-[1.06]">
-<Image
-  src={collectionImgs[i]}
-  alt={`${t(`collections.${ck}.name`)} — bespoke furniture by Heaven Furniture Mart`}
-  className="h-full w-full object-cover object-left-top"
-  fittingType="fill"
-/>
+                <Image
+                  src={collectionImgs[i]}
+                  alt={`${t(`collections.${ck}.name`)} — bespoke furniture by Heaven Furniture Mart`}
+                  className="h-full w-full object-cover object-left-top"
+                  fittingType="fill"
+                />
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-depth/80 via-depth/10 to-transparent" />
               <div className="pointer-events-none absolute inset-0 border border-brass/0 group-hover:border-brass/55 transition-colors duration-500 rounded-sm" />
