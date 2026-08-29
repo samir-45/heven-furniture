@@ -1,0 +1,53 @@
+import { Image } from "@/components/ui/image";
+import Reveal from "./Reveal";
+import { useLang } from "./LanguageProvider";
+import { IMAGES } from "./constants";
+
+// Recognition & trust — credentials and the showroom itself.
+export default function SocialProof() {
+  const { t } = useLang();
+  const creds = ["proof.cred1", "proof.cred2", "proof.cred3"];
+
+  return (
+    <section id="proof" className="scroll-mt-24 bg-bone py-16 md:py-24">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+        <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-center">
+          <div className="md:col-span-7 order-2 md:order-1">
+            <Reveal>
+              <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-5">
+                {t("proof.eyebrow")}
+              </p>
+              <h2 className="font-heading font-light text-ink text-3xl md:text-[2.6rem] leading-[1.16] max-w-xl">
+                {t("proof.title")}
+              </h2>
+            </Reveal>
+
+            <Reveal delay={0.1}>
+              <ul className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.66rem] uppercase tracking-[0.18em] text-ink/55">
+                {creds.map((c) => (
+                  <li key={c} className="flex items-center gap-2.5">
+                    <span className="inline-block h-1 w-1 rounded-full bg-bronze" />
+                    {t(c)}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+
+          <div className="md:col-span-5 order-1 md:order-2">
+            <Reveal delay={0.05}>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
+                <Image
+                  src={IMAGES.showroom}
+                  alt="The Heaven Furniture Mart showroom on Agrabad Access Road, Chattogram"
+                  className="h-full w-full"
+                  fittingType="fill"
+                />
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
