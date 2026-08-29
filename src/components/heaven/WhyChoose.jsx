@@ -57,7 +57,7 @@ export default function WhyChoose() {
                       <Image
                         src={momentImgs[i]}
                         alt={momentAlts[i]}
-                        className="h-full w-full"
+                        className="h-full w-full object-cover object-top"
                         fittingType="fill"
                       />
                     </div>

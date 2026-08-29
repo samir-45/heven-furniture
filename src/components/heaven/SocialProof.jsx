@@ -40,7 +40,7 @@ export default function SocialProof() {
                 <Image
                   src={IMAGES.showroom}
                   alt="The Heaven Furniture Mart showroom on Agrabad Access Road, Chattogram"
-                  className="h-full w-full"
+                  className="h-full w-full object-cover object-left-top"
                   fittingType="fill"
                 />
               </div>

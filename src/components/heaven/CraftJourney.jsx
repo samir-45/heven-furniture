@@ -6,7 +6,7 @@ import { useLang } from "./LanguageProvider";
 import { IMAGES } from "./constants";
 
 const chapterKeys = ["c1", "c2", "c3", "c4"];
-const chapterImgs = [IMAGES.showroom, IMAGES.bespokeDetail, IMAGES.bespoke, IMAGES.living];
+const chapterImgs = [IMAGES.showroom, IMAGES.sofa, IMAGES.bespoke, IMAGES.living];
 const chapterAlts = [
   "The Heaven Furniture Mart showroom where consultations begin",
   "A close detail of a hand-finished bespoke furniture joint",

@@ -24,13 +24,15 @@ export const MD_ROLE = "Managing Director";
 
 export const IMAGES = {
   hero: "/images/hero.jpg",
-  bespoke: "/images/bespoke-chair.jpg",
-  showroom: "/images/showroom.jpg",
-  living: "/images/living-room.jpg",
-  bedroom: "/images/bedroom.jpg",
-  dining: "/images/dining.jpg",
-  office: "/images/office.jpg",
-  bespokeDetail: "/images/craft-detail.jpg",
+  bespoke: "/images/furniture-05.jpg",
+  showroom: "/images/furniture-06.jpg",
+  living: "/images/furniture-01.jpg",
+  bedroom: "/images/furniture-06.jpg",
+  dining: "/images/furniture-05.jpg",
+  office: "/images/furniture-10.jpg",
+  bespokeDetail: "/images/furniture-01.jpg",
+  custom: "/images/furniture-09.jpg",
+  sofa: "/images/furniture-03.jpg"
 };
 
 // Real product & showroom footage pulled from Heaven Furniture Mart's own

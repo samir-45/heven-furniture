@@ -17,12 +17,12 @@ export default function Founder() {
           <div className="md:col-span-5">
             <Reveal>
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
-                <Image
-                  src={IMAGES.bespokeDetail}
-                  alt="A hand-finished detail of bespoke craftsmanship at Heaven Furniture Mart"
-                  className="h-full w-full"
-                  fittingType="fill"
-                />
+<Image
+  src={IMAGES.bespokeDetail}
+  alt="A hand-finished detail of bespoke craftsmanship at Heaven Furniture Mart"
+  className="h-full w-full object-cover object-left-top"
+  fittingType="fill"
+/>
                 <div className="absolute inset-0 bg-gradient-to-t from-cocoa/60 to-transparent" />
               </div>
             </Reveal>

@@ -34,7 +34,7 @@ export default function Bespoke() {
                 <Image
                   src={IMAGES.bespoke}
                   alt="A bespoke hanging swing chair handcrafted by Heaven Furniture Mart"
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-cover object-top"
                   fittingType="fill"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-depth/55 to-transparent pointer-events-none" />
