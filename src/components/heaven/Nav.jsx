@@ -8,7 +8,7 @@ import { useConsultation } from "./ConsultationContext";
 const navItems = [
   { key: "nav.home", path: "/" },
   { key: "nav.collections", path: "/#collections", hash: "collections" },
-  { key: "nav.bespoke", path: "/#bespoke", hash: "bespoke" },
+  { key: "nav.planner", path: "/planner" },
   { key: "nav.residences", path: "/residences" },
   { key: "nav.materials", path: "/materials" },
 ];

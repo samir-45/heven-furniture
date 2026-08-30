@@ -99,6 +99,11 @@ export default function Footer() {
                   {t("nav.materials")}
                 </Link>
               </li>
+              <li>
+                <Link to="/planner" className="hover:text-brass transition-colors">
+                  {t("nav.planner")}
+                </Link>
+              </li>
             </ul>
           </div>
 

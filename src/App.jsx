@@ -13,6 +13,7 @@ import "lenis/dist/lenis.css";
 
 const Residences = lazy(() => import("@/pages/Residences"));
 const Materials = lazy(() => import("@/pages/Materials"));
+const RoomPlanner = lazy(() => import("@/pages/RoomPlanner"));
 
 function PageLoader() {
   return (
@@ -61,6 +62,8 @@ function App() {
                 <Route path="/portfolio" element={<Residences />} />
                 <Route path="/materials" element={<Materials />} />
                 <Route path="/atelier" element={<Materials />} />
+                <Route path="/planner" element={<RoomPlanner />} />
+                <Route path="/room-planner" element={<RoomPlanner />} />
                 <Route path="*" element={<PageNotFound />} />
               </Routes>
             </Suspense>

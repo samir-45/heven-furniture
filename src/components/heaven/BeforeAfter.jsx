@@ -77,20 +77,20 @@ export default function BeforeAfter() {
   ];
 
   return (
-    <section id="styling" className="scroll-mt-24 bg-bone py-16 md:py-28 relative overflow-hidden">
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 mb-12 md:mb-16">
+    <section id="styling" className="scroll-mt-24 bg-bone py-12 sm:py-16 md:py-28 relative overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 sm:gap-8 mb-8 sm:mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-4 flex items-center gap-2">
+            <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("styling.eyebrow")}</span>
             </p>
-            <h2 className="font-heading font-light text-ink text-4xl md:text-5xl lg:text-6xl leading-[1.04] max-w-2xl">
+            <h2 className="font-heading font-light text-ink text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.06] max-w-2xl">
               {t("styling.title")}
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="text-ink/65 text-base md:text-lg font-light max-w-md leading-relaxed">
+            <p className="text-ink/65 text-sm sm:text-base md:text-lg font-light max-w-md leading-relaxed">
               {t("styling.subtitle")}
             </p>
           </Reveal>
@@ -103,7 +103,7 @@ export default function BeforeAfter() {
             onMouseDown={() => setIsDragging(true)}
             onTouchStart={() => setIsDragging(true)}
             onClick={(e) => handleMove(e.clientX)}
-            className="relative w-full aspect-[16/9] md:aspect-[21/10] rounded-sm overflow-hidden select-none cursor-ew-resize bg-sand shadow-2xl border border-ink/10"
+            className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/10] rounded-sm overflow-hidden select-none cursor-ew-resize bg-sand shadow-2xl border border-ink/10"
           >
             {/* After Image (Full background) */}
             <div className="absolute inset-0">
@@ -113,7 +113,7 @@ export default function BeforeAfter() {
                 className="h-full w-full object-cover object-center block"
                 loading="eager"
               />
-              <div className="absolute top-5 right-5 z-10 bg-depth/85 backdrop-blur-md text-bone border border-brass/40 px-3.5 py-1.5 rounded-sm text-[0.66rem] uppercase tracking-[0.24em] font-medium pointer-events-none shadow-md">
+              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 bg-depth/85 backdrop-blur-md text-bone border border-brass/40 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.58rem] sm:text-[0.66rem] uppercase tracking-[0.22em] font-medium pointer-events-none shadow-md">
                 {t("styling.afterLabel")}
               </div>
             </div>
@@ -134,7 +134,7 @@ export default function BeforeAfter() {
                   loading="eager"
                 />
               </div>
-              <div className="absolute top-5 left-5 z-10 bg-bone/90 backdrop-blur-md text-ink border border-ink/15 px-3.5 py-1.5 rounded-sm text-[0.66rem] uppercase tracking-[0.24em] font-medium pointer-events-none shadow-md">
+              <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10 bg-bone/90 backdrop-blur-md text-ink border border-ink/15 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.58rem] sm:text-[0.66rem] uppercase tracking-[0.22em] font-medium pointer-events-none shadow-md">
                 {t("styling.beforeLabel")}
               </div>
             </div>
@@ -144,17 +144,17 @@ export default function BeforeAfter() {
               className="absolute top-0 bottom-0 w-0.5 bg-bone shadow-[0_0_12px_rgba(0,0,0,0.6)] z-20 pointer-events-none"
               style={{ left: `${sliderPos}%` }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-11 w-11 rounded-full bg-bone text-depth shadow-2xl border-2 border-brass flex items-center justify-center pointer-events-auto cursor-ew-resize">
-                <ArrowLeftRight className="h-4 w-4 text-bronze" />
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-bone text-depth shadow-2xl border-2 border-brass flex items-center justify-center pointer-events-auto cursor-ew-resize">
+                <ArrowLeftRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-bronze" />
               </div>
             </div>
           </div>
         </Reveal>
 
         {/* Styling Features Strip & CTA */}
-        <div className="mt-12 md:mt-16 grid lg:grid-cols-12 gap-8 items-center border-t border-ink/10 pt-10">
+        <div className="mt-8 sm:mt-12 md:mt-16 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center border-t border-ink/10 pt-6 sm:pt-10">
           <div className="lg:col-span-8">
-            <ul className="grid sm:grid-cols-2 gap-4 text-xs sm:text-sm text-ink/75">
+            <ul className="grid sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-ink/75">
               {stylingPoints.map((k) => (
                 <li key={k} className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-bronze shrink-0" />
@@ -167,7 +167,7 @@ export default function BeforeAfter() {
             <button
               type="button"
               onClick={() => openConsultation({ scope: "living" })}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-depth text-bone hover:bg-bronze transition-colors px-7 py-3.5 text-xs sm:text-sm uppercase tracking-wider font-light shadow-md cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-depth text-bone hover:bg-bronze transition-colors px-6 sm:px-7 py-3 sm:py-3.5 text-xs sm:text-sm uppercase tracking-wider font-light shadow-md cursor-pointer"
             >
               <Sparkles className="h-4 w-4 text-brass" />
               <span>{t("styling.consultCta")}</span>

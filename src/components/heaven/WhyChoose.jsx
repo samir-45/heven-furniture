@@ -2,8 +2,9 @@ import { Image } from "@/components/ui/image";
 import Reveal from "./Reveal";
 import WhatsAppButton from "./WhatsAppButton";
 import { useLang } from "./LanguageProvider";
+import { useConsultation } from "./ConsultationContext";
 import { ArrowUpRight } from "lucide-react";
-import { IMAGES, WHATSAPP_URL } from "./constants";
+import { IMAGES } from "./constants";
 
 const momentKeys = ["why.m1", "why.m2", "why.m3"];
 const momentImgs = [IMAGES.bespokeDetail, IMAGES.bespoke, IMAGES.showroom];
@@ -15,6 +16,7 @@ const momentAlts = [
 
 export default function WhyChoose() {
   const { t } = useLang();
+  const { openConsultation } = useConsultation();
   const benefits = ["why.b1", "why.b2", "why.b3", "why.b4", "why.b5", "why.b6"];
 
   return (
@@ -91,14 +93,13 @@ export default function WhyChoose() {
             </p>
             <div className="flex flex-col items-center gap-6">
               <WhatsAppButton>{t("cta.consultation")}</WhatsAppButton>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-ink/50 hover:text-bronze transition-colors text-sm"
+              <button
+                type="button"
+                onClick={() => openConsultation({ format: "showroom" })}
+                className="inline-flex items-center gap-1.5 text-ink/50 hover:text-bronze transition-colors text-sm cursor-pointer"
               >
                 {t("cta.noObligation")} <ArrowUpRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           </Reveal>
         </div>

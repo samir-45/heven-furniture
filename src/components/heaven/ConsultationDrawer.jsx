@@ -134,7 +134,7 @@ export default function ConsultationDrawer() {
                   <span className="h-4 w-4 rounded-full bg-bronze text-bone text-[0.6rem] flex items-center justify-center font-bold">1</span>
                   <span>{t("drawer.step1")}</span>
                 </p>
-                <div className="grid sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                   {FORMATS.map(({ id, icon: Icon, titleKey, descKey }) => {
                     const active = format === id;
                     return (
@@ -142,16 +142,16 @@ export default function ConsultationDrawer() {
                         key={id}
                         type="button"
                         onClick={() => setFormat(id)}
-                        className={`p-4 rounded-sm border text-left flex flex-col justify-between transition-all duration-300 ${
+                        className={`p-3.5 sm:p-4 rounded-sm border text-left flex sm:flex-col justify-between items-start sm:items-start transition-all duration-300 cursor-pointer ${
                           active
                             ? "border-brass bg-brass/10 ring-1 ring-brass/30 text-ink shadow-sm"
                             : "border-ink/12 bg-sand/20 hover:border-ink/30 text-ink/75"
                         }`}
                       >
-                        <Icon className={`h-5 w-5 mb-3 ${active ? "text-bronze" : "text-ink/50"}`} />
+                        <Icon className={`h-5 w-5 mb-0 sm:mb-3 mr-3 sm:mr-0 shrink-0 ${active ? "text-bronze" : "text-ink/50"}`} />
                         <div>
-                          <p className="font-heading text-lg font-light leading-tight">{t(titleKey)}</p>
-                          <p className="text-[0.66rem] text-ink/55 mt-1 leading-snug">{t(descKey)}</p>
+                          <p className="font-heading text-base sm:text-lg font-light leading-tight">{t(titleKey)}</p>
+                          <p className="text-[0.62rem] sm:text-[0.66rem] text-ink/55 mt-0.5 sm:mt-1 leading-snug">{t(descKey)}</p>
                         </div>
                       </button>
                     );
@@ -161,11 +161,11 @@ export default function ConsultationDrawer() {
 
               {/* Step 2: Project Scope */}
               <div>
-                <p className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/50 mb-3.5 flex items-center gap-2">
+                <p className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/50 mb-3 sm:mb-3.5 flex items-center gap-2">
                   <span className="h-4 w-4 rounded-full bg-bronze text-bone text-[0.6rem] flex items-center justify-center font-bold">2</span>
                   <span>{t("drawer.step2")}</span>
                 </p>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                   {SCOPES.map(({ id, key }) => {
                     const active = scope === id;
                     return (
@@ -173,7 +173,7 @@ export default function ConsultationDrawer() {
                         key={id}
                         type="button"
                         onClick={() => setScope(id)}
-                        className={`px-4 py-2.5 rounded-full border text-xs sm:text-sm transition-all duration-300 ${
+                        className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-full border text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
                           active
                             ? "border-brass bg-brass/10 text-ink font-medium ring-1 ring-brass/30"
                             : "border-ink/15 text-ink/65 hover:border-ink/35 hover:text-ink bg-sand/15"

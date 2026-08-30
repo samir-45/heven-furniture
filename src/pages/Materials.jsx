@@ -99,27 +99,27 @@ export default function Materials() {
 
       <main className="pt-28 md:pt-36 pb-20">
         {/* Hero Section */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-16 md:mb-24">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-12 sm:mb-16 md:mb-24">
           <Reveal>
-            <p className="text-bronze text-[0.7rem] uppercase tracking-[0.38em] mb-4 flex items-center gap-2">
+            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("materials.eyebrow")}</span>
             </p>
-            <h1 className="font-heading font-light text-ink text-4xl sm:text-6xl lg:text-7xl leading-[1.04] max-w-3xl">
+            <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl lg:text-7xl leading-[1.06] max-w-3xl">
               {t("materials.title")}
             </h1>
-            <p className="mt-6 text-ink/70 text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-ink/70 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("materials.subtitle")}
             </p>
           </Reveal>
         </section>
 
         {/* Interactive Material Inspector */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-28 md:mb-36">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-20 sm:mb-28 md:mb-36">
           <Reveal>
-            <div className="bg-sand/40 border border-ink/8 rounded-sm p-6 sm:p-10 lg:p-12 shadow-xl">
+            <div className="bg-sand/40 border border-ink/8 rounded-sm p-4 sm:p-8 lg:p-12 shadow-xl">
               {/* Tab Selector */}
-              <div className="flex flex-wrap gap-3 pb-8 border-b border-ink/10">
+              <div className="flex flex-wrap gap-2 sm:gap-3 pb-6 sm:pb-8 border-b border-ink/10">
                 {MATERIALS.map((m) => {
                   const active = activeMaterial.id === m.id;
                   return (
@@ -127,14 +127,14 @@ export default function Materials() {
                       key={m.id}
                       type="button"
                       onClick={() => setActiveMaterial(m)}
-                      className={`flex items-center gap-3 px-5 py-3 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
+                      className={`flex items-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-2 sm:py-3 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
                         active
                           ? "border-brass bg-depth text-bone shadow-md"
                           : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
                       }`}
                     >
                       <span
-                        className="h-4 w-4 rounded-full border border-bone/30 shadow-inner overflow-hidden relative"
+                        className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full border border-bone/30 shadow-inner overflow-hidden relative shrink-0"
                         style={{ backgroundColor: m.swatch }}
                       >
                         <img
@@ -268,23 +268,23 @@ export default function Materials() {
         </section>
 
         {/* Bottom CTA Card */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10">
-          <div className="bg-depth text-bone rounded-sm p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
+          <div className="bg-depth text-bone rounded-sm p-6 sm:p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
             <Reveal>
-              <p className="text-brass text-[0.68rem] uppercase tracking-[0.38em] mb-4">
+              <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.38em] mb-3 sm:mb-4">
                 {t("materials.touchEyebrow")}
               </p>
-              <h2 className="font-heading font-light text-3xl sm:text-5xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.08]">
+              <h2 className="font-heading font-light text-2xl sm:text-4xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.1]">
                 {t("materials.touchTitle")}
               </h2>
-              <p className="mt-6 text-bone/70 text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-bone/70 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
                 {t("materials.touchSubtitle")}
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">
                 <button
                   type="button"
                   onClick={() => openConsultation({ format: "showroom" })}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth hover:bg-bone px-8 py-4 text-sm font-medium tracking-wide transition-colors shadow-lg cursor-pointer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth hover:bg-bone px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-medium tracking-wide transition-colors shadow-lg cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>{t("materials.bookShowroomTour")}</span>
@@ -293,7 +293,7 @@ export default function Materials() {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-8 py-4 text-sm font-light tracking-wide transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-light tracking-wide transition-colors"
                 >
                   <span>{t("cta.whatsappUs")} · {PHONE_DISPLAY}</span>
                 </a>

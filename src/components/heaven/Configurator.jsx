@@ -44,10 +44,10 @@ function Pill({ active, onClick, children }) {
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`px-4 py-2.5 rounded-full border text-sm transition-all duration-300 ${
+      className={`px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full border text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
         active
-          ? "border-brass bg-brass/10 text-ink font-medium"
-          : "border-ink/15 text-ink/65 hover:border-ink/35 hover:text-ink"
+          ? "border-brass bg-brass/15 text-ink font-semibold shadow-xs"
+          : "border-ink/15 text-ink/65 hover:border-ink/35 hover:text-ink bg-sand/30"
       }`}
     >
       {children}
@@ -62,19 +62,19 @@ function Swatch({ active, onClick, label, swatch }) {
       onClick={onClick}
       aria-pressed={active}
       aria-label={label}
-      className="group flex flex-col items-center gap-2 transition-all duration-300"
+      className="group flex flex-col items-center gap-1.5 sm:gap-2 transition-all duration-300 cursor-pointer text-center w-full"
     >
       <span
-        className={`h-12 w-12 rounded-full border-2 transition-all duration-300 ${
+        className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 transition-all duration-300 ${
           active
-            ? "border-brass scale-110 ring-2 ring-brass/25 shadow-sm"
+            ? "border-brass scale-110 ring-2 ring-brass/35 shadow-md"
             : "border-ink/15 group-hover:border-ink/35"
         }`}
         style={{ backgroundColor: swatch }}
       />
       <span
-        className={`text-[0.66rem] uppercase tracking-[0.16em] transition-colors ${
-          active ? "text-ink font-medium" : "text-ink/50"
+        className={`text-[0.6rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.16em] transition-colors leading-tight truncate max-w-[80px] sm:max-w-none ${
+          active ? "text-ink font-semibold" : "text-ink/50"
         }`}
       >
         {label}
@@ -85,10 +85,10 @@ function Swatch({ active, onClick, label, swatch }) {
 
 function Slider({ label, value, set, min, max, unit }) {
   return (
-    <div>
-      <div className="flex justify-between text-sm mb-2">
+    <div className="bg-sand/30 p-3 sm:p-3.5 rounded-sm border border-ink/8">
+      <div className="flex justify-between text-xs sm:text-sm mb-2">
         <span className="text-ink/60">{label}</span>
-        <span className="text-ink font-medium tabular-nums">
+        <span className="text-ink font-semibold tabular-nums">
           {value}
           {unit}
         </span>
@@ -100,7 +100,7 @@ function Slider({ label, value, set, min, max, unit }) {
         value={value}
         aria-label={label}
         onChange={(e) => set(Number(e.target.value))}
-        className="w-full accent-bronze h-1 cursor-pointer"
+        className="w-full accent-bronze h-1.5 cursor-pointer bg-ink/10 rounded-lg"
       />
     </div>
   );
@@ -320,36 +320,36 @@ export default function Configurator() {
   return (
     <section
       id="design"
-      className="scroll-mt-24 bg-sand py-16 md:py-24 relative overflow-hidden"
+      className="scroll-mt-24 bg-sand py-12 sm:py-16 md:py-24 relative overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
-        <div className="max-w-2xl mb-12 md:mb-16">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
+        <div className="max-w-2xl mb-8 sm:mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-5">
+            <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-3 sm:mb-5">
               {t("config.eyebrow")}
             </p>
-            <h2 className="font-heading font-light text-ink text-4xl md:text-6xl leading-[1.04]">
+            <h2 className="font-heading font-light text-ink text-3xl sm:text-4xl md:text-6xl leading-[1.06]">
               {t("config.title")}
             </h2>
-            <p className="mt-5 text-ink/60 text-lg leading-relaxed font-light max-w-lg">
+            <p className="mt-3 sm:mt-5 text-ink/60 text-base sm:text-lg leading-relaxed font-light max-w-lg">
               {t("config.subtitle")}
             </p>
           </Reveal>
         </div>
 
         <Reveal delay={0.08}>
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+          <div className="grid lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-start">
             {/* Controls & Live Visualizer */}
-            <div className="lg:col-span-8 bg-bone rounded-sm border border-ink/8 p-7 md:p-10 space-y-9">
+            <div className="lg:col-span-8 bg-bone rounded-sm border border-ink/8 p-4 sm:p-7 md:p-10 space-y-6 sm:space-y-9">
               {/* Dynamic 3D WebGL Studio Visualizer */}
               <div>
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-3 flex items-center justify-between">
+                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-2.5 flex items-center justify-between">
                   <span>{t("config.visualPreview")}</span>
                   <span className="text-bronze font-medium">3D Studio WebGL</span>
                 </p>
                 <Suspense
                   fallback={
-                    <div className="w-full aspect-[16/10] sm:aspect-[2.1/1] rounded-sm bg-[#F4F1EA] border border-ink/10 flex items-center justify-center">
+                    <div className="w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[2.1/1] rounded-sm bg-[#F4F1EA] border border-ink/10 flex items-center justify-center">
                       <div className="flex flex-col items-center gap-2">
                         <Rotate3d className="h-6 w-6 text-bronze animate-spin-slow" />
                         <span className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/50">
@@ -372,10 +372,10 @@ export default function Configurator() {
               </div>
 
               <div>
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-4">
+                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                   {t("config.category")}
                 </p>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                   {CATEGORIES.map((c) => (
                     <Pill
                       key={c.id}
@@ -389,10 +389,10 @@ export default function Configurator() {
               </div>
 
               <div>
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-4">
+                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                   {t("config.wood")}
                 </p>
-                <div className="flex flex-wrap gap-6">
+                <div className="grid grid-cols-4 sm:flex sm:flex-wrap gap-2 sm:gap-6">
                   {WOODS.map((w) => (
                     <Swatch
                       key={w.id}
@@ -407,10 +407,10 @@ export default function Configurator() {
 
               {category.hasFabric && (
                 <div>
-                  <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-4">
+                  <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                     {t("config.upholstery")}
                   </p>
-                  <div className="flex flex-wrap gap-6">
+                  <div className="grid grid-cols-4 sm:flex sm:flex-wrap gap-2 sm:gap-6">
                     {FABRICS.map((f) => (
                       <Swatch
                         key={f.id}
@@ -425,10 +425,10 @@ export default function Configurator() {
               )}
 
               <div>
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-4">
+                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                   {t("config.finish")}
                 </p>
-                <div className="flex flex-wrap gap-2.5">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
                   {FINISHES.map((f) => (
                     <Pill
                       key={f.id}
@@ -441,7 +441,7 @@ export default function Configurator() {
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-3 gap-6 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6 pt-1">
                 <Slider label={t("config.width")} value={width} set={setWidth} min={80} max={320} unit=" cm" />
                 <Slider label={t("config.depth")} value={depth} set={setDepth} min={40} max={160} unit=" cm" />
                 <Slider label={t("config.height")} value={height} set={setHeight} min={40} max={220} unit=" cm" />
@@ -450,11 +450,11 @@ export default function Configurator() {
 
             {/* Live summary */}
             <div className="lg:col-span-4 lg:sticky lg:top-24">
-              <div className="bg-depth text-bone rounded-sm p-7 md:p-8 relative overflow-hidden shadow-xl">
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-5">
+              <div className="bg-depth text-bone rounded-sm p-5 sm:p-7 md:p-8 relative overflow-hidden shadow-xl">
+                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4 sm:mb-5">
                   {t("config.yourSpec")}
                 </p>
-                <div className="space-y-3 text-sm font-light">
+                <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-light">
                   <Row k={t("config.piece")} v={t(`config.cat.${category.id}`)} />
                   <Row k={t("config.wood")} v={t(`config.wood.${wood.id}`)} />
                   {category.hasFabric && (
@@ -464,8 +464,8 @@ export default function Configurator() {
                   <Row k={t("config.dimensions")} v={`${width} × ${depth} × ${height} cm`} />
                 </div>
 
-                <div className="mt-7 pt-6 border-t border-bone/15">
-                  <p className="text-[0.6rem] uppercase tracking-[0.22em] text-bone/45 mb-2">
+                <div className="mt-6 sm:mt-7 pt-5 sm:pt-6 border-t border-bone/15">
+                  <p className="text-[0.58rem] sm:text-[0.6rem] uppercase tracking-[0.22em] text-bone/45 mb-1.5 sm:mb-2">
                     {t("config.priceLabel")}
                   </p>
                   <AnimatePresence mode="wait">
@@ -475,25 +475,25 @@ export default function Configurator() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.25 }}
-                      className="font-heading text-4xl md:text-[2.7rem] font-light text-bone tabular-nums"
+                      className="font-heading text-3xl sm:text-4xl md:text-[2.7rem] font-light text-bone tabular-nums"
                     >
                       {fmt(estimate, lang)}
                     </motion.p>
                   </AnimatePresence>
-                  <p className="mt-2 text-[0.66rem] text-bone/45 leading-relaxed">
+                  <p className="mt-2 text-[0.62rem] sm:text-[0.66rem] text-bone/45 leading-relaxed">
                     {t("config.priceDisclaimer")}
                   </p>
                 </div>
 
-                <div className="mt-7 flex flex-col gap-3">
+                <div className="mt-6 sm:mt-7 flex flex-col gap-2.5 sm:gap-3">
                   <a
                     href={waMessage}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2.5 bg-brass text-depth font-medium text-sm tracking-wide rounded-full px-6 py-3.5 hover:bg-bone transition-colors duration-300 shadow-md"
+                    className="w-full inline-flex items-center justify-center gap-2.5 bg-brass text-depth font-medium text-xs sm:text-sm tracking-wide rounded-full px-5 sm:px-6 py-3 sm:py-3.5 hover:bg-bone transition-colors duration-300 shadow-md cursor-pointer"
                   >
                     <MessageCircle className="h-4 w-4" strokeWidth={1.8} />
-                    {t("config.send")}
+                    <span>{t("config.send")}</span>
                   </a>
 
                   <button
@@ -507,13 +507,13 @@ export default function Configurator() {
                     ) : (
                       <FileText className="h-3.5 w-3.5 text-brass" />
                     )}
-                    {pdfGenerating ? t("config.generatingPdf") : t("config.downloadSpec")}
+                    <span>{pdfGenerating ? t("config.generatingPdf") : t("config.downloadSpec")}</span>
                   </button>
                 </div>
 
-                <div className="mt-5 flex items-center gap-2 text-[0.66rem] text-bone/45">
-                  <Check className="h-3.5 w-3.5 text-brass" strokeWidth={2} />
-                  {t("config.noObligation")}
+                <div className="mt-4 sm:mt-5 flex items-center gap-2 text-[0.62rem] sm:text-[0.66rem] text-bone/45">
+                  <Check className="h-3.5 w-3.5 text-brass shrink-0" strokeWidth={2} />
+                  <span>{t("config.noObligation")}</span>
                 </div>
               </div>
             </div>

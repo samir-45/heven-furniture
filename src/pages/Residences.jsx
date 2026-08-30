@@ -62,23 +62,23 @@ export default function Residences() {
 
       <main className="pt-28 md:pt-36 pb-20">
         {/* Page Hero */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-16 md:mb-24">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-12 sm:mb-16 md:mb-24">
           <Reveal>
-            <p className="text-bronze text-[0.7rem] uppercase tracking-[0.38em] mb-4 flex items-center gap-2">
+            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("residences.eyebrow")}</span>
             </p>
-            <h1 className="font-heading font-light text-ink text-4xl sm:text-6xl lg:text-7xl leading-[1.04] max-w-3xl">
+            <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl lg:text-7xl leading-[1.06] max-w-3xl">
               {t("residences.title")}
             </h1>
-            <p className="mt-6 text-ink/70 text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-ink/70 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("residences.subtitle")}
             </p>
           </Reveal>
         </section>
 
         {/* Project Case Studies */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 space-y-24 md:space-y-36">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 space-y-16 sm:space-y-24 md:space-y-36">
           {PROJECTS.map((p, i) => {
             const isFlipped = i % 2 === 1;
             return (
@@ -171,23 +171,23 @@ export default function Residences() {
         </section>
 
         {/* Bottom Callout Banner */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mt-28 md:mt-36">
-          <div className="bg-depth text-bone rounded-sm p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mt-20 sm:mt-28 md:mt-36">
+          <div className="bg-depth text-bone rounded-sm p-6 sm:p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
             <Reveal>
-              <p className="text-brass text-[0.68rem] uppercase tracking-[0.38em] mb-4">
+              <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.38em] mb-3 sm:mb-4">
                 {t("cta.begin")}
               </p>
-              <h2 className="font-heading font-light text-3xl sm:text-5xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.08]">
+              <h2 className="font-heading font-light text-2xl sm:text-4xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.1]">
                 {t("residences.bottomTitle")}
               </h2>
-              <p className="mt-6 text-bone/70 text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-bone/70 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
                 {t("residences.bottomSubtitle")}
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">
                 <button
                   type="button"
                   onClick={() => openConsultation({ scope: "full" })}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth hover:bg-bone px-8 py-4 text-sm font-medium tracking-wide transition-colors shadow-lg"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth hover:bg-bone px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-medium tracking-wide transition-colors shadow-lg cursor-pointer"
                 >
                   <Sparkles className="h-4 w-4" />
                   <span>{t("cta.consultation")}</span>
@@ -196,7 +196,7 @@ export default function Residences() {
                   href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-8 py-4 text-sm font-light tracking-wide transition-colors"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-light tracking-wide transition-colors"
                 >
                   <span>{t("cta.whatsappUs")} · {PHONE_DISPLAY}</span>
                 </a>
