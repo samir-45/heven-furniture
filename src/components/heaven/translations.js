@@ -72,6 +72,7 @@ export const translations = {
     "collections.c5.line": "Designed entirely around you.",
     "collections.enquire": "Enquire",
     "collections.label": "Collection",
+    "collections.inquiryMsg": "Hello Heaven Furniture Mart, I would like to enquire about your {name} collection.",
 
     // CraftJourney
     "journey.eyebrow": "The Craft Journey",
@@ -249,6 +250,7 @@ export const translations = {
     "collections.c5.line": "সম্পূর্ণ আপনার নিজস্ব রুচি ও পছন্দের বিশেষ নকশা।",
     "collections.enquire": "অর্ডার / বিস্তারিত",
     "collections.label": "কালেকশন",
+    "collections.inquiryMsg": "আসসালামু আলাইকুম, আমি হেভেন ফার্নিচার মার্ট-এর {name} কালেকশন সম্পর্কে বিস্তারিত জানতে চাই।",
 
     // CraftJourney
     "journey.eyebrow": "তৈরির গল্প",

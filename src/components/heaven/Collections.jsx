@@ -54,15 +54,20 @@ export default function Collections() {
         ref={trackRef}
         className="no-scrollbar flex gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory px-6 md:px-10 scroll-pl-6 md:scroll-pl-10 pb-2"
       >
-        {collectionKeys.map((ck, i) => (
-          <a
-            key={ck}
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-cursor="view"
-            className="group relative snap-start shrink-0 w-[78vw] sm:w-[340px] lg:w-[380px] block"
-          >
+        {collectionKeys.map((ck, i) => {
+          const collectionName = t(`collections.${ck}.name`);
+          const waLink = `${WHATSAPP_URL}?text=${encodeURIComponent(
+            t("collections.inquiryMsg", { name: collectionName })
+          )}`;
+          return (
+            <a
+              key={ck}
+              href={waLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-cursor="view"
+              className="group relative snap-start shrink-0 w-[78vw] sm:w-[340px] lg:w-[380px] block"
+            >
             <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-sand">
               <div className="absolute inset-0 transition-transform duration-1100 ease-out group-hover:scale-[1.06]">
                 <Image
@@ -90,7 +95,8 @@ export default function Collections() {
               0{i + 1} — {t("collections.label")}
             </span>
           </a>
-        ))}
+        );
+      })}
       </div>
     </section>
   );

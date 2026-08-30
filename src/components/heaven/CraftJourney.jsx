@@ -6,12 +6,17 @@ import { useLang } from "./LanguageProvider";
 import { IMAGES } from "./constants";
 
 const chapterKeys = ["c1", "c2", "c3", "c4"];
-const chapterImgs = [IMAGES.showroom, IMAGES.sofa, IMAGES.bespoke, IMAGES.living];
+const chapterImgs = [
+  IMAGES.journeyConsult,
+  IMAGES.journeyDesign,
+  IMAGES.journeyCraft,
+  IMAGES.journeyDeliver,
+];
 const chapterAlts = [
-  "The Heaven Furniture Mart showroom where consultations begin",
-  "A close detail of a hand-finished bespoke furniture joint",
-  "A craftsman chiselling a fine walnut joint in the atelier",
-  "A finished bespoke living room installed in a client's home",
+  "Interior designer and client discussing bespoke furniture plans in the Heaven Furniture Mart studio",
+  "Architectural blueprint sketches, solid teak and walnut timber samples, and material swatches",
+  "A master craftsman hand-chiselling solid timber joinery in the Heaven Furniture Mart atelier",
+  "White-glove delivery and final placement of bespoke furniture in a luxury residence",
 ];
 
 export default function CraftJourney() {

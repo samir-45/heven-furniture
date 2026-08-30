@@ -23,7 +23,11 @@ export const MD_NAME = "Abul Kalam Bhuiyan";
 export const MD_ROLE = "Managing Director";
 
 export const IMAGES = {
-  hero: "/images/hero.jpg",
+  hero: "/images/hero-luxury.jpg",
+  journeyConsult: "/images/journey-consult.jpg",
+  journeyDesign: "/images/journey-design.jpg",
+  journeyCraft: "/images/journey-craft.jpg",
+  journeyDeliver: "/images/journey-deliver.jpg",
   bespoke: "/images/furniture-05.jpg",
   showroom: "/images/furniture-06.jpg",
   living: "/images/furniture-01.jpg",
