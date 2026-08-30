@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Facebook, Instagram, Youtube, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 import {
@@ -50,10 +51,10 @@ export default function Footer() {
 
       <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-16 md:py-20">
         <div className="grid md:grid-cols-12 gap-10">
-          <div className="md:col-span-5">
-            <a href="#top" className="font-heading text-2xl tracking-tight">
+          <div className="md:col-span-4">
+            <Link to="/" className="font-heading text-2xl tracking-tight">
               Heaven<span className="text-brass">.</span> {t("nav.furnitureMart")}
-            </a>
+            </Link>
             <p className="mt-4 text-bone/55 max-w-sm leading-relaxed font-light">
               {t("footer.tagline")}
             </p>
@@ -73,37 +74,65 @@ export default function Footer() {
             </div>
           </div>
 
+          <div className="md:col-span-2">
+            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">
+              Atelier Pages
+            </p>
+            <ul className="space-y-2.5 text-xs text-bone/70 font-light">
+              <li>
+                <Link to="/" className="hover:text-brass transition-colors">
+                  {t("nav.home")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/#collections" className="hover:text-brass transition-colors">
+                  {t("nav.collections")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/residences" className="hover:text-brass transition-colors">
+                  {t("nav.residences")}
+                </Link>
+              </li>
+              <li>
+                <Link to="/materials" className="hover:text-brass transition-colors">
+                  {t("nav.materials")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           <div className="md:col-span-3">
             <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">{t("footer.visit")}</p>
-            <p className="text-bone/70 leading-relaxed flex gap-2.5">
-              <MapPin className="h-4 w-4 mt-1 text-bronze shrink-0" strokeWidth={1.5} />
+            <p className="text-bone/70 leading-relaxed flex gap-2.5 text-xs">
+              <MapPin className="h-4 w-4 mt-0.5 text-bronze shrink-0" strokeWidth={1.5} />
               <span>{ADDRESS}</span>
             </p>
           </div>
 
-          <div className="md:col-span-4">
+          <div className="md:col-span-3">
             <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">{t("footer.contact")}</p>
             <a
               href={`tel:${PHONE_TEL}`}
-              className="text-bone/70 hover:text-brass transition-colors flex gap-2.5"
+              className="text-bone/70 hover:text-brass transition-colors flex gap-2.5 text-xs"
             >
-              <Phone className="h-4 w-4 mt-1 text-bronze shrink-0" strokeWidth={1.5} />
+              <Phone className="h-4 w-4 mt-0.5 text-bronze shrink-0" strokeWidth={1.5} />
               <span>{PHONE_DISPLAY}</span>
             </a>
             <a
               href={`mailto:${EMAIL}`}
-              className="mt-2 text-bone/70 hover:text-brass transition-colors flex gap-2.5 break-all"
+              className="mt-2 text-bone/70 hover:text-brass transition-colors flex gap-2.5 break-all text-xs"
             >
-              <Mail className="h-4 w-4 mt-1 text-bronze shrink-0" strokeWidth={1.5} />
+              <Mail className="h-4 w-4 mt-0.5 text-bronze shrink-0" strokeWidth={1.5} />
               <span>{EMAIL}</span>
             </a>
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 text-brass hover:text-bone transition-colors text-sm"
+              className="mt-5 inline-flex items-center gap-2 text-brass hover:text-bone transition-colors text-xs uppercase tracking-wider"
             >
-              {t("cta.whatsappUs")} <ArrowUpRight className="h-4 w-4" />
+              {t("cta.whatsappUs")} <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
           </div>
         </div>

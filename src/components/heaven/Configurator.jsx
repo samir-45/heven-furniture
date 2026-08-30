@@ -1,12 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, MessageCircle, Download, FileText, Sparkles } from "lucide-react";
+import { Check, MessageCircle, Download, FileText, Rotate3d } from "lucide-react";
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
 import { WHATSAPP_URL, ADDRESS, PHONE_DISPLAY, EMAIL } from "./constants";
 
-// Pure-frontend bespoke configurator — live price estimate + dynamic SVG visualizer + PDF download + WhatsApp pre-fill.
-// No backend; all state is local. Prices are illustrative starting points (BDT).
+const Furniture3DCanvas = lazy(() => import("./Furniture3DCanvas"));
 
 const CATEGORIES = [
   { id: "sofa", base: 45000, hasFabric: true },
@@ -103,130 +102,6 @@ function Slider({ label, value, set, min, max, unit }) {
         onChange={(e) => set(Number(e.target.value))}
         className="w-full accent-bronze h-1 cursor-pointer"
       />
-    </div>
-  );
-}
-
-function FurnitureVisualizer({ category, wood, fabric, finish, width, depth, height }) {
-  const woodColor = wood.swatch || "#9C6B3C";
-  const fabricColor = fabric?.swatch || "#D9CFBE";
-
-  const scaleW = Math.max(0.85, Math.min(1.2, width / 200));
-  const scaleH = Math.max(0.88, Math.min(1.15, height / 80));
-
-  return (
-    <div className="relative w-full aspect-[16/9] sm:aspect-[2.2/1] rounded-sm bg-gradient-to-b from-bone via-sand/30 to-sand/60 border border-ink/8 overflow-hidden flex items-center justify-center p-6 select-none shadow-inner">
-      {/* Floor reflection & ambient shadow */}
-      <div className="absolute bottom-5 w-3/4 h-6 rounded-[100%] bg-ink/10 blur-md pointer-events-none" />
-
-      {/* Dynamic SVG graphic */}
-      <motion.svg
-        key={category.id}
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-        viewBox="0 0 400 240"
-        className="w-full h-full max-h-[200px] drop-shadow-md z-10"
-        style={{
-          transform: `scale(${scaleW}, ${scaleH})`,
-          transition: "transform 0.25s ease-out",
-        }}
-      >
-        <defs>
-          <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={woodColor} stopOpacity="1" />
-            <stop offset="100%" stopColor={woodColor} stopOpacity="0.82" />
-          </linearGradient>
-          <linearGradient id="fabricGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={fabricColor} stopOpacity="1" />
-            <stop offset="100%" stopColor={fabricColor} stopOpacity="0.85" />
-          </linearGradient>
-          <filter id="pieceShadow" x="-10%" y="-10%" width="120%" height="130%">
-            <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.18" />
-          </filter>
-        </defs>
-
-        {category.id === "sofa" && (
-          <g>
-            <rect x="75" y="180" width="10" height="24" rx="2" fill={woodColor} />
-            <rect x="315" y="180" width="10" height="24" rx="2" fill={woodColor} />
-            <rect x="195" y="182" width="10" height="22" rx="2" fill={woodColor} opacity="0.8" />
-            <rect x="60" y="172" width="280" height="14" rx="3" fill="url(#woodGrad)" />
-            <rect x="70" y="70" width="260" height="106" rx="14" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <rect x="76" y="128" width="120" height="46" rx="8" fill="url(#fabricGrad)" stroke={woodColor} strokeOpacity="0.2" />
-            <rect x="204" y="128" width="120" height="46" rx="8" fill="url(#fabricGrad)" stroke={woodColor} strokeOpacity="0.2" />
-            <rect x="54" y="105" width="30" height="70" rx="8" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <rect x="316" y="105" width="30" height="70" rx="8" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <path d="M 95 125 Q 110 115 125 125 Q 125 145 110 150 Q 95 145 95 125 Z" fill="#C9A66B" opacity="0.85" />
-          </g>
-        )}
-
-        {category.id === "bed" && (
-          <g>
-            <rect x="70" y="40" width="260" height="120" rx="6" fill="url(#woodGrad)" />
-            <rect x="84" y="52" width="232" height="96" rx="4" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <line x1="142" y1="52" x2="142" y2="148" stroke="#16292B" strokeOpacity="0.15" strokeWidth="2" />
-            <line x1="200" y1="52" x2="200" y2="148" stroke="#16292B" strokeOpacity="0.15" strokeWidth="2" />
-            <line x1="258" y1="52" x2="258" y2="148" stroke="#16292B" strokeOpacity="0.15" strokeWidth="2" />
-            <rect x="60" y="146" width="280" height="40" rx="4" fill="url(#woodGrad)" />
-            <rect x="68" y="142" width="264" height="28" rx="4" fill="#F9F7F2" filter="url(#pieceShadow)" />
-            <rect x="90" y="125" width="80" height="24" rx="4" fill="#EAE7DF" stroke="#1A1A1A" strokeOpacity="0.1" />
-            <rect x="230" y="125" width="80" height="24" rx="4" fill="#EAE7DF" stroke="#1A1A1A" strokeOpacity="0.1" />
-            <rect x="75" y="186" width="14" height="20" rx="2" fill={woodColor} />
-            <rect x="311" y="186" width="14" height="20" rx="2" fill={woodColor} />
-          </g>
-        )}
-
-        {category.id === "dining" && (
-          <g>
-            <rect x="50" y="100" width="300" height="22" rx="4" fill="url(#woodGrad)" filter="url(#pieceShadow)" />
-            <rect x="54" y="122" width="292" height="6" fill={woodColor} opacity="0.7" />
-            <rect x="80" y="128" width="18" height="76" rx="3" fill="url(#woodGrad)" />
-            <rect x="302" y="128" width="18" height="76" rx="3" fill="url(#woodGrad)" />
-            <rect x="110" y="128" width="14" height="68" rx="2" fill={woodColor} opacity="0.6" />
-            <rect x="276" y="128" width="14" height="68" rx="2" fill={woodColor} opacity="0.6" />
-            <ellipse cx="200" cy="98" rx="12" ry="4" fill="#C9A66B" />
-            <path d="M 194 98 Q 188 78 200 68 Q 212 78 206 98 Z" fill="#C9A66B" opacity="0.9" />
-          </g>
-        )}
-
-        {category.id === "wardrobe" && (
-          <g>
-            <rect x="85" y="30" width="230" height="14" rx="2" fill="url(#woodGrad)" />
-            <rect x="90" y="44" width="220" height="150" fill="url(#woodGrad)" filter="url(#pieceShadow)" />
-            <rect x="96" y="48" width="66" height="140" rx="2" fill={woodColor} stroke="#16292B" strokeOpacity="0.25" />
-            <rect x="167" y="48" width="66" height="140" rx="2" fill={woodColor} stroke="#16292B" strokeOpacity="0.25" />
-            <rect x="238" y="48" width="66" height="140" rx="2" fill={woodColor} stroke="#16292B" strokeOpacity="0.25" />
-            <circle cx="156" cy="118" r="3" fill="#C9A66B" />
-            <circle cx="173" cy="118" r="3" fill="#C9A66B" />
-            <circle cx="244" cy="118" r="3" fill="#C9A66B" />
-            <rect x="86" y="194" width="228" height="12" rx="1" fill="url(#woodGrad)" />
-          </g>
-        )}
-
-        {category.id === "chair" && (
-          <g>
-            <line x1="140" y1="160" x2="120" y2="204" stroke={woodColor} strokeWidth="8" strokeLinecap="round" />
-            <line x1="260" y1="160" x2="280" y2="204" stroke={woodColor} strokeWidth="8" strokeLinecap="round" />
-            <rect x="130" y="144" width="140" height="16" rx="4" fill="url(#woodGrad)" />
-            <rect x="145" y="60" width="110" height="88" rx="12" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <rect x="125" y="130" width="150" height="28" rx="8" fill="url(#fabricGrad)" filter="url(#pieceShadow)" />
-            <path d="M 125 105 Q 115 125 125 145" stroke={woodColor} strokeWidth="6" fill="none" strokeLinecap="round" />
-            <path d="M 275 105 Q 285 125 275 145" stroke={woodColor} strokeWidth="6" fill="none" strokeLinecap="round" />
-          </g>
-        )}
-      </motion.svg>
-
-      {/* Floating Dimension Tag */}
-      <div className="absolute top-3 left-3 bg-bone/95 backdrop-blur-sm border border-ink/10 px-2.5 py-1 rounded-sm text-[0.62rem] tracking-wider uppercase text-ink/70 font-medium z-20 flex items-center gap-1.5 shadow-sm">
-        <Sparkles className="h-3 w-3 text-bronze" />
-        <span>{width} × {depth} × {height} cm</span>
-      </div>
-
-      {/* Material Label Tag */}
-      <div className="absolute bottom-3 right-3 bg-depth/90 backdrop-blur-sm border border-brass/35 px-2.5 py-1 rounded-sm text-[0.62rem] tracking-wider text-brass font-light z-20 shadow-sm">
-        {wood.id.toUpperCase()} {category.hasFabric && `· ${fabric.id.toUpperCase()}`}
-      </div>
     </div>
   );
 }
@@ -466,21 +341,34 @@ export default function Configurator() {
           <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Controls & Live Visualizer */}
             <div className="lg:col-span-8 bg-bone rounded-sm border border-ink/8 p-7 md:p-10 space-y-9">
-              {/* Dynamic 2D Visualizer */}
+              {/* Dynamic 3D WebGL Studio Visualizer */}
               <div>
                 <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-3 flex items-center justify-between">
                   <span>{t("config.visualPreview")}</span>
-                  <span className="text-bronze font-medium">Interactive</span>
+                  <span className="text-bronze font-medium">3D Studio WebGL</span>
                 </p>
-                <FurnitureVisualizer
-                  category={category}
-                  wood={wood}
-                  fabric={fabric}
-                  finish={finish}
-                  width={width}
-                  depth={depth}
-                  height={height}
-                />
+                <Suspense
+                  fallback={
+                    <div className="w-full aspect-[16/10] sm:aspect-[2.1/1] rounded-sm bg-[#F4F1EA] border border-ink/10 flex items-center justify-center">
+                      <div className="flex flex-col items-center gap-2">
+                        <Rotate3d className="h-6 w-6 text-bronze animate-spin-slow" />
+                        <span className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/50">
+                          Loading 3D Studio...
+                        </span>
+                      </div>
+                    </div>
+                  }
+                >
+                  <Furniture3DCanvas
+                    category={category}
+                    wood={wood}
+                    fabric={fabric}
+                    finish={finish}
+                    width={width}
+                    depth={depth}
+                    height={height}
+                  />
+                </Suspense>
               </div>
 
               <div>

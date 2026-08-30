@@ -36,7 +36,12 @@ export const IMAGES = {
   office: "/images/furniture-10.jpg",
   bespokeDetail: "/images/furniture-01.jpg",
   custom: "/images/furniture-09.jpg",
-  sofa: "/images/furniture-03.jpg"
+  sofa: "/images/furniture-03.jpg",
+  stylingBefore: "/images/styling-before.jpg",
+  stylingAfter: "/images/styling-after.jpg",
+  residenceGec: "/images/residence-gec.jpg",
+  residenceAgrabad: "/images/residence-agrabad.jpg",
+  residenceKhulshi: "/images/residence-khulshi.jpg"
 };
 
 // Real product & showroom footage pulled from Heaven Furniture Mart's own
