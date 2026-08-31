@@ -62,19 +62,19 @@ function Swatch({ active, onClick, label, swatch }) {
       onClick={onClick}
       aria-pressed={active}
       aria-label={label}
-      className="group flex flex-col items-center gap-1.5 sm:gap-2 transition-all duration-300 cursor-pointer text-center w-full"
+      className="group flex flex-col items-center gap-1.5 sm:gap-2 transition-all duration-300 cursor-pointer text-center"
     >
       <span
         className={`h-10 w-10 sm:h-12 sm:w-12 rounded-full border-2 transition-all duration-300 ${
           active
             ? "border-brass scale-110 ring-2 ring-brass/35 shadow-md"
-            : "border-ink/15 group-hover:border-ink/35"
+            : "border-ink/15 group-hover:border-ink/35 group-hover:scale-105"
         }`}
         style={{ backgroundColor: swatch }}
       />
       <span
-        className={`text-[0.6rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.16em] transition-colors leading-tight truncate max-w-[80px] sm:max-w-none ${
-          active ? "text-ink font-semibold" : "text-ink/50"
+        className={`text-[0.62rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.16em] transition-colors leading-tight whitespace-nowrap ${
+          active ? "text-ink font-semibold" : "text-ink/55 group-hover:text-ink"
         }`}
       >
         {label}
@@ -392,7 +392,7 @@ export default function Configurator() {
                 <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                   {t("config.wood")}
                 </p>
-                <div className="grid grid-cols-4 sm:flex sm:flex-wrap gap-2 sm:gap-6">
+                <div className="flex flex-wrap items-center gap-4 sm:gap-7">
                   {WOODS.map((w) => (
                     <Swatch
                       key={w.id}
@@ -410,7 +410,7 @@ export default function Configurator() {
                   <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
                     {t("config.upholstery")}
                   </p>
-                  <div className="grid grid-cols-4 sm:flex sm:flex-wrap gap-2 sm:gap-6">
+                  <div className="flex flex-wrap items-center gap-4 sm:gap-7">
                     {FABRICS.map((f) => (
                       <Swatch
                         key={f.id}
