@@ -6,7 +6,7 @@ import { useConsultation } from "./ConsultationContext";
 import { IMAGES } from "./constants";
 
 export default function BeforeAfter() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { openConsultation } = useConsultation();
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
@@ -113,8 +113,9 @@ export default function BeforeAfter() {
                 className="h-full w-full object-cover object-center block"
                 loading="eager"
               />
-              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 bg-depth/85 backdrop-blur-md text-bone border border-brass/40 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.58rem] sm:text-[0.66rem] uppercase tracking-[0.22em] font-medium pointer-events-none shadow-md">
-                {t("styling.afterLabel")}
+              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 max-w-[44%] truncate bg-depth/85 backdrop-blur-md text-bone border border-brass/40 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.56rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.22em] font-medium pointer-events-none shadow-md">
+                <span className="font-bold">{lang === "bn" ? "পরে" : "AFTER"}</span>
+                <span className="hidden sm:inline">{lang === "bn" ? " · সাজানো আভিজাত্য" : " · Bespoke Interior"}</span>
               </div>
             </div>
 
@@ -134,8 +135,9 @@ export default function BeforeAfter() {
                   loading="eager"
                 />
               </div>
-              <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10 bg-bone/90 backdrop-blur-md text-ink border border-ink/15 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.58rem] sm:text-[0.66rem] uppercase tracking-[0.22em] font-medium pointer-events-none shadow-md">
-                {t("styling.beforeLabel")}
+              <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10 max-w-[44%] truncate bg-bone/90 backdrop-blur-md text-ink border border-ink/15 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.56rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.22em] font-medium pointer-events-none shadow-md">
+                <span className="font-bold">{lang === "bn" ? "আগে" : "BEFORE"}</span>
+                <span className="hidden sm:inline">{lang === "bn" ? " · খালি রুম" : " · Bare Space"}</span>
               </div>
             </div>
 

@@ -310,12 +310,14 @@ export default function RoomPlanner() {
   useEffect(() => {
     const updateScale = () => {
       if (!canvasRef.current) return;
-      const cw = canvasRef.current.clientWidth - 48;
-      const ch = canvasRef.current.clientHeight - 48;
+      const isMobile = window.innerWidth < 640;
+      const pad = isMobile ? 24 : 48;
+      const cw = Math.max(canvasRef.current.clientWidth - pad, 180);
+      const ch = Math.max(canvasRef.current.clientHeight - pad, 160);
       const scaleX = cw / Math.max(roomWidth, 3);
       const scaleY = ch / Math.max(roomLength, 3);
       const chosen = Math.min(scaleX, scaleY, 95);
-      setPixelsPerMeter(Math.max(40, chosen));
+      setPixelsPerMeter(Math.max(24, chosen));
     };
 
     updateScale();
@@ -684,57 +686,59 @@ export default function RoomPlanner() {
       <FloatingWhatsApp />
       <ConsultationDrawer />
 
-      <main className="pt-28 md:pt-36 pb-20">
+      <main className="pt-24 sm:pt-28 md:pt-36 pb-20 overflow-x-hidden w-full max-w-full">
         {/* Hero Header */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-8 md:mb-12">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-6 sm:mb-8 md:mb-12">
           <Reveal>
-            <p className="text-bronze text-[0.7rem] uppercase tracking-[0.38em] mb-4 flex items-center gap-2">
+            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
               <Compass className="h-3.5 w-3.5" />
               <span>{t("planner.eyebrow")}</span>
             </p>
-            <h1 className="font-heading font-light text-ink text-4xl sm:text-6xl lg:text-7xl leading-[1.04] max-w-3xl">
+            <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.06] sm:leading-[1.04] max-w-3xl">
               {t("planner.title")}
             </h1>
-            <p className="mt-5 text-ink/70 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-3 sm:mt-5 text-ink/70 text-sm sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("planner.subtitle")}
             </p>
           </Reveal>
         </section>
 
         {/* Preset Selector & Dimensions Bar */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-6">
-          <div className="bg-sand/50 border border-ink/10 rounded-sm p-4 sm:p-6 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-6">
+          <div className="bg-sand/50 border border-ink/10 rounded-sm p-3.5 sm:p-5 md:p-6 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
             {/* Presets */}
-            <div className="flex flex-wrap items-center gap-2.5">
-              <span className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/45 mr-1 flex items-center gap-1.5">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full lg:w-auto">
+              <span className="text-[0.64rem] sm:text-[0.66rem] uppercase tracking-[0.24em] text-ink/45 mr-1 flex items-center gap-1.5 shrink-0">
                 <Layers className="h-3.5 w-3.5 text-bronze" />
                 <span>{t("planner.templates")}:</span>
               </span>
-              {ROOM_TEMPLATES.map((tmpl) => {
-                const active = selectedTemplate.id === tmpl.id;
-                return (
-                  <button
-                    key={tmpl.id}
-                    type="button"
-                    onClick={() => handleSelectTemplate(tmpl)}
-                    className={`px-4 py-2 rounded-full border text-xs tracking-wide transition-all duration-300 cursor-pointer ${
-                      active
-                        ? "border-brass bg-depth text-bone shadow-md font-medium"
-                        : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
-                    }`}
-                  >
-                    {t(tmpl.nameKey)}
-                  </button>
-                );
-              })}
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                {ROOM_TEMPLATES.map((tmpl) => {
+                  const active = selectedTemplate.id === tmpl.id;
+                  return (
+                    <button
+                      key={tmpl.id}
+                      type="button"
+                      onClick={() => handleSelectTemplate(tmpl)}
+                      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[0.72rem] sm:text-xs tracking-wide transition-all duration-300 cursor-pointer ${
+                        active
+                          ? "border-brass bg-depth text-bone shadow-md font-medium"
+                          : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
+                      }`}
+                    >
+                      {t(tmpl.nameKey)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {/* Custom Sliders (if custom or tweakable) */}
-            <div className="flex items-center gap-6 w-full lg:w-auto">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 sm:gap-6 w-full lg:w-auto pt-2 sm:pt-0 border-t border-ink/8 lg:border-t-0">
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
                 <Ruler className="h-3.5 w-3.5 text-bronze shrink-0" />
-                <div className="flex items-center gap-4 text-xs text-ink/70">
-                  <label className="flex items-center gap-1.5 font-medium">
+                <div className="flex items-center gap-2.5 sm:gap-4 text-xs text-ink/70">
+                  <label className="flex items-center gap-1 sm:gap-1.5 font-medium">
                     <span>{t("planner.width")}:</span>
                     <input
                       type="number"
@@ -743,12 +747,12 @@ export default function RoomPlanner() {
                       step={0.5}
                       value={roomWidth}
                       onChange={(e) => setRoomWidth(Math.max(3, Math.min(12, Number(e.target.value))))}
-                      className="w-14 bg-bone border border-ink/15 rounded-xs px-2 py-1 text-ink text-center font-bold"
+                      className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs"
                     />
                     <span>m</span>
                   </label>
 
-                  <label className="flex items-center gap-1.5 font-medium">
+                  <label className="flex items-center gap-1 sm:gap-1.5 font-medium">
                     <span>{t("planner.length")}:</span>
                     <input
                       type="number"
@@ -757,7 +761,7 @@ export default function RoomPlanner() {
                       step={0.5}
                       value={roomLength}
                       onChange={(e) => setRoomLength(Math.max(3, Math.min(12, Number(e.target.value))))}
-                      className="w-14 bg-bone border border-ink/15 rounded-xs px-2 py-1 text-ink text-center font-bold"
+                      className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs"
                     />
                     <span>m</span>
                   </label>
@@ -767,7 +771,7 @@ export default function RoomPlanner() {
               <button
                 type="button"
                 onClick={handleResetPreset}
-                className="inline-flex items-center gap-1.5 text-xs text-ink/50 hover:text-ink transition-colors ml-auto cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs text-ink/50 hover:text-ink transition-colors ml-auto cursor-pointer shrink-0"
                 title="Reset to Template Default"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -778,10 +782,10 @@ export default function RoomPlanner() {
         </section>
 
         {/* Main Planner Grid: Left Canvas & Right Catalog */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-10">
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-10">
+          <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             {/* Interactive Floorplan Canvas (8 Cols) */}
-            <div className="lg:col-span-8 space-y-4">
+            <div className="lg:col-span-8 space-y-4 w-full min-w-0">
               <div
                 ref={canvasRef}
                 onClick={(e) => {
@@ -789,7 +793,7 @@ export default function RoomPlanner() {
                     setSelectedItemId(null);
                   }
                 }}
-                className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#F3EFE6] border-2 border-ink/15 rounded-sm overflow-hidden flex items-center justify-center p-6 select-none shadow-xl cursor-default"
+                className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#F3EFE6] border-2 border-ink/15 rounded-sm overflow-hidden flex items-center justify-center p-3 sm:p-6 select-none shadow-xl cursor-default touch-none"
                 style={{
                   backgroundImage: `
                     linear-gradient(to right, rgba(22, 41, 43, 0.05) 1px, transparent 1px),
@@ -912,30 +916,30 @@ export default function RoomPlanner() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="p-4 rounded-sm bg-bone border border-brass/40 shadow-lg flex flex-wrap items-center justify-between gap-4"
+                    className="p-3 sm:p-4 rounded-sm bg-bone border border-brass/40 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
                       <div
-                        className="h-9 w-9 rounded-sm border flex items-center justify-center font-bold text-xs shadow-inner"
+                        className="h-8 w-8 sm:h-9 sm:w-9 rounded-sm border flex items-center justify-center font-bold text-xs shadow-inner shrink-0"
                         style={{ backgroundColor: selectedItemData.cat.fill, color: selectedItemData.cat.color }}
                       >
                         {selectedItemData.cat.wM}m
                       </div>
-                      <div>
-                        <h4 className="text-sm font-heading font-medium text-ink">
+                      <div className="min-w-0">
+                        <h4 className="text-xs sm:text-sm font-heading font-medium text-ink truncate">
                           {lang === "bn" ? selectedItemData.cat.nameBn : selectedItemData.cat.nameEn}
                         </h4>
-                        <p className="text-[0.64rem] uppercase tracking-wider text-bronze font-medium">
+                        <p className="text-[0.6rem] sm:text-[0.64rem] uppercase tracking-wider text-bronze font-medium truncate">
                           {selectedItemData.cat.timber} · ৳{selectedItemData.cat.price.toLocaleString("en-BD")}
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                       <button
                         type="button"
                         onClick={handleRotateSelected}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
                       >
                         <RotateCw className="h-3.5 w-3.5 text-bronze" />
                         <span>{t("planner.rotate")}</span>
@@ -944,7 +948,7 @@ export default function RoomPlanner() {
                       <button
                         type="button"
                         onClick={handleDeleteSelected}
-                        className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full border border-red-200 hover:bg-red-50 text-xs text-red-600 transition-colors cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-red-200 hover:bg-red-50 text-xs text-red-600 transition-colors cursor-pointer"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                         <span>{t("planner.delete")}</span>
@@ -956,19 +960,19 @@ export default function RoomPlanner() {
             </div>
 
             {/* Right Catalog & Analytics Panel (4 Cols) */}
-            <div className="lg:col-span-4 space-y-6">
+            <div className="lg:col-span-4 space-y-6 w-full min-w-0">
               {/* Spatial Analytics Card */}
-              <div className="p-6 rounded-sm bg-depth text-bone shadow-xl space-y-5">
-                <div className="flex items-center justify-between border-b border-bone/15 pb-4">
+              <div className="p-4 sm:p-6 rounded-sm bg-depth text-bone shadow-xl space-y-4 sm:space-y-5">
+                <div className="flex items-center justify-between border-b border-bone/15 pb-3 sm:pb-4 gap-2">
                   <div>
-                    <span className="text-[0.62rem] uppercase tracking-[0.24em] text-brass">
+                    <span className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-brass">
                       {t("planner.totalEstimate")}
                     </span>
-                    <h3 className="font-heading text-3xl sm:text-4xl text-bone font-light mt-0.5">
+                    <h3 className="font-heading text-2xl sm:text-4xl text-bone font-light mt-0.5 tracking-tight">
                       ৳{totalEstimate.toLocaleString("en-BD")}
                     </h3>
                   </div>
-                  <span className="text-[0.64rem] uppercase tracking-wider text-bone/60 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10">
+                  <span className="text-[0.6rem] sm:text-[0.64rem] uppercase tracking-wider text-bone/75 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0">
                     {placedItems.length} Pieces
                   </span>
                 </div>
@@ -997,9 +1001,9 @@ export default function RoomPlanner() {
                     href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-brass text-depth hover:bg-bone rounded-full py-3.5 px-5 text-xs uppercase tracking-[0.16em] font-medium transition-colors shadow-lg cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-brass text-depth hover:bg-bone rounded-full py-3 sm:py-3.5 px-3 sm:px-5 text-[0.72rem] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.16em] font-medium transition-colors shadow-lg cursor-pointer text-center"
                   >
-                    <MessageCircle className="h-4 w-4" />
+                    <MessageCircle className="h-4 w-4 shrink-0" />
                     <span>{t("planner.sendWa")}</span>
                   </a>
 
@@ -1007,16 +1011,16 @@ export default function RoomPlanner() {
                     type="button"
                     onClick={handleDownloadPdf}
                     disabled={pdfGenerating || placedItems.length === 0}
-                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-3 px-5 text-xs uppercase tracking-[0.16em] font-light transition-colors disabled:opacity-50 cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-[0.72rem] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.16em] font-light transition-colors disabled:opacity-50 cursor-pointer text-center"
                   >
-                    <Download className="h-4 w-4" />
+                    <Download className="h-4 w-4 shrink-0" />
                     <span>{pdfGenerating ? "Generating..." : t("planner.exportPdf")}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => openConsultation({ format: "home_visit" })}
-                    className="w-full text-center text-[0.68rem] uppercase tracking-[0.2em] text-bone/60 hover:text-brass transition-colors pt-2 cursor-pointer"
+                    className="w-full text-center text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-bone/60 hover:text-brass transition-colors pt-2 cursor-pointer"
                   >
                     {t("planner.bookMeasure")} →
                   </button>
@@ -1024,9 +1028,9 @@ export default function RoomPlanner() {
               </div>
 
               {/* Furniture Catalog Drawer */}
-              <div className="p-6 rounded-sm bg-sand/40 border border-ink/10 shadow-sm space-y-4">
+              <div className="p-4 sm:p-6 rounded-sm bg-sand/40 border border-ink/10 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-heading text-xl text-ink font-light">
+                  <h3 className="font-heading text-lg sm:text-xl text-ink font-light">
                     {t("planner.catalog")}
                   </h3>
                   <button
@@ -1047,7 +1051,7 @@ export default function RoomPlanner() {
                         key={c.id}
                         type="button"
                         onClick={() => setActiveCatalogCategory(c.id)}
-                        className={`px-3 py-1 rounded-full text-[0.68rem] transition-colors cursor-pointer ${
+                        className={`px-2.5 sm:px-3 py-1 rounded-full text-[0.65rem] sm:text-[0.68rem] transition-colors cursor-pointer ${
                           active
                             ? "bg-depth text-bone font-medium"
                             : "bg-bone border border-ink/10 text-ink/70 hover:border-ink/30"
@@ -1063,37 +1067,37 @@ export default function RoomPlanner() {
                 <div
                   data-lenis-prevent
                   onWheel={(e) => e.stopPropagation()}
-                  className="max-h-[420px] overflow-y-auto overscroll-contain space-y-2 pr-1.5"
+                  className="max-h-[360px] sm:max-h-[420px] overflow-y-auto overscroll-contain space-y-2 pr-1"
                 >
                   {filteredCatalog.map((catItem) => (
                     <button
                       key={catItem.id}
                       type="button"
                       onClick={() => handleAddItem(catItem)}
-                      className="w-full p-3 rounded-sm bg-bone border border-ink/8 hover:border-brass hover:shadow-md transition-all flex items-center justify-between text-left group cursor-pointer"
+                      className="w-full p-2.5 sm:p-3 rounded-sm bg-bone border border-ink/8 hover:border-brass hover:shadow-md transition-all flex items-center justify-between text-left group cursor-pointer gap-2"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                         <div
-                          className="h-8 w-8 rounded-xs border flex items-center justify-center font-bold text-[0.65rem] shrink-0"
+                          className="h-8 w-8 rounded-xs border flex items-center justify-center font-bold text-[0.62rem] sm:text-[0.65rem] shrink-0"
                           style={{ backgroundColor: catItem.fill, color: catItem.color }}
                         >
                           {catItem.wM}m
                         </div>
-                        <div>
-                          <p className="text-xs font-medium text-ink group-hover:text-bronze transition-colors">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs sm:text-sm font-medium text-ink group-hover:text-bronze transition-colors truncate">
                             {lang === "bn" ? catItem.nameBn : catItem.nameEn}
                           </p>
-                          <p className="text-[0.62rem] text-ink/50 font-mono">
+                          <p className="text-[0.6rem] sm:text-[0.62rem] text-ink/50 font-mono truncate">
                             {catItem.wM}m × {catItem.dM}m · {catItem.timber}
                           </p>
                         </div>
                       </div>
 
                       <div className="text-right shrink-0 flex items-center gap-2">
-                        <span className="text-xs font-bold text-ink">
+                        <span className="text-xs sm:text-sm font-bold text-ink whitespace-nowrap">
                           ৳{catItem.price.toLocaleString("en-BD")}
                         </span>
-                        <div className="h-6 w-6 rounded-full bg-sand/60 text-ink/60 group-hover:bg-brass group-hover:text-depth flex items-center justify-center transition-colors">
+                        <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-sand/60 text-ink/60 group-hover:bg-brass group-hover:text-depth flex items-center justify-center transition-colors shrink-0">
                           <Plus className="h-3 w-3" />
                         </div>
                       </div>

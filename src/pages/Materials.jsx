@@ -97,9 +97,9 @@ export default function Materials() {
       <FloatingWhatsApp />
       <ConsultationDrawer />
 
-      <main className="pt-28 md:pt-36 pb-20">
+      <main className="pt-24 sm:pt-28 md:pt-36 pb-20 overflow-x-hidden w-full max-w-full">
         {/* Hero Section */}
-        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-12 sm:mb-16 md:mb-24">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-10 sm:mb-16 md:mb-24">
           <Reveal>
             <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
@@ -108,18 +108,18 @@ export default function Materials() {
             <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl lg:text-7xl leading-[1.06] max-w-3xl">
               {t("materials.title")}
             </h1>
-            <p className="mt-4 sm:mt-6 text-ink/70 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-ink/70 text-sm sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("materials.subtitle")}
             </p>
           </Reveal>
         </section>
 
         {/* Interactive Material Inspector */}
-        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-20 sm:mb-28 md:mb-36">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-16 sm:mb-28 md:mb-36">
           <Reveal>
-            <div className="bg-sand/40 border border-ink/8 rounded-sm p-4 sm:p-8 lg:p-12 shadow-xl">
+            <div className="bg-sand/40 border border-ink/8 rounded-sm p-3.5 sm:p-8 lg:p-12 shadow-xl">
               {/* Tab Selector */}
-              <div className="flex flex-wrap gap-2 sm:gap-3 pb-6 sm:pb-8 border-b border-ink/10">
+              <div className="flex flex-wrap gap-1.5 sm:gap-3 pb-5 sm:pb-8 border-b border-ink/10">
                 {MATERIALS.map((m) => {
                   const active = activeMaterial.id === m.id;
                   return (
@@ -127,9 +127,9 @@ export default function Materials() {
                       key={m.id}
                       type="button"
                       onClick={() => setActiveMaterial(m)}
-                      className={`flex items-center gap-2 sm:gap-3 px-3.5 sm:px-5 py-2 sm:py-3 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
+                      className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-1.5 sm:py-3 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
                         active
-                          ? "border-brass bg-depth text-bone shadow-md"
+                          ? "border-brass bg-depth text-bone shadow-md font-medium"
                           : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
                       }`}
                     >
@@ -158,11 +158,11 @@ export default function Materials() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -12 }}
                   transition={{ duration: 0.3 }}
-                  className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center pt-8"
+                  className="grid lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12 items-center pt-6 sm:pt-8"
                 >
                   {/* High-Resolution Tactile Wood Loupe */}
-                  <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 rounded-sm bg-bone border border-ink/10 text-center shadow-inner relative group">
-                    <div className="relative w-44 h-44 sm:w-56 sm:h-56 rounded-full border-4 border-bone shadow-2xl overflow-hidden mb-6 bg-sand ring-1 ring-ink/10">
+                  <div className="lg:col-span-5 flex flex-col items-center justify-center p-5 sm:p-8 rounded-sm bg-bone border border-ink/10 text-center shadow-inner relative group">
+                    <div className="relative w-36 h-36 sm:w-56 sm:h-56 rounded-full border-4 border-bone shadow-2xl overflow-hidden mb-4 sm:mb-6 bg-sand ring-1 ring-ink/10">
                       <img
                         src={activeMaterial.textureImg}
                         alt={`${t(activeMaterial.nameKey)} wood grain texture`}
@@ -172,43 +172,43 @@ export default function Materials() {
                       <div className="absolute inset-0 bg-gradient-to-tr from-depth/20 via-transparent to-white/10 pointer-events-none" />
                     </div>
 
-                    <span className="text-[0.58rem] uppercase tracking-[0.24em] text-ink/45 bg-sand/60 px-3 py-1 rounded-full border border-ink/8 mb-3">
+                    <span className="text-[0.56rem] sm:text-[0.58rem] uppercase tracking-[0.24em] text-ink/45 bg-sand/60 px-2.5 sm:px-3 py-1 rounded-full border border-ink/8 mb-2 sm:mb-3">
                       Authentic Timber Grain · 100% Solid
                     </span>
 
-                    <h3 className="font-heading text-2xl sm:text-3xl font-light text-ink">
+                    <h3 className="font-heading text-xl sm:text-3xl font-light text-ink">
                       {t(activeMaterial.nameKey)}
                     </h3>
-                    <p className="text-[0.68rem] uppercase tracking-[0.24em] text-bronze mt-1">
+                    <p className="text-[0.64rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-bronze mt-1">
                       {t(activeMaterial.originKey)}
                     </p>
                   </div>
 
                   {/* Material Specs */}
-                  <div className="lg:col-span-7 space-y-6">
+                  <div className="lg:col-span-7 space-y-4 sm:space-y-6">
                     <div>
-                      <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1.5">
+                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
                         {t("materials.densityLabel")}
                       </p>
-                      <p className="text-base text-ink font-medium">
+                      <p className="text-sm sm:text-base text-ink font-medium">
                         {t(activeMaterial.densityKey)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1.5">
+                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
                         {t("materials.charLabel")}
                       </p>
-                      <p className="text-base text-ink/75 leading-relaxed font-light">
+                      <p className="text-sm sm:text-base text-ink/75 leading-relaxed font-light">
                         {t(activeMaterial.charKey)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1.5">
+                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
                         {t("materials.bestLabel")}
                       </p>
-                      <p className="text-base text-ink/75 leading-relaxed font-light">
+                      <p className="text-sm sm:text-base text-ink/75 leading-relaxed font-light">
                         {t(activeMaterial.bestKey)}
                       </p>
                     </div>
@@ -231,34 +231,34 @@ export default function Materials() {
         </section>
 
         {/* 4 In-House Craftsmanship Pillars */}
-        <section className="mx-auto max-w-[1400px] px-6 md:px-10 mb-28 md:mb-36">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-20 sm:mb-28 md:mb-36">
           <Reveal>
-            <div className="max-w-2xl mb-14">
-              <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-3">
+            <div className="max-w-2xl mb-8 sm:mb-14">
+              <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-2 sm:mb-3">
                 {t("materials.standardsEyebrow")}
               </p>
-              <h2 className="font-heading font-light text-ink text-3xl sm:text-5xl leading-[1.06]">
+              <h2 className="font-heading font-light text-ink text-2xl sm:text-5xl leading-[1.06]">
                 {t("materials.standardsTitle")}
               </h2>
             </div>
           </Reveal>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {PILLARS.map(({ icon: Icon, titleKey, descKey }, idx) => (
               <Reveal key={titleKey} delay={idx * 0.07}>
-                <div className="p-7 rounded-sm bg-bone border border-ink/8 h-full flex flex-col justify-between space-y-4 hover:border-brass/40 transition-colors shadow-sm">
+                <div className="p-5 sm:p-7 rounded-sm bg-bone border border-ink/8 h-full flex flex-col justify-between space-y-4 hover:border-brass/40 transition-colors shadow-sm">
                   <div>
-                    <div className="h-11 w-11 rounded-full bg-sand/60 text-bronze flex items-center justify-center mb-5 shadow-inner">
-                      <Icon className="h-5 w-5" />
+                    <div className="h-10 w-10 sm:h-11 sm:w-11 rounded-full bg-sand/60 text-bronze flex items-center justify-center mb-4 sm:mb-5 shadow-inner">
+                      <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                     </div>
-                    <h3 className="font-heading text-2xl font-light text-ink mb-2">
+                    <h3 className="font-heading text-xl sm:text-2xl font-light text-ink mb-2">
                       {t(titleKey)}
                     </h3>
                     <p className="text-xs sm:text-sm text-ink/65 leading-relaxed font-light">
                       {t(descKey)}
                     </p>
                   </div>
-                  <span className="text-[0.6rem] uppercase tracking-[0.24em] text-ink/35">
+                  <span className="text-[0.58rem] sm:text-[0.6rem] uppercase tracking-[0.24em] text-ink/35">
                     0{idx + 1} · Standard
                   </span>
                 </div>
