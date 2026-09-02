@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, Sparkles } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 import { useConsultation } from "./ConsultationContext";
+import BrandLogo from "./BrandLogo";
 
 const navItems = [
   { key: "nav.home", path: "/" },
@@ -101,21 +102,13 @@ export default function Nav() {
       >
         <nav className="mx-auto max-w-[1400px] px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-baseline gap-2.5">
-            <span
-              className={`font-heading text-xl md:text-2xl tracking-tight transition-colors ${
-                navThemeScrolled ? "text-ink" : "text-bone"
-              }`}
-            >
-              Heaven<span className="text-bronze">.</span>
-            </span>
-            <span
-              className={`hidden sm:block text-[0.58rem] uppercase tracking-[0.3em] border-l pl-3 transition-colors ${
-                navThemeScrolled ? "text-ink/50 border-ink/15" : "text-bone/60 border-bone/25"
-              }`}
-            >
-              {t("nav.furnitureMart")}
-            </span>
+          <Link to="/" className="flex items-center gap-2 group py-1" aria-label="Heaven Furniture Mart Home">
+            <BrandLogo
+              theme={navThemeScrolled ? "light" : "dark"}
+              size="md"
+              showSubtitle={true}
+              className="items-start transition-transform duration-300 group-hover:scale-[1.02]"
+            />
           </Link>
 
           {/* Center Links */}

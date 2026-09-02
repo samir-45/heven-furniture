@@ -8,6 +8,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "@/pages/Home";
 import { LanguageProvider } from "@/components/heaven/LanguageProvider";
 import { ConsultationProvider } from "@/components/heaven/ConsultationContext";
+import BrandLogo from "@/components/heaven/BrandLogo";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
 
@@ -18,11 +19,9 @@ const RoomPlanner = lazy(() => import("@/pages/RoomPlanner"));
 function PageLoader() {
   return (
     <div className="min-h-screen bg-bone flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 rounded-full border-2 border-bronze border-t-transparent animate-spin" />
-        <span className="text-[0.68rem] uppercase tracking-[0.28em] text-ink/45">
-          Heaven Atelier
-        </span>
+      <div className="flex flex-col items-center gap-4 animate-pulse">
+        <BrandLogo theme="light" size="lg" showSubtitle={true} />
+        <div className="h-5 w-5 rounded-full border-2 border-bronze border-t-transparent animate-spin mt-1" />
       </div>
     </div>
   );

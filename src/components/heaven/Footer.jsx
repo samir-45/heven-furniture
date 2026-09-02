@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Facebook, Instagram, Youtube, ArrowUpRight, ExternalLink } from "lucide-react";
 import { useLang } from "./LanguageProvider";
+import BrandLogo from "./BrandLogo";
 import {
   ADDRESS,
   PHONE_DISPLAY,
@@ -52,8 +53,13 @@ export default function Footer() {
       <div className="mx-auto max-w-[1400px] px-6 md:px-10 py-16 md:py-20">
         <div className="grid md:grid-cols-12 gap-10">
           <div className="md:col-span-4">
-            <Link to="/" className="font-heading text-2xl tracking-tight">
-              Heaven<span className="text-brass">.</span> {t("nav.furnitureMart")}
+            <Link to="/" className="inline-block group mb-2" aria-label="Heaven Furniture Mart Home">
+              <BrandLogo
+                theme="dark"
+                size="lg"
+                showSubtitle={true}
+                className="items-start transition-transform duration-300 group-hover:scale-[1.02]"
+              />
             </Link>
             <p className="mt-4 text-bone/55 max-w-sm leading-relaxed font-light">
               {t("footer.tagline")}
