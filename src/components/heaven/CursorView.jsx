@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 
 // Desktop-only bronze cursor that expands to "VIEW" over collection imagery.
-// Hidden entirely on touch / coarse pointers.
+// Hidden entirely on touch / coarse pointers and over interactive form inputs/sliders.
 export default function CursorView() {
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [view, setView] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
@@ -12,8 +13,14 @@ export default function CursorView() {
     setEnabled(true);
 
     const move = (e) => setPos({ x: e.clientX, y: e.clientY });
-    const over = (e) =>
+    const over = (e) => {
+      const isInteractive = !!(
+        e.target?.closest &&
+        e.target.closest("input, select, textarea, button, [role='slider']")
+      );
+      setHidden(isInteractive);
       setView(!!(e.target?.closest && e.target.closest("[data-cursor='view']")));
+    };
     const leave = () => setPos({ x: -100, y: -100 });
     const onTouch = () => setEnabled(false);
 
@@ -30,7 +37,7 @@ export default function CursorView() {
     };
   }, []);
 
-  if (!enabled || pos.x < 0) return null;
+  if (!enabled || pos.x < 0 || hidden) return null;
 
   return (
     <div

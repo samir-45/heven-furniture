@@ -8,11 +8,56 @@ import { WHATSAPP_URL, ADDRESS, PHONE_DISPLAY, EMAIL } from "./constants";
 const Furniture3DCanvas = lazy(() => import("./Furniture3DCanvas"));
 
 const CATEGORIES = [
-  { id: "sofa", base: 45000, hasFabric: true },
-  { id: "bed", base: 65000, hasFabric: true },
-  { id: "dining", base: 38000, hasFabric: false },
-  { id: "wardrobe", base: 52000, hasFabric: false },
-  { id: "chair", base: 18000, hasFabric: true },
+  {
+    id: "sofa",
+    base: 45000,
+    hasFabric: true,
+    dims: {
+      w: { min: 160, max: 320, default: 220, step: 2 },
+      d: { min: 80, max: 110, default: 90, step: 2 },
+      h: { min: 75, max: 95, default: 85, step: 1 },
+    },
+  },
+  {
+    id: "bed",
+    base: 65000,
+    hasFabric: true,
+    dims: {
+      w: { min: 150, max: 220, default: 190, step: 2 },
+      d: { min: 190, max: 230, default: 215, step: 2 },
+      h: { min: 90, max: 140, default: 110, step: 1 },
+    },
+  },
+  {
+    id: "dining",
+    base: 38000,
+    hasFabric: false,
+    dims: {
+      w: { min: 140, max: 280, default: 200, step: 2 },
+      d: { min: 80, max: 110, default: 95, step: 2 },
+      h: { min: 72, max: 80, default: 76, step: 1 },
+    },
+  },
+  {
+    id: "wardrobe",
+    base: 52000,
+    hasFabric: false,
+    dims: {
+      w: { min: 120, max: 280, default: 180, step: 2 },
+      d: { min: 55, max: 75, default: 65, step: 1 },
+      h: { min: 180, max: 240, default: 210, step: 2 },
+    },
+  },
+  {
+    id: "chair",
+    base: 18000,
+    hasFabric: true,
+    dims: {
+      w: { min: 70, max: 110, default: 88, step: 2 },
+      d: { min: 70, max: 105, default: 85, step: 2 },
+      h: { min: 75, max: 100, default: 85, step: 1 },
+    },
+  },
 ];
 
 const WOODS = [
@@ -83,25 +128,37 @@ function Swatch({ active, onClick, label, swatch }) {
   );
 }
 
-function Slider({ label, value, set, min, max, unit }) {
+function Slider({ label, value, set, min, max, step = 1, unit }) {
+  const percentage = Math.min(100, Math.max(0, Math.round(((value - min) / (max - min)) * 100)));
+
   return (
-    <div className="bg-sand/30 p-3 sm:p-3.5 rounded-sm border border-ink/8">
-      <div className="flex justify-between text-xs sm:text-sm mb-2">
-        <span className="text-ink/60">{label}</span>
-        <span className="text-ink font-semibold tabular-nums">
+    <div className="bg-sand/35 p-3.5 sm:p-4 rounded-sm border border-ink/8 hover:border-ink/20 transition-colors">
+      <div className="flex justify-between items-baseline text-xs sm:text-sm mb-2.5">
+        <span className="text-ink/65 text-[0.66rem] uppercase tracking-wider font-medium">{label}</span>
+        <span className="text-ink font-semibold tabular-nums text-sm">
           {value}
-          {unit}
+          <span className="text-ink/45 text-xs ml-0.5">{unit}</span>
         </span>
       </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        value={value}
-        aria-label={label}
-        onChange={(e) => set(Number(e.target.value))}
-        className="w-full accent-bronze h-1.5 cursor-pointer bg-ink/10 rounded-lg"
-      />
+      <div className="relative flex items-center py-1">
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value}
+          aria-label={label}
+          onChange={(e) => set(Number(e.target.value))}
+          className="haven-range-slider w-full h-2 rounded-lg cursor-ew-resize appearance-none bg-ink/12 transition-all focus:outline-none"
+          style={{
+            background: `linear-gradient(to right, #8C7355 0%, #8C7355 ${percentage}%, rgba(26,26,26,0.12) ${percentage}%, rgba(26,26,26,0.12) 100%)`,
+          }}
+        />
+      </div>
+      <div className="flex justify-between text-[0.58rem] text-ink/40 mt-1 tabular-nums">
+        <span>{min}{unit}</span>
+        <span>{max}{unit}</span>
+      </div>
     </div>
   );
 }
@@ -112,10 +169,17 @@ export default function Configurator() {
   const [wood, setWood] = useState(WOODS[0]);
   const [fabric, setFabric] = useState(FABRICS[0]);
   const [finish, setFinish] = useState(FINISHES[0]);
-  const [width, setWidth] = useState(200);
-  const [depth, setDepth] = useState(90);
-  const [height, setHeight] = useState(80);
+  const [width, setWidth] = useState(CATEGORIES[0].dims.w.default);
+  const [depth, setDepth] = useState(CATEGORIES[0].dims.d.default);
+  const [height, setHeight] = useState(CATEGORIES[0].dims.h.default);
   const [pdfGenerating, setPdfGenerating] = useState(false);
+
+  const handleCategoryChange = (c) => {
+    setCategory(c);
+    setWidth(c.dims.w.default);
+    setDepth(c.dims.d.default);
+    setHeight(c.dims.h.default);
+  };
 
   const estimate = useMemo(() => {
     const sizeFactor =
@@ -380,7 +444,7 @@ export default function Configurator() {
                     <Pill
                       key={c.id}
                       active={category.id === c.id}
-                      onClick={() => setCategory(c)}
+                      onClick={() => handleCategoryChange(c)}
                     >
                       {t(`config.cat.${c.id}`)}
                     </Pill>
@@ -442,9 +506,33 @@ export default function Configurator() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6 pt-1">
-                <Slider label={t("config.width")} value={width} set={setWidth} min={80} max={320} unit=" cm" />
-                <Slider label={t("config.depth")} value={depth} set={setDepth} min={40} max={160} unit=" cm" />
-                <Slider label={t("config.height")} value={height} set={setHeight} min={40} max={220} unit=" cm" />
+                <Slider
+                  label={t("config.width")}
+                  value={width}
+                  set={setWidth}
+                  min={category.dims.w.min}
+                  max={category.dims.w.max}
+                  step={category.dims.w.step}
+                  unit=" cm"
+                />
+                <Slider
+                  label={t("config.depth")}
+                  value={depth}
+                  set={setDepth}
+                  min={category.dims.d.min}
+                  max={category.dims.d.max}
+                  step={category.dims.d.step}
+                  unit=" cm"
+                />
+                <Slider
+                  label={t("config.height")}
+                  value={height}
+                  set={setHeight}
+                  min={category.dims.h.min}
+                  max={category.dims.h.max}
+                  step={category.dims.h.step}
+                  unit=" cm"
+                />
               </div>
             </div>
 

@@ -3,42 +3,6 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { Rotate3d, Sparkles, RefreshCw } from "lucide-react";
 
-// Optimal Isometric Camera Calculation to keep 3D models 100% centered and fitted
-function setOptimalCamera(camera, controls, widthPx, heightPx) {
-  if (!camera || widthPx <= 0 || heightPx <= 0) return;
-  const aspect = widthPx / heightPx;
-  camera.aspect = aspect;
-  camera.fov = 40;
-
-  // Maximum furniture bounding radius
-  const radius = 1.75;
-  const vFovRad = (camera.fov * Math.PI) / 180;
-  const hFovRad = 2 * Math.atan(Math.tan(vFovRad / 2) * aspect);
-
-  // Compute required distance to fit completely without any cropping
-  const distV = (radius * 1.3) / Math.tan(vFovRad / 2);
-  const distH = (radius * 1.3) / Math.tan(hFovRad / 2);
-  const distance = Math.max(distV, distH, 4.2);
-
-  // 45° azimuth, 22° elevation
-  const azimuth = Math.PI / 4;
-  const elevation = 0.38;
-
-  const x = distance * Math.cos(elevation) * Math.sin(azimuth);
-  const y = distance * Math.sin(elevation) + 0.38;
-  const z = distance * Math.cos(elevation) * Math.cos(azimuth);
-
-  camera.position.set(x, y, z);
-  camera.updateProjectionMatrix();
-
-  if (controls) {
-    controls.target.set(0, 0.38, 0);
-    controls.minDistance = distance * 0.5;
-    controls.maxDistance = distance * 2.8;
-    controls.update();
-  }
-}
-
 export default function Furniture3DCanvas({
   category,
   wood,
@@ -52,9 +16,11 @@ export default function Furniture3DCanvas({
   const [autoRotate, setAutoRotate] = useState(true);
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
+  const rendererRef = useRef(null);
+  const sceneRef = useRef(null);
   const furnitureGroupRef = useRef(null);
-  const materialsRef = useRef({});
 
+  // 1. Scene Initialization
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -62,65 +28,59 @@ export default function Furniture3DCanvas({
     const widthPx = container.clientWidth || 600;
     const heightPx = container.clientHeight || 360;
 
-    // 1. Scene
     const scene = new THREE.Scene();
     scene.background = new THREE.Color("#F4F1EA");
+    sceneRef.current = scene;
 
-    // 2. Camera
-    const camera = new THREE.PerspectiveCamera(40, widthPx / heightPx, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(38, widthPx / heightPx, 0.1, 100);
     cameraRef.current = camera;
 
-    // 3. WebGL Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: "high-performance",
+    });
     renderer.setSize(widthPx, heightPx);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
+    renderer.toneMappingExposure = 1.15;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    rendererRef.current = renderer;
 
     container.appendChild(renderer.domElement);
 
-    // 4. Orbit Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.06;
-    controls.maxPolarAngle = Math.PI / 2 - 0.02; // Don't go below floor
+    controls.maxPolarAngle = Math.PI / 2 - 0.02; // Keep camera above studio floor
     controls.autoRotate = autoRotate;
-    controls.autoRotateSpeed = 0.9;
+    controls.autoRotateSpeed = 0.8;
     controlsRef.current = controls;
 
-    // Center and frame camera initially
-    setOptimalCamera(camera, controls, widthPx, heightPx);
-
-    // 5. Studio Lighting
-    const ambientLight = new THREE.AmbientLight("#FAF7F0", 1.25);
+    // Lighting
+    const ambientLight = new THREE.AmbientLight("#FAF7F0", 1.3);
     scene.add(ambientLight);
 
-    // Key Light
     const keyLight = new THREE.DirectionalLight("#FFF8E7", 2.2);
-    keyLight.position.set(4, 6, 3);
+    keyLight.position.set(4.5, 6.5, 3.5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 1024;
     keyLight.shadow.mapSize.height = 1024;
-    keyLight.shadow.camera.near = 0.5;
-    keyLight.shadow.camera.far = 15;
     keyLight.shadow.bias = -0.0005;
     keyLight.shadow.radius = 3;
     scene.add(keyLight);
 
-    // Warm Fill Light
-    const fillLight = new THREE.DirectionalLight("#E8DFCF", 1.4);
+    const fillLight = new THREE.DirectionalLight("#E8DFCF", 1.3);
     fillLight.position.set(-4, 3, -2);
     scene.add(fillLight);
 
-    // Soft Top Rim Light
-    const rimLight = new THREE.DirectionalLight("#FFFFFF", 1.0);
+    const rimLight = new THREE.DirectionalLight("#FFFFFF", 0.9);
     rimLight.position.set(0, 5, -4);
     scene.add(rimLight);
 
-    // 6. Luxury Ground Floor with Circular Contact Shadow
-    const floorGeo = new THREE.PlaneGeometry(14, 14);
+    // Floor & Studio Pedestal
+    const floorGeo = new THREE.PlaneGeometry(16, 16);
     const floorMat = new THREE.ShadowMaterial({ opacity: 0.16 });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
@@ -128,31 +88,31 @@ export default function Furniture3DCanvas({
     floor.receiveShadow = true;
     scene.add(floor);
 
-    // Studio pedestal disk
-    const diskGeo = new THREE.CircleGeometry(2.4, 64);
+    const diskGeo = new THREE.CircleGeometry(2.8, 64);
     const diskMat = new THREE.MeshBasicMaterial({ color: "#ECE7DE", transparent: true, opacity: 0.65 });
     const disk = new THREE.Mesh(diskGeo, diskMat);
     disk.rotation.x = -Math.PI / 2;
     disk.position.y = 0.001;
     scene.add(disk);
 
-    // 7. Dynamic Furniture Model Group
+    // Dynamic Furniture Group
     const furnitureGroup = new THREE.Group();
     scene.add(furnitureGroup);
     furnitureGroupRef.current = furnitureGroup;
 
-    // Resize Observer for dynamic responsiveness across all device rotations and resize events
+    // Resize Observer
     const resizeObserver = new ResizeObserver(() => {
-      if (!container) return;
+      if (!container || !renderer || !camera) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
       if (w === 0 || h === 0) return;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      setOptimalCamera(camera, controls, w, h);
     });
     resizeObserver.observe(container);
 
-    // 8. Animation Loop
+    // Animation Loop
     let animationFrameId;
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
@@ -172,26 +132,25 @@ export default function Furniture3DCanvas({
     };
   }, []);
 
-  // Update Controls autoRotate on state change
+  // Sync autoRotate
   useEffect(() => {
     if (controlsRef.current) {
       controlsRef.current.autoRotate = autoRotate;
     }
   }, [autoRotate]);
 
-  // Update Materials & Dynamic 3D Meshes
+  // Build Connected Parametric 3D Furniture Meshes
   useEffect(() => {
     const group = furnitureGroupRef.current;
     if (!group) return;
 
-    // Clear old meshes
+    // Clear previous geometries and meshes
     while (group.children.length > 0) {
       const obj = group.children[0];
       if (obj.geometry) obj.geometry.dispose();
       group.remove(obj);
     }
 
-    // Material definitions
     const woodColors = {
       teak: "#9C6B3C",
       walnut: "#5C3A21",
@@ -207,28 +166,22 @@ export default function Furniture3DCanvas({
     };
 
     const finishRoughness = {
-      natural: 0.55,
+      natural: 0.52,
       stained: 0.35,
-      handrubbed: 0.25,
+      handrubbed: 0.24,
     };
 
     const woodMat = new THREE.MeshStandardMaterial({
       color: woodColors[wood.id] || "#9C6B3C",
       roughness: finishRoughness[finish.id] || 0.45,
-      metalness: 0.08,
+      metalness: 0.06,
     });
 
     const fabricMat = new THREE.MeshStandardMaterial({
       color: fabricColors[fabric.id] || "#D9CFBE",
-      roughness: fabric.id === "leather" ? 0.35 : 0.88,
+      roughness: fabric.id === "leather" ? 0.32 : 0.88,
       metalness: fabric.id === "leather" ? 0.12 : 0.0,
     });
-
-    materialsRef.current = { woodMat, fabricMat };
-
-    const scaleW = width / 200;
-    const scaleD = depth / 90;
-    const scaleH = height / 80;
 
     const addMesh = (geo, mat, pos = [0, 0, 0], rot = [0, 0, 0]) => {
       const mesh = new THREE.Mesh(geo, mat);
@@ -240,86 +193,122 @@ export default function Furniture3DCanvas({
       return mesh;
     };
 
+    // Convert cm to 3D scene meters
+    const W = width / 100;
+    const D = depth / 100;
+    const H = height / 100;
+
     if (category.id === "sofa") {
-      const sofaW = 2.1 * scaleW;
-      const sofaD = 0.9 * scaleD;
-      const sofaH = 0.82 * scaleH;
+      const legH = 0.08;
+      const baseH = 0.10;
+      const topOfBase = legH + baseH;
 
-      const baseGeo = new THREE.BoxGeometry(sofaW, 0.14, sofaD);
-      addMesh(baseGeo, woodMat, [0, 0.12, 0]);
+      // 4 Solid Turned Wood Legs
+      const legGeo = new THREE.CylinderGeometry(0.035, 0.025, legH, 16);
+      const legX = W / 2 - 0.14;
+      const legZ = D / 2 - 0.14;
+      addMesh(legGeo, woodMat, [legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [legX, legH / 2, -legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, -legZ]);
 
-      const legGeo = new THREE.CylinderGeometry(0.035, 0.025, 0.12, 16);
-      const legX = sofaW / 2 - 0.12;
-      const legZ = sofaD / 2 - 0.12;
-      addMesh(legGeo, woodMat, [legX, 0.06, legZ]);
-      addMesh(legGeo, woodMat, [-legX, 0.06, legZ]);
-      addMesh(legGeo, woodMat, [legX, 0.06, -legZ]);
-      addMesh(legGeo, woodMat, [-legX, 0.06, -legZ]);
+      // Base Plinth (rests directly on top of legs)
+      const baseGeo = new THREE.BoxGeometry(W, baseH, D);
+      addMesh(baseGeo, woodMat, [0, legH + baseH / 2, 0]);
 
-      const seatGeo = new THREE.BoxGeometry(sofaW - 0.36, 0.22, sofaD - 0.22);
-      addMesh(seatGeo, fabricMat, [0, 0.28, 0.04]);
+      // Side Armrests (rest directly on top of base plinth)
+      const armW = 0.18;
+      const armH = Math.max(0.24, H * 0.72 - topOfBase);
+      const armGeo = new THREE.BoxGeometry(armW, armH, D);
+      addMesh(armGeo, fabricMat, [W / 2 - armW / 2, topOfBase + armH / 2, 0]);
+      addMesh(armGeo, fabricMat, [-W / 2 + armW / 2, topOfBase + armH / 2, 0]);
 
-      const backGeo = new THREE.BoxGeometry(sofaW - 0.36, sofaH * 0.58, 0.22);
-      addMesh(backGeo, fabricMat, [0, 0.58 * scaleH, -sofaD / 2 + 0.16], [-0.08, 0, 0]);
+      // Seat Cushion (rests on base plinth between arms)
+      const seatW = W - 2 * armW;
+      const seatH = 0.20;
+      const seatD = D - 0.18;
+      const seatGeo = new THREE.BoxGeometry(seatW, seatH, seatD);
+      addMesh(seatGeo, fabricMat, [0, topOfBase + seatH / 2, 0.09]);
 
-      const armGeo = new THREE.BoxGeometry(0.18, sofaH * 0.54, sofaD - 0.06);
-      addMesh(armGeo, fabricMat, [sofaW / 2 - 0.09, 0.44 * scaleH, 0]);
-      addMesh(armGeo, fabricMat, [-sofaW / 2 + 0.09, 0.44 * scaleH, 0]);
+      // Backrest (anchored to top of base plinth, extends to H)
+      const backH = Math.max(0.35, H - topOfBase);
+      const backD = 0.18;
+      const backGeo = new THREE.BoxGeometry(seatW, backH, backD);
+      // Center Y is mathematically pinned so bottom touches topOfBase
+      addMesh(backGeo, fabricMat, [0, topOfBase + backH / 2, -D / 2 + backD / 2], [-0.04, 0, 0]);
 
-      const pillowGeo = new THREE.BoxGeometry(0.42, 0.42, 0.16);
-      addMesh(pillowGeo, fabricMat, [sofaW / 2 - 0.32, 0.42 * scaleH, 0.06], [0, -0.3, 0.2]);
-      addMesh(pillowGeo, fabricMat, [-sofaW / 2 + 0.32, 0.42 * scaleH, 0.06], [0, 0.3, -0.2]);
+      // Throw Pillows (nestled on seat cushion against arms)
+      const pillowSize = Math.min(0.42, seatW / 3);
+      const pillowGeo = new THREE.BoxGeometry(pillowSize, pillowSize, 0.14);
+      addMesh(pillowGeo, fabricMat, [seatW / 2 - pillowSize / 2, topOfBase + seatH + pillowSize / 2 * 0.7, 0.08], [0, -0.28, 0.18]);
+      addMesh(pillowGeo, fabricMat, [-seatW / 2 + pillowSize / 2, topOfBase + seatH + pillowSize / 2 * 0.7, 0.08], [0, 0.28, -0.18]);
+
     } else if (category.id === "bed") {
-      const bedW = 1.9 * scaleW;
-      const bedL = 2.15 * scaleD;
-      const bedH = 1.1 * scaleH;
+      const legH = 0.10;
+      const frameH = 0.18;
+      const topOfFrame = legH + frameH;
 
-      const frameGeo = new THREE.BoxGeometry(bedW, 0.22, bedL);
-      addMesh(frameGeo, woodMat, [0, 0.18, 0]);
+      // Legs
+      const legGeo = new THREE.CylinderGeometry(0.045, 0.03, legH, 16);
+      const legX = W / 2 - 0.08;
+      const legZ = D / 2 - 0.08;
+      addMesh(legGeo, woodMat, [legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [legX, legH / 2, -legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, -legZ]);
 
-      const legGeo = new THREE.CylinderGeometry(0.045, 0.03, 0.12, 16);
-      const legX = bedW / 2 - 0.08;
-      const legZ = bedL / 2 - 0.08;
-      addMesh(legGeo, woodMat, [legX, 0.06, legZ]);
-      addMesh(legGeo, woodMat, [-legX, 0.06, legZ]);
-      addMesh(legGeo, woodMat, [legX, 0.06, -legZ]);
-      addMesh(legGeo, woodMat, [-legX, 0.06, -legZ]);
+      // Solid Frame
+      const frameGeo = new THREE.BoxGeometry(W, frameH, D);
+      addMesh(frameGeo, woodMat, [0, legH + frameH / 2, 0]);
 
-      const headboardGeo = new THREE.BoxGeometry(bedW + 0.14, bedH * 0.72, 0.16);
-      addMesh(headboardGeo, woodMat, [0, 0.65 * scaleH, -bedL / 2 + 0.08]);
+      // Headboard (permanently anchored from bottom of frame up to H)
+      const headH = Math.max(0.5, H - legH);
+      const headGeo = new THREE.BoxGeometry(W + 0.14, headH, 0.14);
+      addMesh(headGeo, woodMat, [0, legH + headH / 2, -D / 2 + 0.07]);
 
-      const headPanelGeo = new THREE.BoxGeometry(bedW - 0.12, bedH * 0.54, 0.08);
-      addMesh(headPanelGeo, fabricMat, [0, 0.68 * scaleH, -bedL / 2 + 0.15]);
+      // Headboard Upholstered Inset
+      const panelH = headH * 0.65;
+      const panelGeo = new THREE.BoxGeometry(W - 0.12, panelH, 0.06);
+      addMesh(panelGeo, fabricMat, [0, topOfFrame + panelH / 2, -D / 2 + 0.14]);
 
-      const mattressGeo = new THREE.BoxGeometry(bedW - 0.12, 0.28, bedL - 0.22);
-      addMesh(mattressGeo, fabricMat, [0, 0.38, 0.06]);
+      // Mattress (rests on frame)
+      const mattressH = 0.24;
+      const mattressGeo = new THREE.BoxGeometry(W - 0.12, mattressH, D - 0.20);
+      addMesh(mattressGeo, fabricMat, [0, topOfFrame + mattressH / 2, 0.08]);
 
-      const duvetGeo = new THREE.BoxGeometry(bedW - 0.08, 0.08, (bedL - 0.22) * 0.65);
-      addMesh(duvetGeo, fabricMat, [0, 0.44, 0.32]);
+      // Duvet fold
+      const duvetGeo = new THREE.BoxGeometry(W - 0.08, 0.07, (D - 0.20) * 0.62);
+      addMesh(duvetGeo, fabricMat, [0, topOfFrame + mattressH + 0.035, 0.32]);
 
-      const pillowGeo = new THREE.BoxGeometry(0.55, 0.16, 0.38);
-      addMesh(pillowGeo, fabricMat, [bedW / 4, 0.54, -bedL / 2 + 0.42], [0.25, 0, 0]);
-      addMesh(pillowGeo, fabricMat, [-bedW / 4, 0.54, -bedL / 2 + 0.42], [0.25, 0, 0]);
+      // Sleeping Pillows
+      const pillowGeo = new THREE.BoxGeometry(W * 0.34, 0.14, 0.36);
+      addMesh(pillowGeo, fabricMat, [W * 0.22, topOfFrame + mattressH + 0.07, -D / 2 + 0.40], [0.22, 0, 0]);
+      addMesh(pillowGeo, fabricMat, [-W * 0.22, topOfFrame + mattressH + 0.07, -D / 2 + 0.40], [0.22, 0, 0]);
+
     } else if (category.id === "dining") {
-      const tableW = 2.0 * scaleW;
-      const tableD = 0.95 * scaleD;
-      const tableH = 0.76 * scaleH;
+      const topThick = 0.06;
+      const topOfTable = H;
+      const legH = topOfTable - topThick;
 
-      const topGeo = new THREE.BoxGeometry(tableW, 0.08, tableD);
-      addMesh(topGeo, woodMat, [0, tableH, 0]);
+      // Table Top
+      const topGeo = new THREE.BoxGeometry(W, topThick, D);
+      addMesh(topGeo, woodMat, [0, topOfTable - topThick / 2, 0]);
 
-      const legGeo = new THREE.BoxGeometry(0.08, tableH - 0.04, 0.08);
-      const legX = tableW / 2 - 0.14;
-      const legZ = tableD / 2 - 0.14;
-      addMesh(legGeo, woodMat, [legX, tableH / 2, legZ]);
-      addMesh(legGeo, woodMat, [-legX, tableH / 2, legZ]);
-      addMesh(legGeo, woodMat, [legX, tableH / 2, -legZ]);
-      addMesh(legGeo, woodMat, [-legX, tableH / 2, -legZ]);
+      // 4 Solid Legs (connected from floor y=0 up to bottom of table top)
+      const legGeo = new THREE.BoxGeometry(0.08, legH, 0.08);
+      const legX = W / 2 - 0.14;
+      const legZ = D / 2 - 0.14;
+      addMesh(legGeo, woodMat, [legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, legZ]);
+      addMesh(legGeo, woodMat, [legX, legH / 2, -legZ]);
+      addMesh(legGeo, woodMat, [-legX, legH / 2, -legZ]);
 
-      const aprGeoX = new THREE.BoxGeometry(tableW - 0.28, 0.06, 0.03);
-      addMesh(aprGeoX, woodMat, [0, tableH - 0.06, tableD / 2 - 0.14]);
-      addMesh(aprGeoX, woodMat, [0, tableH - 0.06, -tableD / 2 + 0.14]);
+      // Under-top Apron Beams
+      const aprGeoX = new THREE.BoxGeometry(W - 0.28, 0.06, 0.03);
+      addMesh(aprGeoX, woodMat, [0, topOfTable - topThick - 0.03, D / 2 - 0.14]);
+      addMesh(aprGeoX, woodMat, [0, topOfTable - topThick - 0.03, -D / 2 + 0.14]);
 
+      // Flanking Dining Chairs
       const createChair = (x, z, rotY) => {
         const chairGroup = new THREE.Group();
         chairGroup.position.set(x, 0, z);
@@ -331,86 +320,136 @@ export default function Furniture3DCanvas({
         chairGroup.add(cSeat);
 
         const cLegGeo = new THREE.CylinderGeometry(0.02, 0.015, 0.46, 12);
-        const cl1 = new THREE.Mesh(cLegGeo, woodMat);
-        cl1.position.set(0.18, 0.23, 0.18);
-        cl1.castShadow = true;
-        chairGroup.add(cl1);
-        const cl2 = cl1.clone();
-        cl2.position.set(-0.18, 0.23, 0.18);
-        chairGroup.add(cl2);
-        const cl3 = cl1.clone();
-        cl3.position.set(0.18, 0.23, -0.18);
-        chairGroup.add(cl3);
-        const cl4 = cl1.clone();
-        cl4.position.set(-0.18, 0.23, -0.18);
-        chairGroup.add(cl4);
+        [
+          [0.17, 0.17],
+          [-0.17, 0.17],
+          [0.17, -0.17],
+          [-0.17, -0.17],
+        ].forEach(([cx, cz]) => {
+          const cl = new THREE.Mesh(cLegGeo, woodMat);
+          cl.position.set(cx, 0.23, cz);
+          cl.castShadow = true;
+          chairGroup.add(cl);
+        });
 
-        const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.44, 0.04), woodMat);
-        cBack.position.set(0, 0.68, -0.19);
+        const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.04), woodMat);
+        cBack.position.set(0, 0.67, -0.19);
         cBack.castShadow = true;
         chairGroup.add(cBack);
 
         group.add(chairGroup);
       };
 
-      createChair(-tableW / 3, tableD / 2 + 0.38, Math.PI);
-      createChair(tableW / 3, tableD / 2 + 0.38, Math.PI);
-      createChair(-tableW / 3, -tableD / 2 - 0.38, 0);
-      createChair(tableW / 3, -tableD / 2 - 0.38, 0);
+      createChair(-W / 3, D / 2 + 0.36, Math.PI);
+      createChair(W / 3, D / 2 + 0.36, Math.PI);
+      createChair(-W / 3, -D / 2 - 0.36, 0);
+      createChair(W / 3, -D / 2 - 0.36, 0);
+
     } else if (category.id === "wardrobe") {
-      const wardW = 1.8 * scaleW;
-      const wardD = 0.65 * scaleD;
-      const wardH = 2.0 * scaleH;
+      const plinthH = 0.08;
+      const corniceH = 0.06;
+      const bodyH = Math.max(1.0, H - plinthH - corniceH);
 
-      const bodyGeo = new THREE.BoxGeometry(wardW, wardH, wardD);
-      addMesh(bodyGeo, woodMat, [0, wardH / 2 + 0.08, 0]);
+      // Base Plinth
+      const plinthGeo = new THREE.BoxGeometry(W + 0.04, plinthH, D + 0.02);
+      addMesh(plinthGeo, woodMat, [0, plinthH / 2, 0]);
 
-      const basePlinth = new THREE.BoxGeometry(wardW + 0.06, 0.08, wardD + 0.04);
-      addMesh(basePlinth, woodMat, [0, 0.04, 0]);
+      // Main Cabinet Body
+      const bodyGeo = new THREE.BoxGeometry(W, bodyH, D);
+      addMesh(bodyGeo, woodMat, [0, plinthH + bodyH / 2, 0]);
 
-      const cornice = new THREE.BoxGeometry(wardW + 0.08, 0.06, wardD + 0.06);
-      addMesh(cornice, woodMat, [0, wardH + 0.08, 0]);
+      // Top Crown Cornice
+      const corniceGeo = new THREE.BoxGeometry(W + 0.08, corniceH, D + 0.04);
+      addMesh(corniceGeo, woodMat, [0, plinthH + bodyH + corniceH / 2, 0]);
 
-      const doorW = wardW / 2 - 0.02;
-      const doorGeo = new THREE.BoxGeometry(doorW, wardH - 0.12, 0.02);
-      addMesh(doorGeo, woodMat, [-wardW / 4, wardH / 2 + 0.08, wardD / 2 + 0.015]);
-      addMesh(doorGeo, woodMat, [wardW / 4, wardH / 2 + 0.08, wardD / 2 + 0.015]);
+      // Doors
+      const doorW = W / 2 - 0.02;
+      const doorGeo = new THREE.BoxGeometry(doorW, bodyH - 0.06, 0.02);
+      addMesh(doorGeo, woodMat, [-W / 4, plinthH + bodyH / 2, D / 2 + 0.015]);
+      addMesh(doorGeo, woodMat, [W / 4, plinthH + bodyH / 2, D / 2 + 0.015]);
 
+      // Brass Handles
       const brassMat = new THREE.MeshStandardMaterial({ color: "#C9A66B", metalness: 0.85, roughness: 0.25 });
       const handleGeo = new THREE.CylinderGeometry(0.012, 0.012, 0.45, 16);
-      addMesh(handleGeo, brassMat, [-0.06, wardH / 2 + 0.08, wardD / 2 + 0.035]);
-      addMesh(handleGeo, brassMat, [0.06, wardH / 2 + 0.08, wardD / 2 + 0.035]);
+      addMesh(handleGeo, brassMat, [-0.06, plinthH + bodyH / 2, D / 2 + 0.035]);
+      addMesh(handleGeo, brassMat, [0.06, plinthH + bodyH / 2, D / 2 + 0.035]);
+
     } else if (category.id === "chair") {
-      const chairW = 0.95 * scaleW;
-      const chairD = 0.9 * scaleD;
+      const legH = 0.22;
 
-      const legGeo = new THREE.CylinderGeometry(0.03, 0.02, 0.24, 16);
-      addMesh(legGeo, woodMat, [chairW / 2 - 0.08, 0.12, chairD / 2 - 0.1], [0.15, 0, -0.15]);
-      addMesh(legGeo, woodMat, [-chairW / 2 + 0.08, 0.12, chairD / 2 - 0.1], [0.15, 0, 0.15]);
-      addMesh(legGeo, woodMat, [chairW / 2 - 0.08, 0.12, -chairD / 2 + 0.1], [-0.15, 0, -0.15]);
-      addMesh(legGeo, woodMat, [-chairW / 2 + 0.08, 0.12, -chairD / 2 + 0.1], [-0.15, 0, 0.15]);
+      // Angled Timber Legs
+      const legGeo = new THREE.CylinderGeometry(0.03, 0.02, legH, 16);
+      addMesh(legGeo, woodMat, [W / 2 - 0.08, legH / 2, D / 2 - 0.1], [0.12, 0, -0.12]);
+      addMesh(legGeo, woodMat, [-W / 2 + 0.08, legH / 2, D / 2 - 0.1], [0.12, 0, 0.12]);
+      addMesh(legGeo, woodMat, [W / 2 - 0.08, legH / 2, -D / 2 + 0.1], [-0.12, 0, -0.12]);
+      addMesh(legGeo, woodMat, [-W / 2 + 0.08, legH / 2, -D / 2 + 0.1], [-0.12, 0, 0.12]);
 
-      const seatGeo = new THREE.BoxGeometry(chairW - 0.08, 0.18, chairD - 0.14);
-      addMesh(seatGeo, fabricMat, [0, 0.32, 0.04]);
+      // Deep Seat Cushion (rests on legs)
+      const seatH = 0.18;
+      const seatGeo = new THREE.BoxGeometry(W - 0.06, seatH, D - 0.12);
+      addMesh(seatGeo, fabricMat, [0, legH + seatH / 2, 0.03]);
 
-      const backGeo = new THREE.BoxGeometry(chairW - 0.08, 0.65 * scaleH, 0.16);
-      addMesh(backGeo, fabricMat, [0, 0.68 * scaleH, -chairD / 2 + 0.16], [-0.22, 0, 0]);
+      // Backrest (anchored to top of seat, extends to H)
+      const backH = Math.max(0.35, H - legH);
+      const backGeo = new THREE.BoxGeometry(W - 0.06, backH, 0.15);
+      addMesh(backGeo, fabricMat, [0, legH + backH / 2, -D / 2 + 0.15], [-0.15, 0, 0]);
 
-      const armGeo = new THREE.BoxGeometry(0.08, 0.04, chairD * 0.85);
-      addMesh(armGeo, woodMat, [chairW / 2 - 0.03, 0.52 * scaleH, 0], [0.06, 0, 0]);
-      addMesh(armGeo, woodMat, [-chairW / 2 + 0.03, 0.52 * scaleH, 0], [0.06, 0, 0]);
+      // Sculpted Wooden Armrests
+      const armH = Math.max(0.18, H * 0.65 - legH);
+      const armGeo = new THREE.BoxGeometry(0.06, 0.04, D * 0.85);
+      addMesh(armGeo, woodMat, [W / 2 - 0.03, legH + armH, 0]);
+      addMesh(armGeo, woodMat, [-W / 2 + 0.03, legH + armH, 0]);
+    }
+
+    // Dynamic Camera Framing — perfectly centers and fits any size without clipping
+    if (cameraRef.current && controlsRef.current && mountRef.current) {
+      const box = new THREE.Box3().setFromObject(group);
+      const size = new THREE.Vector3();
+      box.getSize(size);
+      const center = new THREE.Vector3();
+      box.getCenter(center);
+
+      const maxDim = Math.max(size.x, size.y * 1.3, size.z);
+      const aspect = cameraRef.current.aspect || 1.6;
+      const fovRad = (cameraRef.current.fov * Math.PI) / 180;
+      const distV = (maxDim * 0.9) / Math.tan(fovRad / 2);
+      const distH = (maxDim * 0.9) / (Math.tan(fovRad / 2) * aspect);
+      const distance = Math.max(distV, distH, 3.8);
+
+      const azimuth = Math.PI / 4;
+      const elevation = 0.38;
+
+      const camX = distance * Math.cos(elevation) * Math.sin(azimuth);
+      const camY = distance * Math.sin(elevation) + center.y;
+      const camZ = distance * Math.cos(elevation) * Math.cos(azimuth);
+
+      cameraRef.current.position.set(camX, camY, camZ);
+      cameraRef.current.lookAt(center);
+      controlsRef.current.target.set(0, center.y, 0);
+      controlsRef.current.update();
     }
   }, [category, wood, fabric, finish, width, depth, height]);
 
   const handleResetCamera = () => {
-    const container = mountRef.current;
-    if (!container || !cameraRef.current || !controlsRef.current) return;
-    setOptimalCamera(
-      cameraRef.current,
-      controlsRef.current,
-      container.clientWidth,
-      container.clientHeight
+    if (!furnitureGroupRef.current || !cameraRef.current || !controlsRef.current) return;
+    const box = new THREE.Box3().setFromObject(furnitureGroupRef.current);
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+
+    const maxDim = Math.max(size.x, size.y * 1.3, size.z);
+    const distance = Math.max(maxDim * 1.8, 4.0);
+    const azimuth = Math.PI / 4;
+    const elevation = 0.38;
+
+    cameraRef.current.position.set(
+      distance * Math.cos(elevation) * Math.sin(azimuth),
+      distance * Math.sin(elevation) + center.y,
+      distance * Math.cos(elevation) * Math.cos(azimuth)
     );
+    controlsRef.current.target.set(0, center.y, 0);
+    controlsRef.current.update();
   };
 
   return (
@@ -421,7 +460,7 @@ export default function Furniture3DCanvas({
       {/* Top Left Floating Dimension Badge */}
       <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-bone/95 backdrop-blur-md border border-ink/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-sm text-[0.55rem] sm:text-[0.64rem] tracking-wider uppercase text-ink/75 font-medium z-10 flex items-center gap-1.5 shadow-sm pointer-events-none">
         <Sparkles className="h-3 w-3 text-bronze shrink-0" />
-        <span>{width}×{depth}×{height}cm</span>
+        <span>{width} × {depth} × {height} cm</span>
       </div>
 
       {/* Top Right Material Tag */}
