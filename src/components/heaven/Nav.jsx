@@ -68,8 +68,12 @@ export default function Nav() {
         setOpen(false);
         const el = document.getElementById(item.hash);
         if (el) {
-          const top = el.getBoundingClientRect().top + window.scrollY - 72;
-          window.scrollTo({ top, behavior: "smooth" });
+          if (window.lenis) {
+            window.lenis.scrollTo(el, { offset: -72, duration: 1.1 });
+          } else {
+            const top = el.getBoundingClientRect().top + window.scrollY - 72;
+            window.scrollTo({ top, behavior: "smooth" });
+          }
         }
       } else {
         setOpen(false);

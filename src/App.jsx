@@ -35,6 +35,7 @@ function App() {
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
+    window.lenis = lenis;
 
     let rafId;
     function raf(time) {
@@ -46,6 +47,7 @@ function App() {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 

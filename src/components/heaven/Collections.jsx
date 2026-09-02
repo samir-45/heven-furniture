@@ -55,9 +55,11 @@ export default function Collections() {
         className="no-scrollbar flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory px-4 sm:px-6 md:px-10 scroll-pl-4 sm:scroll-pl-6 md:scroll-pl-10 pb-2"
       >
         {collectionKeys.map((ck, i) => {
-          const collectionName = t(`collections.${ck}.name`);
+          const collectionTitle = t(`collections.${ck}.title`) || t(`collections.${ck}.name`);
+          const collectionDesc = t(`collections.${ck}.desc`) || t(`collections.${ck}.line`);
+          const collectionTag = t(`collections.${ck}.tag`) || t("collections.label");
           const waLink = `${WHATSAPP_URL}?text=${encodeURIComponent(
-            t("collections.inquiryMsg", { name: collectionName })
+            t("collections.inquiryMsg", { title: collectionTitle, name: collectionTitle })
           )}`;
           return (
             <a
@@ -72,7 +74,7 @@ export default function Collections() {
               <div className="absolute inset-0 transition-transform duration-1100 ease-out group-hover:scale-[1.06]">
                 <Image
                   src={collectionImgs[i]}
-                  alt={`${t(`collections.${ck}.name`)} — bespoke furniture by Heaven Furniture Mart`}
+                  alt={`${collectionTitle} — bespoke furniture by Heaven Furniture Mart`}
                   className="h-full w-full object-cover object-left-top"
                   fittingType="fill"
                 />
@@ -81,10 +83,10 @@ export default function Collections() {
               <div className="pointer-events-none absolute inset-0 border border-brass/0 group-hover:border-brass/55 transition-colors duration-500 rounded-sm" />
               <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
                 <h3 className="font-heading font-light text-bone text-2xl md:text-3xl">
-                  {t(`collections.${ck}.name`)}
+                  {collectionTitle}
                 </h3>
                 <p className="mt-1 text-bone/75 text-xs sm:text-sm leading-relaxed max-w-[16rem]">
-                  {t(`collections.${ck}.line`)}
+                  {collectionDesc}
                 </p>
                 <span className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-brass text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.2em] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-y-1 sm:group-hover:translate-y-0 transition-all duration-500">
                   {t("collections.enquire")} <ArrowRight className="h-3.5 w-3.5" />
@@ -92,7 +94,7 @@ export default function Collections() {
               </div>
             </div>
             <span className="mt-2.5 sm:mt-3 block text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/35">
-              0{i + 1} — {t("collections.label")}
+              0{i + 1} — {collectionTag}
             </span>
           </a>
         );
