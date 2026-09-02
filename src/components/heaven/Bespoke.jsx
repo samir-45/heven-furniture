@@ -26,7 +26,7 @@ export default function Bespoke() {
                 {t("bespoke.title")}
               </h2>
               <p className="mt-4 text-bone/70 max-w-md leading-relaxed font-light text-sm sm:text-base">
-                {t("bespoke.subtitle")}
+                {t("bespoke.subtitle") || t("bespoke.p1")}
               </p>
             </Reveal>
             <Reveal delay={0.1}>
@@ -53,10 +53,10 @@ export default function Bespoke() {
                     </span>
                     <div>
                       <h3 className="font-heading text-xl lg:text-2xl font-light text-bone">
-                        {t(`bespoke.${sk}.title`)}
+                        {t(`bespoke.${sk}.title`) || t(`bespoke.b${i + 1}`)}
                       </h3>
                       <p className="mt-1 text-bone/65 leading-relaxed font-light text-xs sm:text-sm">
-                        {t(`bespoke.${sk}.desc`)}
+                        {t(`bespoke.${sk}.desc`) || t(`bespoke.b${i + 1}.desc`)}
                       </p>
                     </div>
                   </div>

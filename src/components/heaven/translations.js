@@ -145,6 +145,7 @@ export const translations = {
     // Bespoke
     "bespoke.eyebrow": "Made to Measure",
     "bespoke.title": "Every room is different. Your furniture should be, too.",
+    "bespoke.subtitle": "You don't adapt to furniture. We adapt furniture to you.",
     "bespoke.p1": "You don't adapt to furniture. We adapt furniture to you.",
     "bespoke.p2": "Bring a floor plan, a reference photo, or an empty room. Our team works with you on dimensions, timber species, fabric textures, and finishes — ensuring the piece fits the architecture of your life.",
     "bespoke.b1": "Custom Dimensions",
@@ -155,6 +156,14 @@ export const translations = {
     "bespoke.b3.desc": "Linen, velvet, boucle, and full-grain leather.",
     "bespoke.b4": "Handcrafted Finishes",
     "bespoke.b4.desc": "Natural oil, matte wax, or deep stain.",
+    "bespoke.s1.title": "Custom Dimensions",
+    "bespoke.s1.desc": "Scaled to the millimeter for your floor plan.",
+    "bespoke.s2.title": "Timber Selection",
+    "bespoke.s2.desc": "Solid teak, walnut, oak, and mahogany.",
+    "bespoke.s3.title": "Fabric & Leather",
+    "bespoke.s3.desc": "Linen, velvet, boucle, and full-grain leather.",
+    "bespoke.s4.title": "Handcrafted Finishes",
+    "bespoke.s4.desc": "Natural oil, matte wax, or deep stain.",
 
     // Configurator
     "config.eyebrow": "Live Configurator",
@@ -523,6 +532,7 @@ export const translations = {
     // Bespoke
     "bespoke.eyebrow": "আপনার মনের মতো মাপ",
     "bespoke.title": "প্রতিটি ঘর আলাদা, তাই আপনার আসবাবও হওয়া চাই অনন্য।",
+    "bespoke.subtitle": "আপনাকে আসবাবের সাথে মানিয়ে নিতে হবে না — আসবাবই তৈরি হবে আপনার ঘরের মাপে।",
     "bespoke.p1": "আপনাকে আসবাবের সাথে মানিয়ে নিতে হবে না — আসবাবই তৈরি হবে আপনার ঘরের মাপে।",
     "bespoke.p2": "ঘরের ফ্লোরপ্ল্যান বা পছন্দের কোনো ছবি নিয়ে আসুন। আমাদের টিম কাঠ, ফেব্রিক, রঙ ও সাইজ নিখুঁতভাবে নির্ধারণ করে আপনার জন্য সেরা আসবাবটি তৈরি করবে।",
     "bespoke.b1": "কাস্টম সাইজ",
@@ -533,6 +543,14 @@ export const translations = {
     "bespoke.b3.desc": "লিনেন, ভেলভেট, বুক্লে ও খাঁটি লেদার।",
     "bespoke.b4": "হ্যান্ডক্রাফটেড পলিশ",
     "bespoke.b4.desc": "ন্যাচারাল অয়েল, ম্যাট ওয়াক্স বা গাঢ় উড ফিনিশ।",
+    "bespoke.s1.title": "কাস্টম সাইজ",
+    "bespoke.s1.desc": "আপনার ঘরের ইঞ্চি ইঞ্চি মেপে পারফেক্ট সাইজ।",
+    "bespoke.s2.title": "সেরা মানের কাঠ",
+    "bespoke.s2.desc": "চিটাগাং সেগুন, মেহগনি, ওক ও আখরোট কাঠ।",
+    "bespoke.s3.title": "প্রিমিয়াম ফেব্রিক ও লেদার",
+    "bespoke.s3.desc": "লিনেন, ভেলভেট, বুক্লে ও খাঁটি লেদার।",
+    "bespoke.s4.title": "হ্যান্ডক্রাফটেড পলিশ",
+    "bespoke.s4.desc": "ন্যাচারাল অয়েল, ম্যাট ওয়াক্স বা গাঢ় উড ফিনিশ।",
 
     // Configurator
     "config.eyebrow": "লাইভ কনফিগারেটর",
