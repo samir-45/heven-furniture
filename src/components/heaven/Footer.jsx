@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { MapPin, Phone, Mail, Facebook, Instagram, Youtube, ArrowUpRight, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Mail, Facebook, Instagram, Youtube, ArrowUpRight, ExternalLink, ArrowUp } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 import BrandLogo from "./BrandLogo";
 import {
@@ -24,7 +24,15 @@ const socials = [
 ];
 
 export default function Footer() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
+
+  const scrollToTop = () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <footer className="bg-depth text-bone border-t border-bone/10">
@@ -148,11 +156,24 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-bone/10 flex flex-col md:flex-row justify-between gap-3 text-[0.68rem] text-bone/40">
-          <p>
+        <div className="mt-14 pt-6 border-t border-bone/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[0.68rem] text-bone/40">
+          <p className="text-center sm:text-left">
             {t("footer.copyright", { year: new Date().getFullYear(), founded: FOUNDED, founder: FOUNDER })}
           </p>
-          <p>{t("footer.location")}</p>
+          <div className="flex items-center gap-5 sm:gap-7">
+            <p className="hidden md:block">{t("footer.location")}</p>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="inline-flex items-center gap-2 text-bone/55 hover:text-brass text-[0.66rem] uppercase tracking-[0.2em] transition-colors cursor-pointer group"
+              aria-label="Back to top of page"
+            >
+              <span>{lang === "bn" ? "উপরে যান" : "Back to Top"}</span>
+              <div className="h-6 w-6 rounded-full border border-bone/20 group-hover:border-brass flex items-center justify-center transition-colors">
+                <ArrowUp className="h-3 w-3 text-bone/60 group-hover:text-brass transition-transform duration-300 group-hover:-translate-y-0.5" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
     </footer>

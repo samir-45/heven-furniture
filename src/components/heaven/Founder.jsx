@@ -1,11 +1,14 @@
+import { ArrowUpRight } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
+import { useConsultation } from "./ConsultationContext";
 import { IMAGES, FOUNDED, FOUNDER } from "./constants";
 
 // Founder's Heritage — emotional anchor that humanizes the atelier.
 export default function Founder() {
   const { t } = useLang();
+  const { openConsultation } = useConsultation();
 
   return (
     <section
@@ -17,12 +20,12 @@ export default function Founder() {
           <div className="md:col-span-5">
             <Reveal>
               <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
-<Image
-  src={IMAGES.bespokeDetail}
-  alt="A hand-finished detail of bespoke craftsmanship at Heaven Furniture Mart"
-  className="h-full w-full object-cover object-left-top"
-  fittingType="fill"
-/>
+                <Image
+                  src={IMAGES.bespokeDetail}
+                  alt="A hand-finished detail of bespoke craftsmanship at Heaven Furniture Mart"
+                  className="h-full w-full object-cover object-left-top"
+                  fittingType="fill"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-cocoa/60 to-transparent" />
               </div>
             </Reveal>
@@ -51,6 +54,16 @@ export default function Founder() {
               <p className="mt-8 text-bone/50 text-[0.66rem] uppercase tracking-[0.24em]">
                 {t("founder.founded", { year: FOUNDED, founder: FOUNDER })}
               </p>
+              <div className="mt-8 pt-1">
+                <button
+                  type="button"
+                  onClick={() => openConsultation({ format: "showroom" })}
+                  className="inline-flex items-center gap-2 rounded-full border border-brass/50 text-bone hover:bg-brass hover:text-depth transition-colors px-6 py-3 text-xs uppercase tracking-wider font-light cursor-pointer group"
+                >
+                  <span>{t("founder.scheduleCta")}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-brass group-hover:text-depth group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </button>
+              </div>
             </Reveal>
           </div>
         </div>

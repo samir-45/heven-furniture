@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
@@ -31,6 +33,15 @@ export default function SocialProof() {
                   </li>
                 ))}
               </ul>
+              <div className="mt-9 pt-1">
+                <Link
+                  to="/residences"
+                  className="inline-flex items-center gap-2 rounded-full bg-bronze text-bone hover:bg-bronze-dark transition-colors px-6 py-3 text-xs uppercase tracking-wider font-medium shadow-md cursor-pointer group"
+                >
+                  <span>{t("proof.exploreCta")}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </div>
             </Reveal>
           </div>
 

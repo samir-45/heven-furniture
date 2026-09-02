@@ -1,8 +1,10 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
+import { useConsultation } from "./ConsultationContext";
 import { IMAGES } from "./constants";
 
 const chapterKeys = ["c1", "c2", "c3", "c4"];
@@ -21,6 +23,7 @@ const chapterAlts = [
 
 export default function CraftJourney() {
   const { t } = useLang();
+  const { openConsultation } = useConsultation();
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -37,7 +40,7 @@ export default function CraftJourney() {
       style={{ height: `${chapterKeys.length * 75}vh` }}
     >
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-start pt-16 sm:pt-20 md:pt-24">
-        <div className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 md:px-10 mb-4 sm:mb-6 md:mb-8">
+        <div className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 md:px-10 mb-4 sm:mb-6 md:mb-8 flex items-end justify-between gap-4">
           <Reveal>
             <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-2 sm:mb-4">
               {t("journey.eyebrow")}
@@ -45,6 +48,16 @@ export default function CraftJourney() {
             <h2 className="font-heading font-light text-3xl sm:text-4xl md:text-6xl leading-[1.06] max-w-2xl">
               {t("journey.title")}
             </h2>
+          </Reveal>
+          <Reveal delay={0.1} className="hidden sm:block shrink-0">
+            <button
+              type="button"
+              onClick={() => openConsultation()}
+              className="inline-flex items-center gap-2 rounded-full border border-brass/40 text-bone hover:bg-brass hover:text-depth transition-all duration-300 px-5 py-2.5 text-xs uppercase tracking-wider font-light cursor-pointer group"
+            >
+              <span>{t("journey.beginCta")}</span>
+              <ArrowUpRight className="h-3.5 w-3.5 text-brass group-hover:text-depth group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
           </Reveal>
         </div>
 
@@ -79,14 +92,22 @@ export default function CraftJourney() {
           ))}
         </motion.div>
 
-        {/* Progress indicator */}
-        <div className="mx-auto max-w-[1400px] w-full px-6 md:px-10 mt-8">
-          <div className="h-px w-full bg-bone/15 relative overflow-hidden">
+        {/* Progress indicator & Action */}
+        <div className="mx-auto max-w-[1400px] w-full px-6 md:px-10 mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="h-px flex-1 w-full bg-bone/15 relative overflow-hidden">
             <motion.div
               style={{ scaleX: scrollYProgress }}
               className="absolute inset-y-0 left-0 w-full bg-brass origin-left"
             />
           </div>
+          <button
+            type="button"
+            onClick={() => openConsultation()}
+            className="sm:hidden w-full inline-flex items-center justify-center gap-2 rounded-full border border-brass/40 text-bone hover:bg-brass hover:text-depth transition-colors py-2.5 text-xs uppercase tracking-wider font-light cursor-pointer"
+          >
+            <span>{t("journey.beginCta")}</span>
+            <ArrowUpRight className="h-3.5 w-3.5 text-brass" />
+          </button>
         </div>
       </div>
     </section>

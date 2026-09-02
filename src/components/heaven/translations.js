@@ -41,6 +41,7 @@ export const translations = {
     "brand.solidTimber": "Solid timber, in-house",
     "brand.delivery": "Delivery & installation",
     "brand.body": "Heaven Furniture Mart is a bespoke furniture house and interior-styling atelier, founded by {founder}. We design, craft, and customize each piece around the way you live — turning rooms into reflections of taste, comfort, and lasting elegance.",
+    "brand.visitCta": "Visit Our Showroom",
 
     // WhyChoose
     "why.eyebrow": "Why Heaven",
@@ -130,6 +131,7 @@ export const translations = {
     "journey.p3.desc": "Master craftsmen hand-chisel solid kiln-dried timber, precision-cut upholstery, and hand-rub artisanal finishes.",
     "journey.p4.title": "White-Glove Installation",
     "journey.p4.desc": "Delivered to your home, carefully placed, leveled, and fitted — ready to live with from day one.",
+    "journey.beginCta": "Begin Your Journey",
 
     // Showroom
     "showroom.eyebrow": "The Showroom & Workshop",
@@ -369,6 +371,7 @@ export const translations = {
     "founder.name": "Abul Kalam Bhuiyan",
     "founder.role": "Managing Director",
     "founder.founded": "Heaven Furniture Mart · Founded {year} by {founder}",
+    "founder.scheduleCta": "Schedule Your Visit",
 
     // SocialProof
     "proof.eyebrow": "Recognition",
@@ -376,6 +379,7 @@ export const translations = {
     "proof.cred1": "International Furniture Fair Chattogram — Exhibitor 2024–25",
     "proof.cred2": "Chamber of Commerce Member 2025",
     "proof.cred3": "BFIOA National Recognition 2026",
+    "proof.exploreCta": "Explore Our Portfolio",
 
     // Finale
     "finale.title1": "Transform",
@@ -428,6 +432,7 @@ export const translations = {
     "brand.solidTimber": "খাঁটি কাঠ, নিজস্ব কারিগর",
     "brand.delivery": "হোম ডেলিভারি ও ফিটিং",
     "brand.body": "হেভেন ফার্নিচার মার্ট একটি প্রিমিয়াম কাস্টম ফার্নিচার হাউস ও ইন্টেরিয়র স্টাইলিং প্রতিষ্ঠান, যার প্রতিষ্ঠাতা {founder}। আমরা আপনার রুচি ও ঘরের পরিমাপ অনুযায়ী নিখুঁত আসবাব তৈরি করি — যেন আপনার ঘর হয়ে ওঠে আরামদায়ক ও চিরকালীন সৌন্দর্যের প্রতীক।",
+    "brand.visitCta": "শোরুম ভিজিট করুন",
 
     // WhyChoose
     "why.eyebrow": "কেন হেভেন ফার্নিচার মার্ট",
@@ -517,6 +522,7 @@ export const translations = {
     "journey.p3.desc": "দক্ষ কারিগররা সিজনিং করা কাঠ কেটে, নিখুঁত খাঁজ তৈরি করে এবং হাতে পলিশ করে রূপ দেন।",
     "journey.p4.title": "ডেলিভারি ও নিখুঁত ফিটিং",
     "journey.p4.desc": "আপনার বাসায় যত্নসহকারে পৌঁছে দিয়ে নিখুঁতভাবে বসিয়ে দেওয়ার দায়িত্ব সম্পূর্ণ আমাদের।",
+    "journey.beginCta": "আপনার যাত্রা শুরু করুন",
 
     // Showroom
     "showroom.eyebrow": "আমাদের শোরুম ও কারখানা",
@@ -756,6 +762,7 @@ export const translations = {
     "founder.name": "আবুল কালাম ভূঞা",
     "founder.role": "ব্যবস্থাপনা পরিচালক",
     "founder.founded": "হেভেন ফার্নিচার মার্ট · প্রতিষ্ঠা {year} · প্রতিষ্ঠাতা {founder}",
+    "founder.scheduleCta": "শোরুম ভিজিট করুন",
 
     // SocialProof
     "proof.eyebrow": "আমাদের অর্জন ও স্বীকৃতি",
@@ -763,6 +770,7 @@ export const translations = {
     "proof.cred1": "আন্তর্জাতিক ফার্নিচার মেলা চট্টগ্রাম — অফিসিয়াল এক্সহিবিটর ২০২৪–২৫",
     "proof.cred2": "চিটাগাং চেম্বার অব কমার্স অ্যান্ড ইন্ডাস্ট্রি সদস্য ২০২৫",
     "proof.cred3": "বাংলাদেশ ফার্নিচার শিল্প মালিক সমিতি (BFIOA) স্বীকৃত ২০২৬",
+    "proof.exploreCta": "আমাদের পোর্টফোলিও দেখুন",
 
     // Finale
     "finale.title1": "আপনার ঘরে আনুন",

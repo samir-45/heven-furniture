@@ -1,9 +1,12 @@
+import { ArrowUpRight } from "lucide-react";
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
+import { useConsultation } from "./ConsultationContext";
 import { FOUNDED, FOUNDER, ADDRESS } from "./constants";
 
 export default function BrandIntro() {
   const { t } = useLang();
+  const { openConsultation } = useConsultation();
 
   return (
     <section id="about" className="scroll-mt-24 bg-bone py-16 md:py-24">
@@ -35,6 +38,16 @@ export default function BrandIntro() {
               <div className="mt-8 flex items-center gap-3 text-[0.68rem] uppercase tracking-[0.16em] md:tracking-[0.22em] text-ink/50 flex-wrap">
                 <span className="h-px w-8 sm:w-10 bg-bronze/60 shrink-0" />
                 <span className="leading-relaxed">{ADDRESS}</span>
+              </div>
+              <div className="mt-8 pt-2">
+                <button
+                  type="button"
+                  onClick={() => openConsultation({ format: "showroom" })}
+                  className="inline-flex items-center gap-2 rounded-full bg-depth text-bone hover:bg-bronze transition-colors px-6 py-3 text-xs uppercase tracking-wider font-light shadow-sm cursor-pointer group"
+                >
+                  <span>{t("brand.visitCta")}</span>
+                  <ArrowUpRight className="h-3.5 w-3.5 text-brass group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </button>
               </div>
             </Reveal>
           </div>
