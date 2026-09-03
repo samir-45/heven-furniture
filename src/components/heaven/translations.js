@@ -7,6 +7,7 @@ export const translations = {
     // Nav
     "nav.home": "Home",
     "nav.collections": "Collections",
+    "nav.gallery": "Gallery",
     "nav.journey": "Journey",
     "nav.showroom": "Showroom",
     "nav.bespoke": "Bespoke",
@@ -18,6 +19,24 @@ export const translations = {
     "nav.contact": "Contact",
     "nav.consultation": "Consultation",
     "nav.furnitureMart": "Furniture Mart",
+
+    // Product Gallery
+    "gallery.eyebrow": "Atelier Masterpieces",
+    "gallery.title": "Handcrafted Bespoke Furniture",
+    "gallery.subtitle": "Explore our curated collection of solid Chittagong Teak, American Walnut, and hand-carved furniture made to order in Chattogram.",
+    "gallery.all": "All Pieces",
+    "gallery.filterRoom": "Room Category",
+    "gallery.filterTimber": "Timber Species",
+    "gallery.showing": "Showing {count} handcrafted pieces",
+    "gallery.viewDetails": "Quick View",
+    "gallery.enquire": "WhatsApp",
+    "gallery.startingAt": "Starting from",
+    "gallery.customBannerTitle": "Have a Specific Design or Architectural Blueprint?",
+    "gallery.customBannerSubtitle": "Bring your room dimensions, Pinterest inspiration, or flat blueprint. Our master craftsmen handcraft every piece to exact millimeters.",
+    "gallery.bookConsultation": "Book Bespoke Design Session",
+    "gallery.exploreFull": "Explore Complete Atelier Gallery",
+    "gallery.viewInShowroom": "View in Agrabad Showroom",
+    "gallery.clearFilters": "Reset Filters",
 
     // Shared CTA
     "cta.consultation": "Request a Free Consultation",
@@ -398,6 +417,7 @@ export const translations = {
     // Nav
     "nav.home": "হোম",
     "nav.collections": "কালেকশন",
+    "nav.gallery": "গ্যালারি",
     "nav.journey": "আমাদের গল্প",
     "nav.showroom": "শোরুম",
     "nav.bespoke": "বেস্পোক",
@@ -409,6 +429,24 @@ export const translations = {
     "nav.contact": "যোগাযোগ",
     "nav.consultation": "পরামর্শ নিন",
     "nav.furnitureMart": "ফার্নিচার মার্ট",
+
+    // Product Gallery
+    "gallery.eyebrow": "অ্যাটেলিয়ার মাস্টারপিস",
+    "gallery.title": "অভিজাত কাঠের আসবাবপত্র",
+    "gallery.subtitle": "চিটাগাং সেগুন, আমেরিকান আখরোট ও নিখুঁত কারুকাজে তৈরি আমাদের প্রিমিয়াম আসবাবের সংগ্রহ।",
+    "gallery.all": "সব আসবাব",
+    "gallery.filterRoom": "রুম ক্যাটাগরি",
+    "gallery.filterTimber": "কাঠের ধরন",
+    "gallery.showing": "{count}টি আভিজাত্যপূর্ণ আসবাব দেখাচ্ছে",
+    "gallery.viewDetails": "বিস্তারিত দেখুন",
+    "gallery.enquire": "হোয়াটসঅ্যাপ",
+    "gallery.startingAt": "শুরু",
+    "gallery.customBannerTitle": "আপনার কি কোনো নির্দিষ্ট ডিজাইন বা রুমের প্ল্যান রয়েছে?",
+    "gallery.customBannerSubtitle": "আপনার পছন্দের ছবি, মাপ বা ড্রয়িং নিয়ে আসুন। আমাদের কারিগররা আপনার মনমতো নিখুঁত আসবাব তৈরি করে দেবে।",
+    "gallery.bookConsultation": "পরামর্শের জন্য বুক করুন",
+    "gallery.exploreFull": "সম্পূর্ণ আসবাব গ্যালারি দেখুন",
+    "gallery.viewInShowroom": "আগ্রাবাদ শোরুমে দেখুন",
+    "gallery.clearFilters": "সব ফিল্টার মুছুন",
 
     // Shared CTA
     "cta.consultation": "বিনামূল্যে পরামর্শ নিন",

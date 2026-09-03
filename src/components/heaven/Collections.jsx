@@ -1,104 +1,248 @@
-import { useRef } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Image } from "@/components/ui/image";
+import { useRef, useState, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Eye, Sparkles, SlidersHorizontal } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import Reveal from "./Reveal";
+import ProductDetailModal from "./ProductDetailModal";
+import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
-import { IMAGES, WHATSAPP_URL } from "./constants";
-
-const collectionKeys = ["c1", "c2", "c3", "c4", "c5"];
-const collectionImgs = [IMAGES.living, IMAGES.bedroom, IMAGES.dining, IMAGES.office, IMAGES.custom];
+import { PRODUCTS, CATEGORIES } from "./products";
+import { WHATSAPP_URL } from "./constants";
 
 export default function Collections() {
-  const { t } = useLang();
+  const { lang, t } = useLang();
+  const navigate = useNavigate();
   const trackRef = useRef(null);
+
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  const displayedProducts = useMemo(() => {
+    if (activeCategory === "all") return PRODUCTS;
+    return PRODUCTS.filter((p) => p.category === activeCategory);
+  }, [activeCategory]);
 
   const scrollBy = (dir) => {
     const el = trackRef.current;
     if (!el) return;
-    const amount = Math.min(el.clientWidth * 0.8, 420);
+    const amount = Math.min(el.clientWidth * 0.75, 420);
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
   };
 
+  const handleOpen3D = (configCat) => {
+    const el = document.getElementById("design");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(`/#design`);
+    }
+  };
+
   return (
-    <section id="collections" className="scroll-mt-24 bg-bone py-12 sm:py-16 md:py-24">
+    <section id="collections" className="scroll-mt-24 bg-bone py-14 sm:py-20 md:py-28 relative">
+      {/* Quick View Inspection Modal on Home */}
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        onOpen3D={handleOpen3D}
+      />
+
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
-        <div className="flex items-end justify-between gap-6 mb-8 sm:mb-10 md:mb-14">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 sm:mb-10">
           <Reveal>
-            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-5">
-              {t("collections.eyebrow")}
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>{t("collections.eyebrow")}</span>
             </p>
             <h2 className="font-heading font-light text-ink text-3xl sm:text-4xl md:text-5xl leading-[1.08] max-w-xl">
               {t("collections.title")}
             </h2>
           </Reveal>
-          <div className="hidden md:flex gap-2">
+
+          {/* Desktop Swiper Navigation Controls */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              to="/gallery"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm uppercase tracking-[0.16em] font-semibold text-bronze hover:text-bronze-dark transition-colors mr-3"
+            >
+              <span>{t("gallery.exploreFull")}</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+
             <button
               onClick={() => scrollBy(-1)}
               aria-label="Scroll collections left"
-              className="h-11 w-11 rounded-full border border-ink/20 text-ink/70 hover:bg-bronze hover:text-bone hover:border-bronze transition-colors flex items-center justify-center cursor-pointer"
+              className="h-11 w-11 rounded-full border border-ink/20 text-ink/70 hover:bg-bronze hover:text-bone hover:border-bronze transition-colors flex items-center justify-center cursor-pointer shadow-xs"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
             <button
               onClick={() => scrollBy(1)}
               aria-label="Scroll collections right"
-              className="h-11 w-11 rounded-full border border-ink/20 text-ink/70 hover:bg-bronze hover:text-bone hover:border-bronze transition-colors flex items-center justify-center cursor-pointer"
+              className="h-11 w-11 rounded-full border border-ink/20 text-ink/70 hover:bg-bronze hover:text-bone hover:border-bronze transition-colors flex items-center justify-center cursor-pointer shadow-xs"
             >
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>
+
+        {/* Fluid Category Filter Tabs (Framer Motion Pill) */}
+        <div className="mb-6 sm:mb-8 flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
+          {CATEGORIES.map((c) => {
+            const active = activeCategory === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => {
+                  setActiveCategory(c.id);
+                  if (trackRef.current) {
+                    trackRef.current.scrollTo({ left: 0, behavior: "smooth" });
+                  }
+                }}
+                className={`relative px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors shrink-0 cursor-pointer ${
+                  active ? "text-bone" : "text-ink/75 hover:text-ink bg-sand/50 border border-ink/10"
+                }`}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="homeGalleryTab"
+                    className="absolute inset-0 bg-depth rounded-full shadow-sm"
+                    transition={{ type: "spring", stiffness: 400, damping: 32 }}
+                  />
+                )}
+                <span className="relative z-10">
+                  {lang === "bn" ? c.labelBn : c.labelEn}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
+      {/* Swiper Touch/Drag Carousel Track */}
       <div
         ref={trackRef}
-        className="no-scrollbar flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory px-4 sm:px-6 md:px-10 scroll-pl-4 sm:scroll-pl-6 md:scroll-pl-10 pb-2"
+        className="no-scrollbar flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory px-4 sm:px-6 md:px-10 scroll-pl-4 sm:scroll-pl-6 md:scroll-pl-10 pb-4"
       >
-        {collectionKeys.map((ck, i) => {
-          const collectionTitle = t(`collections.${ck}.title`) || t(`collections.${ck}.name`);
-          const collectionDesc = t(`collections.${ck}.desc`) || t(`collections.${ck}.line`);
-          const collectionTag = t(`collections.${ck}.tag`) || t("collections.label");
-          const waLink = `${WHATSAPP_URL}?text=${encodeURIComponent(
-            t("collections.inquiryMsg", { title: collectionTitle, name: collectionTitle })
-          )}`;
-          return (
-            <a
-              key={ck}
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="view"
-              className="group relative snap-start shrink-0 w-[82vw] sm:w-[340px] lg:w-[380px] block"
-            >
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-sand">
-              <div className="absolute inset-0 transition-transform duration-1100 ease-out group-hover:scale-[1.06]">
-                <Image
-                  src={collectionImgs[i]}
-                  alt={`${collectionTitle} — bespoke furniture by Heaven Furniture Mart`}
-                  className="h-full w-full object-cover object-left-top"
-                  fittingType="fill"
-                />
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-depth/80 via-depth/10 to-transparent" />
-              <div className="pointer-events-none absolute inset-0 border border-brass/0 group-hover:border-brass/55 transition-colors duration-500 rounded-sm" />
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
-                <h3 className="font-heading font-light text-bone text-2xl md:text-3xl">
-                  {collectionTitle}
-                </h3>
-                <p className="mt-1 text-bone/90 text-sm leading-relaxed max-w-[16rem]">
-                  {collectionDesc}
-                </p>
-                <span className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-brass text-xs sm:text-sm uppercase tracking-[0.16em] font-medium opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-y-1 sm:group-hover:translate-y-0 transition-all duration-500">
-                  {t("collections.enquire")} <ArrowRight className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </div>
-            <span className="mt-2.5 sm:mt-3 block text-xs uppercase tracking-[0.18em] text-ink/65 font-medium">
-              0{i + 1} — {collectionTag}
+        <AnimatePresence mode="popLayout">
+          {displayedProducts.map((p, i) => {
+            const title = lang === "bn" ? p.titleBn : p.titleEn;
+            const desc = lang === "bn" ? p.descBn : p.descEn;
+            const timber = lang === "bn" ? p.timberLabelBn : p.timberLabelEn;
+            const waLink = `${WHATSAPP_URL}?text=${encodeURIComponent(
+              lang === "bn"
+                ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের "${title}" (৳${p.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে চাই।`
+                : `Hello Heaven Furniture Mart, I would like to inquire about the "${title}" (৳${p.price.toLocaleString("en-BD")}).`
+            )}`;
+
+            return (
+              <motion.div
+                key={p.id}
+                layout="position"
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.24, ease: "easeOut" }}
+                whileHover={{ y: -4 }}
+                className="group relative snap-start shrink-0 w-[84vw] sm:w-[350px] lg:w-[390px] flex flex-col bg-bone rounded-sm border border-ink/10 overflow-hidden shadow-sm hover:shadow-xl hover:border-brass/35 transition-shadow duration-300"
+              >
+                {/* Visual */}
+                <div 
+                  onClick={() => setSelectedProduct(p)}
+                  className="relative aspect-[4/3] overflow-hidden bg-sand cursor-pointer select-none"
+                >
+                  <img
+                    src={p.img}
+                    alt={title}
+                    className="h-full w-full object-cover object-left-top group-hover:scale-106 transition-transform duration-700 ease-out"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-depth/60 via-transparent to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
+
+                  {/* Timber Species Floating Badge */}
+                  <span className="absolute top-3 left-3 bg-depth/90 backdrop-blur-md text-bone border border-brass/35 text-xs font-semibold px-3 py-1 rounded-sm shadow-sm">
+                    {timber}
+                  </span>
+
+                  {/* Quick View Hover Pill */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <span className="inline-flex items-center gap-2 bg-bone/95 backdrop-blur-md text-ink px-4 py-2 rounded-full text-xs font-semibold shadow-lg">
+                      <Eye className="h-3.5 w-3.5 text-bronze" />
+                      <span>{t("gallery.viewDetails")}</span>
+                    </span>
+                  </div>
+
+                  {/* Price Tag */}
+                  <span className="absolute bottom-3 right-3 bg-bone/95 backdrop-blur-md text-ink font-heading text-sm font-semibold px-3 py-1 rounded-sm shadow-sm">
+                    ৳{p.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
+                  </span>
+                </div>
+
+                {/* Content Box */}
+                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <h3 
+                      onClick={() => setSelectedProduct(p)}
+                      className="font-heading font-light text-xl sm:text-2xl text-ink group-hover:text-bronze transition-colors cursor-pointer"
+                    >
+                      {title}
+                    </h3>
+                    <p className="mt-1.5 text-xs sm:text-sm text-ink/75 line-clamp-2 leading-relaxed font-light">
+                      {desc}
+                    </p>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="pt-3 border-t border-ink/8 flex items-center gap-2.5">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProduct(p)}
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/20 hover:border-brass text-ink hover:text-bronze py-2.5 px-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      <span>{t("gallery.viewDetails")}</span>
+                    </button>
+
+                    <a
+                      href={waLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 rounded-full bg-bronze text-bone hover:bg-bronze-dark py-2.5 px-4 text-xs font-medium tracking-wide shadow-sm transition-all cursor-pointer shrink-0"
+                      title="Inquire on WhatsApp"
+                    >
+                      <WhatsAppIcon className="h-4 w-4 fill-current shrink-0" />
+                      <span>{t("gallery.enquire")}</span>
+                    </a>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Connected Deep-Link Banner to /gallery */}
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mt-8 sm:mt-12">
+        <div className="p-6 sm:p-8 rounded-sm bg-sand/50 border border-ink/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left shadow-xs">
+          <div>
+            <span className="text-xs uppercase tracking-[0.16em] text-bronze font-semibold block mb-1">
+              {lang === "bn" ? "সম্পূর্ণ ক্যাটালগ উন্মুক্ত" : "Full Catalog Available"}
             </span>
-          </a>
-        );
-      })}
+            <h4 className="font-heading text-xl sm:text-2xl font-light text-ink">
+              {lang === "bn" ? "১২+ টি হস্তনির্মিত আসবাব ও কাস্টমাইজেশন সুবিধা" : "Explore All 12+ Signature Atelier Pieces & Custom Timbers"}
+            </h4>
+          </div>
+
+          <Link
+            to="/gallery"
+            className="inline-flex items-center justify-center gap-2.5 rounded-full bg-depth text-bone hover:bg-brass hover:text-depth px-6 sm:px-8 py-3.5 text-xs sm:text-sm font-medium tracking-wide transition-all shadow-md shrink-0 cursor-pointer"
+          >
+            <span>{t("gallery.exploreFull")}</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );

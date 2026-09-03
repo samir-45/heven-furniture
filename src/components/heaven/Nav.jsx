@@ -8,7 +8,7 @@ import BrandLogo from "./BrandLogo";
 
 const navItems = [
   { key: "nav.home", path: "/" },
-  { key: "nav.collections", path: "/#collections", hash: "collections" },
+  { key: "nav.gallery", path: "/gallery" },
   { key: "nav.planner", path: "/planner" },
   { key: "nav.residences", path: "/residences" },
   { key: "nav.materials", path: "/materials" },

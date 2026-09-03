@@ -15,6 +15,7 @@ import "lenis/dist/lenis.css";
 const Residences = lazy(() => import("@/pages/Residences"));
 const Materials = lazy(() => import("@/pages/Materials"));
 const RoomPlanner = lazy(() => import("@/pages/RoomPlanner"));
+const Gallery = lazy(() => import("@/pages/Gallery"));
 
 function PageLoader() {
   return (
@@ -59,6 +60,9 @@ function App() {
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/gallery" element={<Gallery />} />
+                <Route path="/catalog" element={<Gallery />} />
+                <Route path="/products" element={<Gallery />} />
                 <Route path="/residences" element={<Residences />} />
                 <Route path="/portfolio" element={<Residences />} />
                 <Route path="/materials" element={<Materials />} />

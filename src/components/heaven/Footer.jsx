@@ -99,8 +99,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/#collections" className="hover:text-brass transition-colors">
-                  {t("nav.collections")}
+                <Link to="/gallery" className="hover:text-brass transition-colors">
+                  {t("nav.gallery")}
                 </Link>
               </li>
               <li>

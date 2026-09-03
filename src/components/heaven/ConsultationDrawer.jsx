@@ -4,6 +4,7 @@ import { X, MapPin, Home as HomeIcon, Video, MessageCircle, Calendar, Clock, Spa
 import { useLang } from "./LanguageProvider";
 import { useConsultation } from "./ConsultationContext";
 import { WHATSAPP_URL, PHONE_DISPLAY, ADDRESS } from "./constants";
+import WhatsAppIcon from "./WhatsAppIcon";
 
 const FORMATS = [
   { id: "showroom", icon: MapPin, titleKey: "drawer.format.showroom", descKey: "drawer.format.showroomDesc" },
@@ -259,9 +260,9 @@ export default function ConsultationDrawer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={closeConsultation}
-                className="w-full inline-flex items-center justify-center gap-2.5 bg-bronze text-bone hover:bg-bronze-dark rounded-full px-6 py-4 text-sm sm:text-base font-medium tracking-wide shadow-lg transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2.5 bg-bronze text-bone hover:bg-bronze-dark rounded-full px-6 py-4 text-sm sm:text-base font-medium tracking-wide shadow-lg transition-all duration-300 cursor-pointer"
               >
-                <MessageCircle className="h-5 w-5" />
+                <WhatsAppIcon className="h-5 w-5 fill-current shrink-0" />
                 <span>{t("drawer.confirmBtn")}</span>
               </a>
               <p className="text-center text-xs text-ink/65 font-medium">
