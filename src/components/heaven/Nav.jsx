@@ -89,16 +89,14 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-transform duration-500 ease-out ${
-        hidden ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className={`fixed top-0 inset-x-0 z-50 transition-transform duration-500 ease-out ${hidden ? "-translate-y-full" : "translate-y-0"
+        }`}
     >
       <div
-        className={`transition-all duration-500 ${
-          navThemeScrolled
+        className={`transition-all duration-500 ${navThemeScrolled
             ? "bg-bone/85 backdrop-blur-md border-b border-ink/10 shadow-sm"
             : "bg-transparent border-b border-transparent"
-        }`}
+          }`}
       >
         <nav className="mx-auto max-w-[1400px] px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
           {/* Logo */}
@@ -120,23 +118,21 @@ export default function Nav() {
                   key={item.key}
                   to={item.path}
                   onClick={(e) => handleNavClick(e, item)}
-                  className={`text-xs uppercase tracking-[0.14em] transition-colors relative py-1 font-medium ${
-                    navThemeScrolled
+                  className={`text-xs uppercase tracking-[0.14em] transition-colors relative py-1 font-medium ${navThemeScrolled
                       ? isActive
                         ? "text-bronze font-semibold"
                         : "text-ink/80 hover:text-bronze"
                       : isActive
-                      ? "text-brass font-semibold"
-                      : "text-bone/85 hover:text-brass"
-                  }`}
+                        ? "text-brass font-semibold"
+                        : "text-bone/85 hover:text-brass"
+                    }`}
                 >
                   {t(item.key)}
                   {isActive && (
                     <motion.span
                       layoutId="activeNav"
-                      className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${
-                        navThemeScrolled ? "bg-bronze" : "bg-brass"
-                      }`}
+                      className={`absolute bottom-0 left-0 right-0 h-0.5 rounded-full ${navThemeScrolled ? "bg-bronze" : "bg-brass"
+                        }`}
                     />
                   )}
                 </Link>
@@ -165,9 +161,8 @@ export default function Nav() {
 
           {/* Mobile Hamburger */}
           <button
-            className={`lg:hidden p-2 -mr-2 transition-colors cursor-pointer ${
-              navThemeScrolled ? "text-ink" : "text-bone"
-            }`}
+            className={`lg:hidden p-2 -mr-2 transition-colors cursor-pointer ${navThemeScrolled ? "text-ink" : "text-bone"
+              }`}
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle menu"
           >
