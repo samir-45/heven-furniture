@@ -64,14 +64,14 @@ export default function Residences() {
         {/* Page Hero */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-10 sm:mb-16 md:mb-24">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("residences.eyebrow")}</span>
             </p>
             <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl lg:text-7xl leading-[1.06] max-w-3xl">
               {t("residences.title")}
             </h1>
-            <p className="mt-4 sm:mt-6 text-ink/70 text-sm sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-ink/80 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("residences.subtitle")}
             </p>
           </Reveal>
@@ -93,7 +93,7 @@ export default function Residences() {
                       fittingType="fill"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-depth/50 via-transparent to-transparent pointer-events-none" />
-                    <span className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-depth/85 text-bone border border-brass/30 px-2.5 sm:px-3 py-1 rounded-sm text-[0.58rem] sm:text-[0.62rem] uppercase tracking-[0.24em] font-medium">
+                    <span className="absolute top-4 left-4 sm:top-5 sm:left-5 bg-depth/90 text-bone border border-brass/30 px-3 py-1.5 rounded-sm text-xs uppercase tracking-[0.16em] font-semibold">
                       0{i + 1} · {t(p.locationKey)}
                     </span>
                   </div>
@@ -103,7 +103,7 @@ export default function Residences() {
                 <Reveal delay={0.1} className={`lg:col-span-5 ${isFlipped ? "lg:order-1" : "lg:order-2"}`}>
                   <div className="space-y-5 sm:space-y-6">
                     <div>
-                      <p className="text-bronze text-[0.64rem] sm:text-[0.66rem] uppercase tracking-[0.28em] mb-1.5 sm:mb-2">
+                      <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.2em] font-medium mb-1.5 sm:mb-2">
                         {t(p.typeKey)}
                       </p>
                       <h2 className="font-heading font-light text-ink text-2xl sm:text-4xl leading-[1.12]">
@@ -112,7 +112,7 @@ export default function Residences() {
                     </div>
 
                     {/* Metadata Badges */}
-                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 py-3 sm:py-4 border-y border-ink/10 text-xs text-ink/75">
+                    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 py-3 sm:py-4 border-y border-ink/10 text-xs sm:text-sm text-ink/85 font-medium">
                       <div className="flex items-center gap-2">
                         <MapPin className="h-3.5 w-3.5 text-bronze shrink-0" />
                         <span className="truncate">{t(p.locationKey)}</span>
@@ -121,18 +121,18 @@ export default function Residences() {
                         <Calendar className="h-3.5 w-3.5 text-bronze shrink-0" />
                         <span className="truncate">{t(p.timelineKey)}</span>
                       </div>
-                      <div className="col-span-2 flex items-center gap-2 text-ink/80">
+                      <div className="col-span-2 flex items-center gap-2 text-ink/85 font-medium">
                         <Layers className="h-3.5 w-3.5 text-bronze shrink-0" />
                         <span>{t(p.timberKey)}</span>
                       </div>
                     </div>
 
-                    <p className="text-ink/70 leading-relaxed font-light text-sm sm:text-base">
+                    <p className="text-ink/80 leading-relaxed font-light text-sm sm:text-base">
                       {t(p.descKey)}
                     </p>
 
                     {/* Scope Items */}
-                    <ul className="space-y-1.5 sm:space-y-2 pt-1 text-xs text-ink/75">
+                    <ul className="space-y-1.5 sm:space-y-2 pt-1 text-xs sm:text-sm text-ink/85 font-medium">
                       {p.scopeKeys.map((sk) => (
                         <li key={sk} className="flex items-center gap-2.5">
                           <CheckCircle2 className="h-3.5 w-3.5 text-bronze shrink-0" />
@@ -157,7 +157,7 @@ export default function Residences() {
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-ink/60 hover:text-bronze text-xs tracking-wide transition-colors py-1"
+                        className="inline-flex items-center gap-1.5 text-ink/75 hover:text-bronze text-xs sm:text-sm font-medium tracking-wide transition-colors py-1"
                       >
                         <span>WhatsApp</span>
                         <ArrowUpRight className="h-3.5 w-3.5" />
@@ -174,13 +174,13 @@ export default function Residences() {
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mt-20 sm:mt-28 md:mt-36">
           <div className="bg-depth text-bone rounded-sm p-6 sm:p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
             <Reveal>
-              <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.38em] mb-3 sm:mb-4">
+              <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4">
                 {t("cta.begin")}
               </p>
               <h2 className="font-heading font-light text-2xl sm:text-4xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.1]">
                 {t("residences.bottomTitle")}
               </h2>
-              <p className="mt-4 sm:mt-6 text-bone/70 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-bone/85 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
                 {t("residences.bottomSubtitle")}
               </p>
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">

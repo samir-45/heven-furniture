@@ -42,7 +42,7 @@ export default function CraftJourney() {
       <div className="sticky top-0 h-screen overflow-hidden flex flex-col justify-start pt-16 sm:pt-20 md:pt-24">
         <div className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 md:px-10 mb-4 sm:mb-6 md:mb-8 flex items-end justify-between gap-4">
           <Reveal>
-            <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-2 sm:mb-4">
+            <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-2 sm:mb-4">
               {t("journey.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-3xl sm:text-4xl md:text-6xl leading-[1.06] max-w-2xl">
@@ -78,13 +78,13 @@ export default function CraftJourney() {
                 0{i + 1}
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7 md:p-10">
-                <p className="text-brass text-[0.58rem] sm:text-[0.62rem] uppercase tracking-[0.28em] mb-1.5 sm:mb-3">
+                <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.18em] font-medium mb-1.5 sm:mb-3">
                   {t(`journey.${ck}.eyebrow`)}
                 </p>
                 <h3 className="font-heading font-light text-bone text-xl sm:text-2xl md:text-4xl leading-[1.1] mb-1.5 sm:mb-3">
                   {t(`journey.${ck}.title`)}
                 </h3>
-                <p className="text-bone/70 text-xs sm:text-sm md:text-base leading-relaxed font-light max-w-md">
+                <p className="text-bone/90 text-xs sm:text-sm md:text-base leading-relaxed font-light max-w-md">
                   {t(`journey.${ck}.desc`)}
                 </p>
               </div>

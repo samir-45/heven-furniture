@@ -28,7 +28,7 @@ export default function Showroom() {
       <div className="mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
               {t("showroom.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-ink text-4xl md:text-5xl leading-[1.08] max-w-xl">
@@ -40,7 +40,7 @@ export default function Showroom() {
               href={SOCIAL.youtube}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-ink/70 hover:text-bronze transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-ink/80 hover:text-bronze font-medium transition-colors text-sm"
             >
               {t("showroom.youtube")} <ArrowUpRight className="h-4 w-4" />
             </a>
@@ -72,14 +72,14 @@ export default function Showroom() {
                       <Play className="h-6 w-6 ml-0.5 fill-current" />
                     </span>
                   </div>
-                  <span className="absolute top-3 left-3 text-[0.58rem] uppercase tracking-[0.22em] text-bone/90 bg-depth/55 px-2.5 py-1 rounded-sm">
+                  <span className="absolute top-3 left-3 text-xs uppercase tracking-[0.14em] text-bone bg-depth/85 px-3 py-1 rounded-sm font-medium">
                     {v.kind === "short" ? t("showroom.short") : t("showroom.tour")}
                   </span>
                 </div>
                 <h3 className="mt-4 font-heading font-light text-ink text-xl md:text-2xl group-hover:text-bronze transition-colors">
                   {v.title}
                 </h3>
-                <p className="mt-1 inline-flex items-center gap-1.5 text-bronze text-[0.72rem] uppercase tracking-[0.2em]">
+                <p className="mt-1 inline-flex items-center gap-1.5 text-bronze text-xs sm:text-sm uppercase tracking-[0.16em] font-medium">
                   {t("showroom.watch")} <Play className="h-3 w-3 fill-current" />
                 </p>
               </button>
@@ -113,7 +113,7 @@ export default function Showroom() {
               {/* Header Bar */}
               <div className="px-6 py-4 border-b border-bone/10 flex items-center justify-between">
                 <div>
-                  <span className="text-[0.6rem] uppercase tracking-[0.26em] text-brass">
+                  <span className="text-xs uppercase tracking-[0.18em] text-brass font-medium">
                     {t("showroom.eyebrow")}
                   </span>
                   <h3 className="font-heading text-lg sm:text-xl font-light text-bone truncate max-w-md">
@@ -142,22 +142,21 @@ export default function Showroom() {
               </div>
 
               {/* Action Bar */}
-              <div className="p-5 sm:p-6 bg-depth border-t border-bone/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <p className="text-xs text-bone/60 leading-relaxed max-w-md">
+              <div className="p-5 sm:p-6 bg-depth border-t border-bone/10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                <p className="text-xs sm:text-sm text-bone/75 leading-relaxed max-w-md">
                   {t("showroom.cinemaDesc")}
                 </p>
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto shrink-0">
                   <button
                     type="button"
                     onClick={() => {
-                      const title = activeVideo.title;
                       setActiveVideo(null);
                       openConsultation({ scope: "living" });
                     }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth font-medium text-xs uppercase tracking-wider px-5 py-3 hover:bg-bone transition-colors"
+                    className="w-full sm:w-auto whitespace-nowrap inline-flex items-center justify-center gap-2 rounded-full bg-brass text-depth font-medium text-xs uppercase tracking-wider px-5 sm:px-6 py-3 hover:bg-bone transition-colors shrink-0 cursor-pointer shadow-sm"
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
-                    <span>{t("showroom.bookTour")}</span>
+                    <Sparkles className="h-3.5 w-3.5 shrink-0" />
+                    <span className="whitespace-nowrap">{t("showroom.bookTour")}</span>
                   </button>
                   <a
                     href={`${WHATSAPP_URL}?text=${encodeURIComponent(
@@ -165,10 +164,10 @@ export default function Showroom() {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass text-xs uppercase tracking-wider px-5 py-3 transition-colors"
+                    className="w-full sm:w-auto whitespace-nowrap inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass text-xs uppercase tracking-wider px-5 sm:px-6 py-3 transition-colors shrink-0"
                   >
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    <span>{t("showroom.enquirePiece")}</span>
+                    <MessageCircle className="h-3.5 w-3.5 shrink-0" />
+                    <span className="whitespace-nowrap">{t("showroom.enquirePiece")}</span>
                   </a>
                 </div>
               </div>

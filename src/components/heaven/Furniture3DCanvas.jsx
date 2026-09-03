@@ -458,19 +458,19 @@ export default function Furniture3DCanvas({
       <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
       {/* Top Left Floating Dimension Badge */}
-      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-bone/95 backdrop-blur-md border border-ink/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-sm text-[0.55rem] sm:text-[0.64rem] tracking-wider uppercase text-ink/75 font-medium z-10 flex items-center gap-1.5 shadow-sm pointer-events-none">
-        <Sparkles className="h-3 w-3 text-bronze shrink-0" />
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-bone/95 backdrop-blur-md border border-ink/10 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-xs tracking-wider uppercase text-ink/85 font-semibold z-10 flex items-center gap-1.5 shadow-sm pointer-events-none">
+        <Sparkles className="h-3.5 w-3.5 text-bronze shrink-0" />
         <span>{width} × {depth} × {height} cm</span>
       </div>
 
       {/* Top Right Material Tag */}
-      <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-depth/90 backdrop-blur-md border border-brass/35 px-2 sm:px-3 py-1 sm:py-1.5 rounded-sm text-[0.55rem] sm:text-[0.62rem] tracking-wider text-brass font-light z-10 shadow-sm pointer-events-none uppercase">
+      <div className="absolute top-2.5 right-2.5 sm:top-3 sm:right-3 bg-depth/90 backdrop-blur-md border border-brass/35 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-xs tracking-wider text-brass font-medium z-10 shadow-sm pointer-events-none uppercase">
         {wood.id} {category.hasFabric && `· ${fabric.id}`}
       </div>
 
       {/* Bottom Center 360° Drag Hint */}
-      <div className="hidden xs:flex absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 bg-bone/85 backdrop-blur-md border border-ink/10 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[0.54rem] sm:text-[0.6rem] tracking-[0.14em] uppercase text-ink/60 font-medium z-10 items-center gap-1.5 shadow-sm pointer-events-none">
-        <Rotate3d className="h-3 w-3 text-bronze animate-spin-slow" />
+      <div className="hidden xs:flex absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 bg-bone/90 backdrop-blur-md border border-ink/10 px-3 py-1 rounded-full text-xs tracking-wider uppercase text-ink/75 font-semibold z-10 items-center gap-1.5 shadow-sm pointer-events-none">
+        <Rotate3d className="h-3.5 w-3.5 text-bronze animate-spin-slow" />
         <span>360° View</span>
       </div>
 

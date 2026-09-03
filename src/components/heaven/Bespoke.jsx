@@ -19,13 +19,13 @@ export default function Bespoke() {
           {/* Left: header + image stacked */}
           <div className="md:col-span-5 flex flex-col justify-between h-full">
             <Reveal>
-              <p className="text-brass text-[0.68rem] uppercase tracking-[0.34em] mb-4">
+              <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-4">
                 {t("bespoke.eyebrow")}
               </p>
               <h2 className="font-heading font-light text-3xl sm:text-4xl lg:text-5xl leading-[1.06]">
                 {t("bespoke.title")}
               </h2>
-              <p className="mt-4 text-bone/70 max-w-md leading-relaxed font-light text-sm sm:text-base">
+              <p className="mt-4 text-bone/85 max-w-md leading-relaxed font-light text-sm sm:text-base">
                 {t("bespoke.subtitle") || t("bespoke.p1")}
               </p>
             </Reveal>
@@ -55,7 +55,7 @@ export default function Bespoke() {
                       <h3 className="font-heading text-xl lg:text-2xl font-light text-bone">
                         {t(`bespoke.${sk}.title`) || t(`bespoke.b${i + 1}`)}
                       </h3>
-                      <p className="mt-1 text-bone/65 leading-relaxed font-light text-xs sm:text-sm">
+                      <p className="mt-1 text-bone/80 leading-relaxed font-light text-sm">
                         {t(`bespoke.${sk}.desc`) || t(`bespoke.b${i + 1}.desc`)}
                       </p>
                     </div>

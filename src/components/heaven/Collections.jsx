@@ -24,7 +24,7 @@ export default function Collections() {
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         <div className="flex items-end justify-between gap-6 mb-8 sm:mb-10 md:mb-14">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-3 sm:mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-5">
               {t("collections.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-ink text-3xl sm:text-4xl md:text-5xl leading-[1.08] max-w-xl">
@@ -85,15 +85,15 @@ export default function Collections() {
                 <h3 className="font-heading font-light text-bone text-2xl md:text-3xl">
                   {collectionTitle}
                 </h3>
-                <p className="mt-1 text-bone/75 text-xs sm:text-sm leading-relaxed max-w-[16rem]">
+                <p className="mt-1 text-bone/90 text-sm leading-relaxed max-w-[16rem]">
                   {collectionDesc}
                 </p>
-                <span className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-brass text-[0.68rem] sm:text-[0.72rem] uppercase tracking-[0.2em] opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-y-1 sm:group-hover:translate-y-0 transition-all duration-500">
+                <span className="mt-3 sm:mt-4 inline-flex items-center gap-1.5 text-brass text-xs sm:text-sm uppercase tracking-[0.16em] font-medium opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:-translate-y-1 sm:group-hover:translate-y-0 transition-all duration-500">
                   {t("collections.enquire")} <ArrowRight className="h-3.5 w-3.5" />
                 </span>
               </div>
             </div>
-            <span className="mt-2.5 sm:mt-3 block text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/35">
+            <span className="mt-2.5 sm:mt-3 block text-xs uppercase tracking-[0.18em] text-ink/65 font-medium">
               0{i + 1} — {collectionTag}
             </span>
           </a>

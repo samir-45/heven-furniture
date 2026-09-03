@@ -17,18 +17,18 @@ const navItems = [
 function LangToggle({ className = "" }) {
   const { lang, setLang } = useLang();
   return (
-    <div className={`flex items-center gap-1 text-[0.66rem] uppercase tracking-[0.14em] ${className}`}>
+    <div className={`flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.12em] ${className}`}>
       <button
         onClick={() => setLang("en")}
-        className={`transition-colors cursor-pointer ${lang === "en" ? "text-bronze font-medium" : "text-ink/40 hover:text-ink/70"}`}
+        className={`transition-colors cursor-pointer px-1.5 py-0.5 rounded-sm ${lang === "en" ? "text-bronze font-bold" : "text-ink/65 hover:text-ink"}`}
         aria-pressed={lang === "en"}
       >
         EN
       </button>
-      <span className="text-ink/20">|</span>
+      <span className="text-ink/30">|</span>
       <button
         onClick={() => setLang("bn")}
-        className={`transition-colors cursor-pointer ${lang === "bn" ? "text-bronze font-medium" : "text-ink/40 hover:text-ink/70"}`}
+        className={`transition-colors cursor-pointer px-1.5 py-0.5 rounded-sm ${lang === "bn" ? "text-bronze font-bold" : "text-ink/65 hover:text-ink"}`}
         aria-pressed={lang === "bn"}
       >
         বাংলা
@@ -120,14 +120,14 @@ export default function Nav() {
                   key={item.key}
                   to={item.path}
                   onClick={(e) => handleNavClick(e, item)}
-                  className={`text-[0.76rem] uppercase tracking-[0.18em] transition-colors relative py-1 ${
+                  className={`text-xs uppercase tracking-[0.14em] transition-colors relative py-1 font-medium ${
                     navThemeScrolled
                       ? isActive
-                        ? "text-bronze font-medium"
-                        : "text-ink/75 hover:text-bronze"
+                        ? "text-bronze font-semibold"
+                        : "text-ink/80 hover:text-bronze"
                       : isActive
-                      ? "text-brass font-medium"
-                      : "text-bone/80 hover:text-brass"
+                      ? "text-brass font-semibold"
+                      : "text-bone/85 hover:text-brass"
                   }`}
                 >
                   {t(item.key)}
@@ -150,13 +150,13 @@ export default function Nav() {
               className={
                 navThemeScrolled
                   ? ""
-                  : "[&_*]:!text-bone/70 [&_button:hover]:!text-brass [&_.text-ink\\/20]:!text-bone/25"
+                  : "[&_*]:!text-bone/80 [&_button:hover]:!text-brass [&_.text-ink\\/30]:!text-bone/35"
               }
             />
             <button
               type="button"
               onClick={() => openConsultation()}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-bronze text-bone hover:bg-bronze-dark transition-all duration-300 px-6 py-2.5 text-[0.8rem] tracking-wide font-medium shadow-md cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-bronze text-bone hover:bg-bronze-dark transition-all duration-300 px-6 py-2.5 text-xs sm:text-sm tracking-wide font-medium shadow-md cursor-pointer"
             >
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("nav.consultation")}</span>

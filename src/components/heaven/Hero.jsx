@@ -32,7 +32,7 @@ export default function Hero() {
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"
         >
-          <p className="text-brass text-[0.7rem] md:text-[0.78rem] uppercase tracking-[0.42em] mb-5 md:mb-7">
+          <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.24em] font-medium mb-5 md:mb-7">
             {t("hero.tagline")}
           </p>
           <h1 className="font-heading font-light text-bone text-[2.4rem] leading-[1.12] sm:text-5xl md:text-6xl lg:text-[4.6rem] tracking-[-0.01em]">
@@ -40,21 +40,21 @@ export default function Hero() {
             <br />
             {t("hero.title2")}
           </h1>
-          <p className="mt-6 md:mt-8 text-bone/85 text-base md:text-lg max-w-md leading-relaxed font-light">
+          <p className="mt-6 md:mt-8 text-bone/90 text-base md:text-lg max-w-md leading-relaxed font-light">
             {t("hero.subtitle")}
           </p>
           <div className="mt-9 md:mt-11">
             <WhatsAppButton>{t("cta.consultation")}</WhatsAppButton>
           </div>
-          <p className="mt-6 md:mt-8 text-bone/55 text-[0.62rem] uppercase tracking-[0.28em] font-light">
+          <p className="mt-6 md:mt-8 text-bone/75 text-xs sm:text-sm uppercase tracking-[0.16em] font-medium">
             {t("hero.founded", { year: FOUNDED, founder: FOUNDER })}
           </p>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-bone/45">
-        <span className="text-[0.58rem] uppercase tracking-[0.3em]">{t("hero.scroll")}</span>
-        <span className="block h-10 w-px bg-bone/30" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-bone/70">
+        <span className="text-xs uppercase tracking-[0.2em] font-medium">{t("hero.scroll")}</span>
+        <span className="block h-10 w-px bg-bone/40" />
       </div>
     </section>
   );

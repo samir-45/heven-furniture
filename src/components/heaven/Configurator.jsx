@@ -118,8 +118,8 @@ function Swatch({ active, onClick, label, swatch }) {
         style={{ backgroundColor: swatch }}
       />
       <span
-        className={`text-[0.62rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.16em] transition-colors leading-tight whitespace-nowrap ${
-          active ? "text-ink font-semibold" : "text-ink/55 group-hover:text-ink"
+        className={`text-xs uppercase tracking-wider transition-colors leading-tight whitespace-nowrap ${
+          active ? "text-ink font-bold" : "text-ink/75 group-hover:text-ink"
         }`}
       >
         {label}
@@ -134,10 +134,10 @@ function Slider({ label, value, set, min, max, step = 1, unit }) {
   return (
     <div className="bg-sand/35 p-3.5 sm:p-4 rounded-sm border border-ink/8 hover:border-ink/20 transition-colors">
       <div className="flex justify-between items-baseline text-xs sm:text-sm mb-2.5">
-        <span className="text-ink/65 text-[0.66rem] uppercase tracking-wider font-medium">{label}</span>
+        <span className="text-ink/75 text-xs uppercase tracking-wider font-semibold">{label}</span>
         <span className="text-ink font-semibold tabular-nums text-sm">
           {value}
-          <span className="text-ink/45 text-xs ml-0.5">{unit}</span>
+          <span className="text-ink/50 text-xs ml-0.5">{unit}</span>
         </span>
       </div>
       <div className="relative flex items-center py-1">
@@ -155,7 +155,7 @@ function Slider({ label, value, set, min, max, step = 1, unit }) {
           }}
         />
       </div>
-      <div className="flex justify-between text-[0.58rem] text-ink/40 mt-1 tabular-nums">
+      <div className="flex justify-between text-xs text-ink/65 mt-1.5 tabular-nums font-medium">
         <span>{min}{unit}</span>
         <span>{max}{unit}</span>
       </div>
@@ -389,13 +389,13 @@ export default function Configurator() {
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         <div className="max-w-2xl mb-8 sm:mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-3 sm:mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-5">
               {t("config.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-ink text-3xl sm:text-4xl md:text-6xl leading-[1.06]">
               {t("config.title")}
             </h2>
-            <p className="mt-3 sm:mt-5 text-ink/60 text-base sm:text-lg leading-relaxed font-light max-w-lg">
+            <p className="mt-3 sm:mt-5 text-ink/80 text-base sm:text-lg leading-relaxed font-light max-w-lg">
               {t("config.subtitle")}
             </p>
           </Reveal>
@@ -407,16 +407,16 @@ export default function Configurator() {
             <div className="lg:col-span-8 bg-bone rounded-sm border border-ink/8 p-4 sm:p-7 md:p-10 space-y-6 sm:space-y-9">
               {/* Dynamic 3D WebGL Studio Visualizer */}
               <div>
-                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-2.5 flex items-center justify-between">
+                <p className="text-xs uppercase tracking-[0.16em] text-ink/75 font-semibold mb-2.5 flex items-center justify-between">
                   <span>{t("config.visualPreview")}</span>
-                  <span className="text-bronze font-medium">3D Studio WebGL</span>
+                  <span className="text-bronze font-bold">3D Studio WebGL</span>
                 </p>
                 <Suspense
                   fallback={
                     <div className="w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[2.1/1] rounded-sm bg-[#F4F1EA] border border-ink/10 flex items-center justify-center">
                       <div className="flex flex-col items-center gap-2">
                         <Rotate3d className="h-6 w-6 text-bronze animate-spin-slow" />
-                        <span className="text-[0.62rem] uppercase tracking-[0.24em] text-ink/50">
+                        <span className="text-xs uppercase tracking-[0.16em] text-ink/70 font-medium">
                           Loading 3D Studio...
                         </span>
                       </div>
@@ -436,7 +436,7 @@ export default function Configurator() {
               </div>
 
               <div>
-                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-semibold mb-3 sm:mb-4">
                   {t("config.category")}
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
@@ -453,7 +453,7 @@ export default function Configurator() {
               </div>
 
               <div>
-                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-semibold mb-3 sm:mb-4">
                   {t("config.wood")}
                 </p>
                 <div className="flex flex-wrap items-center gap-4 sm:gap-7">
@@ -471,7 +471,7 @@ export default function Configurator() {
 
               {category.hasFabric && (
                 <div>
-                  <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
+                  <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-semibold mb-3 sm:mb-4">
                     {t("config.upholstery")}
                   </p>
                   <div className="flex flex-wrap items-center gap-4 sm:gap-7">
@@ -489,7 +489,7 @@ export default function Configurator() {
               )}
 
               <div>
-                <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.22em] text-ink/45 mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-semibold mb-3 sm:mb-4">
                   {t("config.finish")}
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
@@ -539,7 +539,7 @@ export default function Configurator() {
             {/* Live summary */}
             <div className="lg:col-span-4 lg:sticky lg:top-24">
               <div className="bg-depth text-bone rounded-sm p-5 sm:p-7 md:p-8 relative overflow-hidden shadow-xl">
-                <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4 sm:mb-5">
+                <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-brass mb-4 sm:mb-5 font-medium">
                   {t("config.yourSpec")}
                 </p>
                 <div className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-light">
@@ -553,7 +553,7 @@ export default function Configurator() {
                 </div>
 
                 <div className="mt-6 sm:mt-7 pt-5 sm:pt-6 border-t border-bone/15">
-                  <p className="text-[0.58rem] sm:text-[0.6rem] uppercase tracking-[0.22em] text-bone/45 mb-1.5 sm:mb-2">
+                  <p className="text-xs uppercase tracking-[0.16em] text-bone/70 mb-1.5 sm:mb-2 font-medium">
                     {t("config.priceLabel")}
                   </p>
                   <AnimatePresence mode="wait">
@@ -568,7 +568,7 @@ export default function Configurator() {
                       {fmt(estimate, lang)}
                     </motion.p>
                   </AnimatePresence>
-                  <p className="mt-2 text-[0.62rem] sm:text-[0.66rem] text-bone/45 leading-relaxed">
+                  <p className="mt-2 text-xs text-bone/75 leading-relaxed font-light">
                     {t("config.priceDisclaimer")}
                   </p>
                 </div>
@@ -599,7 +599,7 @@ export default function Configurator() {
                   </button>
                 </div>
 
-                <div className="mt-4 sm:mt-5 flex items-center gap-2 text-[0.62rem] sm:text-[0.66rem] text-bone/45">
+                <div className="mt-4 sm:mt-5 flex items-center gap-2 text-xs text-bone/75 font-medium">
                   <Check className="h-3.5 w-3.5 text-brass shrink-0" strokeWidth={2} />
                   <span>{t("config.noObligation")}</span>
                 </div>

@@ -33,7 +33,7 @@ export default function Founder() {
 
           <div className="md:col-span-6 md:col-start-7">
             <Reveal delay={0.1}>
-              <p className="text-brass text-[0.68rem] uppercase tracking-[0.34em] mb-6">
+              <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-6">
                 {t("founder.eyebrow")}
               </p>
               <blockquote className="font-heading font-light text-bone text-2xl md:text-[2.1rem] leading-[1.32]">
@@ -48,10 +48,10 @@ export default function Founder() {
                   <p className="text-bone font-medium tracking-wide">
                     {t("founder.name")}
                   </p>
-                  <p className="text-bone/55 text-sm">{t("founder.role")}</p>
+                  <p className="text-bone/80 text-sm font-medium">{t("founder.role")}</p>
                 </div>
               </div>
-              <p className="mt-8 text-bone/50 text-[0.66rem] uppercase tracking-[0.24em]">
+              <p className="mt-8 text-bone/75 text-xs sm:text-sm uppercase tracking-[0.16em] font-medium">
                 {t("founder.founded", { year: FOUNDED, founder: FOUNDER })}
               </p>
               <div className="mt-8 pt-1">

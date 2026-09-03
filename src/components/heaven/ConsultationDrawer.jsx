@@ -106,7 +106,7 @@ export default function ConsultationDrawer() {
             {/* Header */}
             <div className="shrink-0 bg-bone border-b border-ink/10 px-6 sm:px-8 py-5 flex items-center justify-between z-20">
               <div>
-                <span className="text-[0.62rem] uppercase tracking-[0.28em] text-bronze font-medium">
+                <span className="text-xs uppercase tracking-[0.2em] text-bronze font-medium">
                   {t("drawer.eyebrow")}
                 </span>
                 <h2 className="font-heading text-2xl sm:text-3xl text-ink font-light">
@@ -130,8 +130,8 @@ export default function ConsultationDrawer() {
             >
               {/* Step 1: Format */}
               <div>
-                <p className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/50 mb-3.5 flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-bronze text-bone text-[0.6rem] flex items-center justify-center font-bold">1</span>
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-medium mb-3.5 flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-bronze text-bone text-xs flex items-center justify-center font-bold">1</span>
                   <span>{t("drawer.step1")}</span>
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
@@ -145,13 +145,13 @@ export default function ConsultationDrawer() {
                         className={`p-3.5 sm:p-4 rounded-sm border text-left flex sm:flex-col justify-between items-start sm:items-start transition-all duration-300 cursor-pointer ${
                           active
                             ? "border-brass bg-brass/10 ring-1 ring-brass/30 text-ink shadow-sm"
-                            : "border-ink/12 bg-sand/20 hover:border-ink/30 text-ink/75"
+                            : "border-ink/15 bg-sand/20 hover:border-ink/30 text-ink/85"
                         }`}
                       >
-                        <Icon className={`h-5 w-5 mb-0 sm:mb-3 mr-3 sm:mr-0 shrink-0 ${active ? "text-bronze" : "text-ink/50"}`} />
+                        <Icon className={`h-5 w-5 mb-0 sm:mb-3 mr-3 sm:mr-0 shrink-0 ${active ? "text-bronze" : "text-ink/60"}`} />
                         <div>
                           <p className="font-heading text-base sm:text-lg font-light leading-tight">{t(titleKey)}</p>
-                          <p className="text-[0.62rem] sm:text-[0.66rem] text-ink/55 mt-0.5 sm:mt-1 leading-snug">{t(descKey)}</p>
+                          <p className="text-xs text-ink/75 mt-1 leading-snug">{t(descKey)}</p>
                         </div>
                       </button>
                     );
@@ -161,8 +161,8 @@ export default function ConsultationDrawer() {
 
               {/* Step 2: Project Scope */}
               <div>
-                <p className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/50 mb-3 sm:mb-3.5 flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-bronze text-bone text-[0.6rem] flex items-center justify-center font-bold">2</span>
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-medium mb-3 sm:mb-3.5 flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-bronze text-bone text-xs flex items-center justify-center font-bold">2</span>
                   <span>{t("drawer.step2")}</span>
                 </p>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2.5">
@@ -173,10 +173,10 @@ export default function ConsultationDrawer() {
                         key={id}
                         type="button"
                         onClick={() => setScope(id)}
-                        className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-full border text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
+                        className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full border text-xs sm:text-sm transition-all duration-300 cursor-pointer ${
                           active
-                            ? "border-brass bg-brass/10 text-ink font-medium ring-1 ring-brass/30"
-                            : "border-ink/15 text-ink/65 hover:border-ink/35 hover:text-ink bg-sand/15"
+                            ? "border-brass bg-brass/10 text-ink font-semibold ring-1 ring-brass/30"
+                            : "border-ink/15 text-ink/75 hover:border-ink/35 hover:text-ink bg-sand/20"
                         }`}
                       >
                         {t(key)}
@@ -188,14 +188,14 @@ export default function ConsultationDrawer() {
 
               {/* Step 3: Preferred Timing */}
               <div className="space-y-4">
-                <p className="text-[0.66rem] uppercase tracking-[0.24em] text-ink/50 flex items-center gap-2">
-                  <span className="h-4 w-4 rounded-full bg-bronze text-bone text-[0.6rem] flex items-center justify-center font-bold">3</span>
+                <p className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-medium flex items-center gap-2">
+                  <span className="h-5 w-5 rounded-full bg-bronze text-bone text-xs flex items-center justify-center font-bold">3</span>
                   <span>{t("drawer.step3")}</span>
                 </p>
 
                 <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs text-ink/60">
-                    <Calendar className="h-3.5 w-3.5 text-bronze" />
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-ink/80 font-medium">
+                    <Calendar className="h-4 w-4 text-bronze" />
                     <span>{t("drawer.dayLabel")}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -204,10 +204,10 @@ export default function ConsultationDrawer() {
                         key={id}
                         type="button"
                         onClick={() => setDay(id)}
-                        className={`px-3.5 py-2 rounded-sm border text-xs transition-all ${
+                        className={`px-3.5 py-2 rounded-sm border text-xs sm:text-sm transition-all ${
                           day === id
-                            ? "border-brass bg-depth text-bone font-light"
-                            : "border-ink/15 text-ink/70 hover:border-ink/35"
+                            ? "border-brass bg-depth text-bone font-medium"
+                            : "border-ink/15 text-ink/75 hover:border-ink/35 bg-sand/15"
                         }`}
                       >
                         {t(key)}
@@ -217,8 +217,8 @@ export default function ConsultationDrawer() {
                 </div>
 
                 <div className="space-y-3 pt-1">
-                  <div className="flex items-center gap-2 text-xs text-ink/60">
-                    <Clock className="h-3.5 w-3.5 text-bronze" />
+                  <div className="flex items-center gap-2 text-xs sm:text-sm text-ink/80 font-medium">
+                    <Clock className="h-4 w-4 text-bronze" />
                     <span>{t("drawer.timeLabel")}</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -227,10 +227,10 @@ export default function ConsultationDrawer() {
                         key={id}
                         type="button"
                         onClick={() => setTime(id)}
-                        className={`px-3.5 py-2 rounded-sm border text-xs transition-all ${
+                        className={`px-3.5 py-2 rounded-sm border text-xs sm:text-sm transition-all ${
                           time === id
-                            ? "border-brass bg-depth text-bone font-light"
-                            : "border-ink/15 text-ink/70 hover:border-ink/35"
+                            ? "border-brass bg-depth text-bone font-medium"
+                            : "border-ink/15 text-ink/75 hover:border-ink/35 bg-sand/15"
                         }`}
                       >
                         {t(key)}
@@ -241,12 +241,12 @@ export default function ConsultationDrawer() {
               </div>
 
               {/* Trust Box */}
-              <div className="p-4 rounded-sm bg-sand/50 border border-ink/8 text-xs text-ink/75 space-y-2">
+              <div className="p-4 rounded-sm bg-sand/50 border border-ink/10 text-xs sm:text-sm text-ink/80 space-y-2">
                 <div className="flex items-center gap-2 font-medium text-ink">
-                  <Sparkles className="h-3.5 w-3.5 text-bronze" />
+                  <Sparkles className="h-4 w-4 text-bronze" />
                   <span>{t("drawer.promiseTitle")}</span>
                 </div>
-                <p className="text-ink/60 leading-relaxed text-[0.76rem]">
+                <p className="text-ink/75 leading-relaxed text-xs sm:text-sm">
                   {t("drawer.promiseDesc")}
                 </p>
               </div>
@@ -259,13 +259,13 @@ export default function ConsultationDrawer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={closeConsultation}
-                className="w-full inline-flex items-center justify-center gap-2.5 bg-bronze text-bone hover:bg-bronze-dark rounded-full px-6 py-4 text-sm font-medium tracking-wide shadow-lg transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2.5 bg-bronze text-bone hover:bg-bronze-dark rounded-full px-6 py-4 text-sm sm:text-base font-medium tracking-wide shadow-lg transition-all duration-300"
               >
-                <MessageCircle className="h-4 w-4" />
+                <MessageCircle className="h-5 w-5" />
                 <span>{t("drawer.confirmBtn")}</span>
               </a>
-              <p className="text-center text-[0.68rem] text-ink/45">
-                {t("cta.noObligation")} · {PHONE_DISPLAY}
+              <p className="text-center text-xs text-ink/65 font-medium">
+                {t("cta.noObligation")} · <a href="tel:+8801960481983" className="hover:underline text-bronze font-semibold">{PHONE_DISPLAY}</a>
               </p>
             </div>
           </motion.div>

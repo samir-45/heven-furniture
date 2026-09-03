@@ -690,14 +690,14 @@ export default function RoomPlanner() {
         {/* Hero Header */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-6 sm:mb-8 md:mb-12">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
               <Compass className="h-3.5 w-3.5" />
               <span>{t("planner.eyebrow")}</span>
             </p>
             <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.06] sm:leading-[1.04] max-w-3xl">
               {t("planner.title")}
             </h1>
-            <p className="mt-3 sm:mt-5 text-ink/70 text-sm sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-3 sm:mt-5 text-ink/80 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("planner.subtitle")}
             </p>
           </Reveal>
@@ -708,7 +708,7 @@ export default function RoomPlanner() {
           <div className="bg-sand/50 border border-ink/10 rounded-sm p-3.5 sm:p-5 md:p-6 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
             {/* Presets */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full lg:w-auto">
-              <span className="text-[0.64rem] sm:text-[0.66rem] uppercase tracking-[0.24em] text-ink/45 mr-1 flex items-center gap-1.5 shrink-0">
+              <span className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/70 font-semibold mr-1 flex items-center gap-1.5 shrink-0">
                 <Layers className="h-3.5 w-3.5 text-bronze" />
                 <span>{t("planner.templates")}:</span>
               </span>
@@ -720,7 +720,7 @@ export default function RoomPlanner() {
                       key={tmpl.id}
                       type="button"
                       onClick={() => handleSelectTemplate(tmpl)}
-                      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-[0.72rem] sm:text-xs tracking-wide transition-all duration-300 cursor-pointer ${
+                      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
                         active
                           ? "border-brass bg-depth text-bone shadow-md font-medium"
                           : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
@@ -965,21 +965,21 @@ export default function RoomPlanner() {
               <div className="p-4 sm:p-6 rounded-sm bg-depth text-bone shadow-xl space-y-4 sm:space-y-5">
                 <div className="flex items-center justify-between border-b border-bone/15 pb-3 sm:pb-4 gap-2">
                   <div>
-                    <span className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-brass">
+                    <span className="text-xs uppercase tracking-[0.16em] text-brass font-medium">
                       {t("planner.totalEstimate")}
                     </span>
                     <h3 className="font-heading text-2xl sm:text-4xl text-bone font-light mt-0.5 tracking-tight">
                       ৳{totalEstimate.toLocaleString("en-BD")}
                     </h3>
                   </div>
-                  <span className="text-[0.6rem] sm:text-[0.64rem] uppercase tracking-wider text-bone/75 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0">
+                  <span className="text-xs uppercase tracking-wider text-bone/85 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0 font-medium">
                     {placedItems.length} Pieces
                   </span>
                 </div>
 
                 {/* Flow Bar */}
                 <div className="space-y-2">
-                  <div className="flex justify-between text-xs text-bone/75">
+                  <div className="flex justify-between text-xs sm:text-sm text-bone/85 font-medium">
                     <span>{t("planner.spaceUtilized")}</span>
                     <span className="font-bold text-brass">{occupiedAreaM2} m² ({occupancyPercent}%)</span>
                   </div>
@@ -989,7 +989,7 @@ export default function RoomPlanner() {
                       style={{ width: `${occupancyPercent}%` }}
                     />
                   </div>
-                  <p className="text-[0.64rem] text-bone/60 flex items-center justify-between pt-1">
+                  <p className="text-xs text-bone/80 flex items-center justify-between pt-1">
                     <span>{t("planner.flowRating")}:</span>
                     <span className="text-bone font-medium">{t(`planner.${flowStatus}`)}</span>
                   </p>
@@ -1001,7 +1001,7 @@ export default function RoomPlanner() {
                     href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-brass text-depth hover:bg-bone rounded-full py-3 sm:py-3.5 px-3 sm:px-5 text-[0.72rem] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.16em] font-medium transition-colors shadow-lg cursor-pointer text-center"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-brass text-depth hover:bg-bone rounded-full py-3 sm:py-3.5 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-medium transition-colors shadow-lg cursor-pointer text-center"
                   >
                     <MessageCircle className="h-4 w-4 shrink-0" />
                     <span>{t("planner.sendWa")}</span>
@@ -1011,7 +1011,7 @@ export default function RoomPlanner() {
                     type="button"
                     onClick={handleDownloadPdf}
                     disabled={pdfGenerating || placedItems.length === 0}
-                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-[0.72rem] sm:text-xs uppercase tracking-[0.12em] sm:tracking-[0.16em] font-light transition-colors disabled:opacity-50 cursor-pointer text-center"
+                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-light transition-colors disabled:opacity-50 cursor-pointer text-center"
                   >
                     <Download className="h-4 w-4 shrink-0" />
                     <span>{pdfGenerating ? "Generating..." : t("planner.exportPdf")}</span>
@@ -1020,7 +1020,7 @@ export default function RoomPlanner() {
                   <button
                     type="button"
                     onClick={() => openConsultation({ format: "home_visit" })}
-                    className="w-full text-center text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.16em] sm:tracking-[0.2em] text-bone/60 hover:text-brass transition-colors pt-2 cursor-pointer"
+                    className="w-full text-center text-xs sm:text-sm uppercase tracking-[0.14em] text-bone/80 hover:text-brass font-medium transition-colors pt-2 cursor-pointer"
                   >
                     {t("planner.bookMeasure")} →
                   </button>

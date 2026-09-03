@@ -16,7 +16,7 @@ export default function SocialProof() {
         <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="md:col-span-7 order-2 md:order-1">
             <Reveal>
-              <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-5">
+              <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
                 {t("proof.eyebrow")}
               </p>
               <h2 className="font-heading font-light text-ink text-3xl md:text-[2.6rem] leading-[1.16] max-w-xl">
@@ -25,10 +25,10 @@ export default function SocialProof() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <ul className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-[0.66rem] uppercase tracking-[0.18em] text-ink/55">
+              <ul className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3 text-xs sm:text-sm uppercase tracking-[0.14em] text-ink/80 font-medium">
                 {creds.map((c) => (
                   <li key={c} className="flex items-center gap-2.5">
-                    <span className="inline-block h-1 w-1 rounded-full bg-bronze" />
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-bronze" />
                     {t(c)}
                   </li>
                 ))}

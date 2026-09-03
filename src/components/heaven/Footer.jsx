@@ -89,10 +89,10 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-2">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">
+            <p className="text-xs uppercase tracking-[0.16em] text-brass mb-4 font-semibold">
               Atelier Pages
             </p>
-            <ul className="space-y-2.5 text-xs text-bone/70 font-light">
+            <ul className="space-y-2.5 text-xs sm:text-sm text-bone/85 font-normal">
               <li>
                 <Link to="/" className="hover:text-brass transition-colors">
                   {t("nav.home")}
@@ -122,18 +122,18 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-3">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">{t("footer.visit")}</p>
-            <p className="text-bone/70 leading-relaxed flex gap-2.5 text-xs">
+            <p className="text-xs uppercase tracking-[0.16em] text-brass mb-4 font-semibold">{t("footer.visit")}</p>
+            <p className="text-bone/85 leading-relaxed flex gap-2.5 text-xs sm:text-sm">
               <MapPin className="h-4 w-4 mt-0.5 text-bronze shrink-0" strokeWidth={1.5} />
               <span>{ADDRESS}</span>
             </p>
           </div>
 
           <div className="md:col-span-3">
-            <p className="text-[0.62rem] uppercase tracking-[0.24em] text-brass mb-4">{t("footer.contact")}</p>
+            <p className="text-xs uppercase tracking-[0.16em] text-brass mb-4 font-semibold">{t("footer.contact")}</p>
             <a
               href={`tel:${PHONE_TEL}`}
-              className="text-bone/70 hover:text-brass transition-colors flex gap-2.5 text-xs"
+              className="text-bone/85 hover:text-brass transition-colors flex gap-2.5 text-xs sm:text-sm font-medium"
             >
               <Phone className="h-4 w-4 mt-0.5 text-bronze shrink-0" strokeWidth={1.5} />
               <span>{PHONE_DISPLAY}</span>
@@ -156,7 +156,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-bone/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[0.68rem] text-bone/40">
+        <div className="mt-14 pt-6 border-t border-bone/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-bone/70">
           <p className="text-center sm:text-left">
             {t("footer.copyright", { year: new Date().getFullYear(), founded: FOUNDED, founder: FOUNDER })}
           </p>
@@ -165,12 +165,12 @@ export default function Footer() {
             <button
               type="button"
               onClick={scrollToTop}
-              className="inline-flex items-center gap-2 text-bone/55 hover:text-brass text-[0.66rem] uppercase tracking-[0.2em] transition-colors cursor-pointer group"
+              className="inline-flex items-center gap-2 text-bone/75 hover:text-brass text-xs font-medium uppercase tracking-[0.16em] transition-colors cursor-pointer group"
               aria-label="Back to top of page"
             >
               <span>{lang === "bn" ? "উপরে যান" : "Back to Top"}</span>
               <div className="h-6 w-6 rounded-full border border-bone/20 group-hover:border-brass flex items-center justify-center transition-colors">
-                <ArrowUp className="h-3 w-3 text-bone/60 group-hover:text-brass transition-transform duration-300 group-hover:-translate-y-0.5" />
+                <ArrowUp className="h-3 w-3 text-bone/70 group-hover:text-brass transition-transform duration-300 group-hover:-translate-y-0.5" />
               </div>
             </button>
           </div>

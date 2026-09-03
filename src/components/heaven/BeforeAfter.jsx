@@ -81,7 +81,7 @@ export default function BeforeAfter() {
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 sm:gap-8 mb-8 sm:mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-3 sm:mb-4 flex items-center gap-2">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("styling.eyebrow")}</span>
             </p>
@@ -90,7 +90,7 @@ export default function BeforeAfter() {
             </h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="text-ink/65 text-sm sm:text-base md:text-lg font-light max-w-md leading-relaxed">
+            <p className="text-ink/80 text-sm sm:text-base md:text-lg font-light max-w-md leading-relaxed">
               {t("styling.subtitle")}
             </p>
           </Reveal>
@@ -109,11 +109,11 @@ export default function BeforeAfter() {
             <div className="absolute inset-0">
               <img
                 src={IMAGES.stylingAfter}
-                alt="A fully styled luxury bespoke living room by Heaven Furniture Mart"
+                alt="A luxury bespoke living room designed and styled by Heaven Furniture Mart"
                 className="h-full w-full object-cover object-center block"
                 loading="eager"
               />
-              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 max-w-[44%] truncate bg-depth/85 backdrop-blur-md text-bone border border-brass/40 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.56rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.22em] font-medium pointer-events-none shadow-md">
+              <div className="absolute top-3 right-3 sm:top-5 sm:right-5 z-10 max-w-[44%] truncate bg-depth/90 backdrop-blur-md text-bone border border-brass/40 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-sm text-xs sm:text-sm uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium pointer-events-none shadow-md">
                 <span className="font-bold">{lang === "bn" ? "পরে" : "AFTER"}</span>
                 <span className="hidden sm:inline">{lang === "bn" ? " · সাজানো আভিজাত্য" : " · Bespoke Interior"}</span>
               </div>
@@ -135,7 +135,7 @@ export default function BeforeAfter() {
                   loading="eager"
                 />
               </div>
-              <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10 max-w-[44%] truncate bg-bone/90 backdrop-blur-md text-ink border border-ink/15 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-sm text-[0.56rem] sm:text-[0.66rem] uppercase tracking-[0.14em] sm:tracking-[0.22em] font-medium pointer-events-none shadow-md">
+              <div className="absolute top-3 left-3 sm:top-5 sm:left-5 z-10 max-w-[44%] truncate bg-bone/95 backdrop-blur-md text-ink border border-ink/15 px-2.5 sm:px-4 py-1 sm:py-1.5 rounded-sm text-xs sm:text-sm uppercase tracking-[0.14em] sm:tracking-[0.18em] font-medium pointer-events-none shadow-md">
                 <span className="font-bold">{lang === "bn" ? "আগে" : "BEFORE"}</span>
                 <span className="hidden sm:inline">{lang === "bn" ? " · খালি রুম" : " · Bare Space"}</span>
               </div>
@@ -156,7 +156,7 @@ export default function BeforeAfter() {
         {/* Styling Features Strip & CTA */}
         <div className="mt-8 sm:mt-12 md:mt-16 grid lg:grid-cols-12 gap-6 sm:gap-8 items-center border-t border-ink/10 pt-6 sm:pt-10">
           <div className="lg:col-span-8">
-            <ul className="grid sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-ink/75">
+            <ul className="grid sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-ink/85 font-medium">
               {stylingPoints.map((k) => (
                 <li key={k} className="flex items-center gap-2.5">
                   <CheckCircle2 className="h-4 w-4 text-bronze shrink-0" />

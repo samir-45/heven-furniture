@@ -22,7 +22,7 @@ export default function PageNotFound() {
       <main className="flex-1 flex items-center justify-center px-6 py-32 md:py-40">
         <div className="max-w-xl w-full text-center space-y-8">
           <div className="space-y-3">
-            <span className="text-[0.66rem] uppercase tracking-[0.38em] text-bronze font-medium">
+            <span className="text-xs uppercase tracking-[0.2em] text-bronze font-medium">
               404 · {lang === "bn" ? "পৃষ্ঠাটি পাওয়া যায়নি" : "Page Not Found"}
             </span>
             <h1 className="font-heading font-light text-5xl sm:text-7xl lg:text-8xl text-ink tracking-tight">

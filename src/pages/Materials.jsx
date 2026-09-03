@@ -101,14 +101,14 @@ export default function Materials() {
         {/* Hero Section */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-10 sm:mb-16 md:mb-24">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] sm:text-[0.7rem] uppercase tracking-[0.38em] mb-3 sm:mb-4 flex items-center gap-2">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("materials.eyebrow")}</span>
             </p>
             <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl lg:text-7xl leading-[1.06] max-w-3xl">
               {t("materials.title")}
             </h1>
-            <p className="mt-4 sm:mt-6 text-ink/70 text-sm sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
+            <p className="mt-4 sm:mt-6 text-ink/80 text-base sm:text-lg md:text-xl font-light max-w-2xl leading-relaxed">
               {t("materials.subtitle")}
             </p>
           </Reveal>
@@ -172,14 +172,14 @@ export default function Materials() {
                       <div className="absolute inset-0 bg-gradient-to-tr from-depth/20 via-transparent to-white/10 pointer-events-none" />
                     </div>
 
-                    <span className="text-[0.56rem] sm:text-[0.58rem] uppercase tracking-[0.24em] text-ink/45 bg-sand/60 px-2.5 sm:px-3 py-1 rounded-full border border-ink/8 mb-2 sm:mb-3">
+                    <span className="text-xs uppercase tracking-[0.16em] text-ink/70 bg-sand/60 px-3 py-1 rounded-full border border-ink/8 mb-2 sm:mb-3 font-medium">
                       Authentic Timber Grain · 100% Solid
                     </span>
 
                     <h3 className="font-heading text-xl sm:text-3xl font-light text-ink">
                       {t(activeMaterial.nameKey)}
                     </h3>
-                    <p className="text-[0.64rem] sm:text-[0.68rem] uppercase tracking-[0.24em] text-bronze mt-1">
+                    <p className="text-xs sm:text-sm uppercase tracking-[0.18em] text-bronze font-medium mt-1">
                       {t(activeMaterial.originKey)}
                     </p>
                   </div>
@@ -187,7 +187,7 @@ export default function Materials() {
                   {/* Material Specs */}
                   <div className="lg:col-span-7 space-y-4 sm:space-y-6">
                     <div>
-                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
+                      <p className="text-xs uppercase tracking-[0.16em] text-ink/70 font-semibold mb-1">
                         {t("materials.densityLabel")}
                       </p>
                       <p className="text-sm sm:text-base text-ink font-medium">
@@ -196,19 +196,19 @@ export default function Materials() {
                     </div>
 
                     <div>
-                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
+                      <p className="text-xs uppercase tracking-[0.16em] text-ink/70 font-semibold mb-1">
                         {t("materials.charLabel")}
                       </p>
-                      <p className="text-sm sm:text-base text-ink/75 leading-relaxed font-light">
+                      <p className="text-sm sm:text-base text-ink/85 leading-relaxed font-light">
                         {t(activeMaterial.charKey)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-[0.6rem] sm:text-[0.62rem] uppercase tracking-[0.24em] text-ink/45 mb-1">
+                      <p className="text-xs uppercase tracking-[0.16em] text-ink/70 font-semibold mb-1">
                         {t("materials.bestLabel")}
                       </p>
-                      <p className="text-sm sm:text-base text-ink/75 leading-relaxed font-light">
+                      <p className="text-sm sm:text-base text-ink/85 leading-relaxed font-light">
                         {t(activeMaterial.bestKey)}
                       </p>
                     </div>
@@ -234,7 +234,7 @@ export default function Materials() {
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-20 sm:mb-28 md:mb-36">
           <Reveal>
             <div className="max-w-2xl mb-8 sm:mb-14">
-              <p className="text-bronze text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.34em] mb-2 sm:mb-3">
+              <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-2 sm:mb-3">
                 {t("materials.standardsEyebrow")}
               </p>
               <h2 className="font-heading font-light text-ink text-2xl sm:text-5xl leading-[1.06]">
@@ -254,11 +254,11 @@ export default function Materials() {
                     <h3 className="font-heading text-xl sm:text-2xl font-light text-ink mb-2">
                       {t(titleKey)}
                     </h3>
-                    <p className="text-xs sm:text-sm text-ink/65 leading-relaxed font-light">
+                    <p className="text-xs sm:text-sm text-ink/80 leading-relaxed font-light">
                       {t(descKey)}
                     </p>
                   </div>
-                  <span className="text-[0.58rem] sm:text-[0.6rem] uppercase tracking-[0.24em] text-ink/35">
+                  <span className="text-xs uppercase tracking-[0.16em] text-ink/65 font-medium">
                     0{idx + 1} · Standard
                   </span>
                 </div>
@@ -271,13 +271,13 @@ export default function Materials() {
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
           <div className="bg-depth text-bone rounded-sm p-6 sm:p-10 md:p-16 relative overflow-hidden text-center shadow-2xl">
             <Reveal>
-              <p className="text-brass text-[0.66rem] sm:text-[0.68rem] uppercase tracking-[0.38em] mb-3 sm:mb-4">
+              <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4">
                 {t("materials.touchEyebrow")}
               </p>
               <h2 className="font-heading font-light text-2xl sm:text-4xl lg:text-6xl text-bone max-w-3xl mx-auto leading-[1.1]">
                 {t("materials.touchTitle")}
               </h2>
-              <p className="mt-4 sm:mt-6 text-bone/70 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-bone/85 text-sm sm:text-base md:text-lg font-light max-w-xl mx-auto leading-relaxed">
                 {t("materials.touchSubtitle")}
               </p>
               <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-4">

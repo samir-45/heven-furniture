@@ -24,7 +24,7 @@ export default function WhyChoose() {
       <div className="mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="max-w-2xl mb-16 md:mb-24">
           <Reveal>
-            <p className="text-bronze text-[0.68rem] uppercase tracking-[0.34em] mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
               {t("why.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-ink text-4xl md:text-6xl leading-[1.04]">
@@ -35,10 +35,10 @@ export default function WhyChoose() {
 
         {/* Scannable benefit strip — instant comprehension for a cold visitor */}
         <Reveal>
-          <ul className="flex flex-wrap gap-x-3 gap-y-2 mb-16 md:mb-24 text-[0.72rem] md:text-[0.78rem] uppercase tracking-[0.18em] text-ink/55">
+          <ul className="flex flex-wrap gap-x-4 gap-y-2.5 mb-16 md:mb-24 text-xs sm:text-sm uppercase tracking-[0.14em] text-ink/80 font-medium">
             {benefits.map((b) => (
               <li key={b} className="flex items-center gap-3">
-                <span className="inline-block h-1 w-1 rounded-full bg-bronze" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-bronze" />
                 {t(b)}
               </li>
             ))}
@@ -71,13 +71,13 @@ export default function WhyChoose() {
                 </Reveal>
 
                 <Reveal delay={0.08} className={`md:col-span-5 ${flip ? "md:order-1" : "md:order-2"}`}>
-                  <p className="text-bronze text-[0.66rem] uppercase tracking-[0.3em] mb-4">
+                  <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.2em] font-medium mb-4">
                     {t(`${mk}.eyebrow`)}
                   </p>
                   <h3 className="font-heading font-light text-ink text-3xl md:text-[2.6rem] leading-[1.08]">
                     {t(`${mk}.title`)}
                   </h3>
-                  <p className="mt-5 text-ink/60 text-base md:text-lg leading-relaxed font-light max-w-md">
+                  <p className="mt-5 text-ink/80 text-base md:text-lg leading-relaxed font-light max-w-md">
                     {t(`${mk}.desc`)}
                   </p>
                 </Reveal>
@@ -88,7 +88,7 @@ export default function WhyChoose() {
 
         <div className="mt-20 md:mt-32 flex flex-col items-center text-center">
           <Reveal>
-            <p className="text-bronze text-[0.66rem] uppercase tracking-[0.3em] mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
               {t("cta.begin")}
             </p>
             <div className="flex flex-col items-center gap-6">
@@ -96,7 +96,7 @@ export default function WhyChoose() {
               <button
                 type="button"
                 onClick={() => openConsultation({ format: "showroom" })}
-                className="inline-flex items-center gap-1.5 text-ink/50 hover:text-bronze transition-colors text-sm cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-ink/75 hover:text-bronze transition-colors text-sm font-medium cursor-pointer"
               >
                 {t("cta.noObligation")} <ArrowUpRight className="h-4 w-4" />
               </button>
