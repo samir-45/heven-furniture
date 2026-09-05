@@ -5,11 +5,9 @@ import WhyChoose from "@/components/heaven/WhyChoose";
 import Collections from "@/components/heaven/Collections";
 import BeforeAfter from "@/components/heaven/BeforeAfter";
 import CraftJourney from "@/components/heaven/CraftJourney";
-import Showroom from "@/components/heaven/Showroom";
-import Bespoke from "@/components/heaven/Bespoke";
 import Configurator from "@/components/heaven/Configurator";
+import Showroom from "@/components/heaven/Showroom";
 import Founder from "@/components/heaven/Founder";
-import SocialProof from "@/components/heaven/SocialProof";
 import Finale from "@/components/heaven/Finale";
 import Footer from "@/components/heaven/Footer";
 import CursorView from "@/components/heaven/CursorView";
@@ -30,11 +28,9 @@ export default function Home() {
         <Collections />
         <BeforeAfter />
         <CraftJourney />
-        <Showroom />
-        <Bespoke />
         <Configurator />
+        <Showroom />
         <Founder />
-        <SocialProof />
         <Finale />
       </main>
       <Footer />

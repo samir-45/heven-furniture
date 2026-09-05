@@ -41,7 +41,8 @@ export const IMAGES = {
   stylingAfter: "/images/styling-after.jpg",
   residenceGec: "/images/residence-gec.jpg",
   residenceAgrabad: "/images/residence-agrabad.jpg",
-  residenceKhulshi: "/images/residence-khulshi.jpg"
+  residenceKhulshi: "/images/residence-khulshi.jpg",
+  director: "/images/director.jpg",
 };
 
 // Real product & showroom footage pulled from Heaven Furniture Mart's own

@@ -19,14 +19,14 @@ export default function Founder() {
         <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="md:col-span-5">
             <Reveal>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-sm">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-sm bg-depth/30 border border-brass/20 shadow-xl">
                 <Image
-                  src={IMAGES.bespokeDetail}
-                  alt="A hand-finished detail of bespoke craftsmanship at Heaven Furniture Mart"
-                  className="h-full w-full object-cover object-left-top"
+                  src={IMAGES.director}
+                  alt={`${FOUNDER}, Managing Director of Heaven Furniture Mart`}
+                  className="h-full w-full object-cover object-top"
                   fittingType="fill"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-cocoa/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-cocoa/50 via-transparent to-transparent pointer-events-none" />
               </div>
             </Reveal>
           </div>

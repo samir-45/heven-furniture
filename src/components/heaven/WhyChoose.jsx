@@ -1,9 +1,6 @@
 import { Image } from "@/components/ui/image";
 import Reveal from "./Reveal";
-import WhatsAppButton from "./WhatsAppButton";
 import { useLang } from "./LanguageProvider";
-import { useConsultation } from "./ConsultationContext";
-import { ArrowUpRight } from "lucide-react";
 import { IMAGES } from "./constants";
 
 const momentKeys = ["why.m1", "why.m2", "why.m3"];
@@ -16,15 +13,13 @@ const momentAlts = [
 
 export default function WhyChoose() {
   const { t } = useLang();
-  const { openConsultation } = useConsultation();
-  const benefits = ["why.b1", "why.b2", "why.b3", "why.b4", "why.b5", "why.b6"];
 
   return (
     <section id="why" className="scroll-mt-24 bg-bone py-16 md:py-24">
       <div className="mx-auto max-w-[1400px] px-6 md:px-10">
-        <div className="max-w-2xl mb-16 md:mb-24">
+        <div className="max-w-2xl mb-12 md:mb-16">
           <Reveal>
-            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
+            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-4">
               {t("why.eyebrow")}
             </p>
             <h2 className="font-heading font-light text-ink text-4xl md:text-6xl leading-[1.04]">
@@ -32,18 +27,6 @@ export default function WhyChoose() {
             </h2>
           </Reveal>
         </div>
-
-        {/* Scannable benefit strip — instant comprehension for a cold visitor */}
-        <Reveal>
-          <ul className="flex flex-wrap gap-x-4 gap-y-2.5 mb-16 md:mb-24 text-xs sm:text-sm uppercase tracking-[0.14em] text-ink/80 font-medium">
-            {benefits.map((b) => (
-              <li key={b} className="flex items-center gap-3">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-bronze" />
-                {t(b)}
-              </li>
-            ))}
-          </ul>
-        </Reveal>
 
         <div className="flex flex-col gap-14 md:gap-20">
           {momentKeys.map((mk, i) => {
@@ -84,24 +67,6 @@ export default function WhyChoose() {
               </div>
             );
           })}
-        </div>
-
-        <div className="mt-20 md:mt-32 flex flex-col items-center text-center">
-          <Reveal>
-            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">
-              {t("cta.begin")}
-            </p>
-            <div className="flex flex-col items-center gap-6">
-              <WhatsAppButton>{t("cta.consultation")}</WhatsAppButton>
-              <button
-                type="button"
-                onClick={() => openConsultation({ format: "showroom" })}
-                className="inline-flex items-center gap-1.5 text-ink/75 hover:text-bronze transition-colors text-sm font-medium cursor-pointer"
-              >
-                {t("cta.noObligation")} <ArrowUpRight className="h-4 w-4" />
-              </button>
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>

@@ -20,14 +20,13 @@ export default function BrandIntro() {
               <h2 className="font-heading font-light text-ink text-4xl md:text-5xl leading-[1.08]">
                 {t("brand.title", { year: FOUNDED })}
               </h2>
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs sm:text-sm uppercase tracking-[0.14em] text-ink/75 font-medium">
-                {["brand.est", "brand.showroom", "brand.solidTimber", "brand.delivery"].map((k) => (
-                  <li key={k} className="flex items-center gap-2.5">
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-bronze" />
-                    {t(k)}
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-8 pt-6 border-t border-ink/10 flex items-center gap-4 sm:gap-6 text-xs uppercase tracking-[0.16em] text-ink/70 font-medium flex-wrap">
+                <span>{t("brand.est")}</span>
+                <span>•</span>
+                <span>{t("brand.showroom")}</span>
+                <span>•</span>
+                <span>{t("brand.solidTimber")}</span>
+              </div>
             </Reveal>
           </div>
           <div className="md:col-span-6 md:col-start-7">

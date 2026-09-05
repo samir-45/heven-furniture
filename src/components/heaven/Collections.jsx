@@ -4,10 +4,8 @@ import { ArrowLeft, ArrowRight, Eye, Sparkles, SlidersHorizontal } from "lucide-
 import { motion, AnimatePresence } from "framer-motion";
 import Reveal from "./Reveal";
 import ProductDetailModal from "./ProductDetailModal";
-import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
 import { PRODUCTS, CATEGORIES } from "./products";
-import { WHATSAPP_URL } from "./constants";
 
 export default function Collections() {
   const { lang, t } = useLang();
@@ -131,12 +129,6 @@ export default function Collections() {
             const title = lang === "bn" ? p.titleBn : p.titleEn;
             const desc = lang === "bn" ? p.descBn : p.descEn;
             const timber = lang === "bn" ? p.timberLabelBn : p.timberLabelEn;
-            const waLink = `${WHATSAPP_URL}?text=${encodeURIComponent(
-              lang === "bn"
-                ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের "${title}" (৳${p.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে চাই।`
-                : `Hello Heaven Furniture Mart, I would like to inquire about the "${title}" (৳${p.price.toLocaleString("en-BD")}).`
-            )}`;
-
             return (
               <motion.div
                 key={p.id}
@@ -146,20 +138,18 @@ export default function Collections() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.24, ease: "easeOut" }}
                 whileHover={{ y: -4 }}
-                className="group relative snap-start shrink-0 w-[84vw] sm:w-[350px] lg:w-[390px] flex flex-col bg-bone rounded-sm border border-ink/10 overflow-hidden shadow-sm hover:shadow-xl hover:border-brass/35 transition-shadow duration-300"
+                onClick={() => setSelectedProduct(p)}
+                className="group relative snap-start shrink-0 w-[84vw] sm:w-[350px] lg:w-[390px] flex flex-col bg-bone rounded-sm border border-ink/10 overflow-hidden shadow-sm hover:shadow-xl hover:border-brass/35 transition-all duration-300 cursor-pointer"
               >
                 {/* Visual */}
-                <div 
-                  onClick={() => setSelectedProduct(p)}
-                  className="relative aspect-[4/3] overflow-hidden bg-sand cursor-pointer select-none"
-                >
+                <div className="relative aspect-[4/3] overflow-hidden bg-sand select-none">
                   <img
                     src={p.img}
                     alt={title}
-                    className="h-full w-full object-cover object-left-top group-hover:scale-106 transition-transform duration-700 ease-out"
+                    className="h-full w-full object-cover object-left-top group-hover:scale-105 transition-transform duration-700 ease-out"
                     loading="lazy"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-depth/60 via-transparent to-transparent opacity-60 group-hover:opacity-85 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-depth/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
                   {/* Timber Species Floating Badge */}
                   <span className="absolute top-3 left-3 bg-depth/90 backdrop-blur-md text-bone border border-brass/35 text-xs font-semibold px-3 py-1 rounded-sm shadow-sm">
@@ -183,10 +173,7 @@ export default function Collections() {
                 {/* Content Box */}
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                   <div>
-                    <h3 
-                      onClick={() => setSelectedProduct(p)}
-                      className="font-heading font-light text-xl sm:text-2xl text-ink group-hover:text-bronze transition-colors cursor-pointer"
-                    >
+                    <h3 className="font-heading font-light text-xl sm:text-2xl text-ink group-hover:text-bronze transition-colors">
                       {title}
                     </h3>
                     <p className="mt-1.5 text-xs sm:text-sm text-ink/75 line-clamp-2 leading-relaxed font-light">
@@ -194,27 +181,15 @@ export default function Collections() {
                     </p>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="pt-3 border-t border-ink/8 flex items-center gap-2.5">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedProduct(p)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/20 hover:border-brass text-ink hover:text-bronze py-2.5 px-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
+                  {/* Card Footer: Dimensions & Elegant View Details link */}
+                  <div className="pt-3 border-t border-ink/10 flex items-center justify-between">
+                    <span className="text-xs text-ink/60 font-light">
+                      {p.dimensions ? `${p.dimensions.w} × ${p.dimensions.d} × ${p.dimensions.h} cm` : timber}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-bronze group-hover:text-ink font-medium transition-colors">
                       <span>{t("gallery.viewDetails")}</span>
-                    </button>
-
-                    <a
-                      href={waLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 rounded-full bg-bronze text-bone hover:bg-bronze-dark py-2.5 px-4 text-xs font-medium tracking-wide shadow-sm transition-all cursor-pointer shrink-0"
-                      title="Inquire on WhatsApp"
-                    >
-                      <WhatsAppIcon className="h-4 w-4 fill-current shrink-0" />
-                      <span>{t("gallery.enquire")}</span>
-                    </a>
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
                   </div>
                 </div>
               </motion.div>
