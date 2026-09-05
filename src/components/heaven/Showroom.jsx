@@ -8,7 +8,7 @@ import { useConsultation } from "./ConsultationContext";
 import { SHOWROOM_VIDEOS, SOCIAL, ytThumb, WHATSAPP_URL } from "./constants";
 
 export default function Showroom() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { openConsultation } = useConsultation();
   const [activeVideo, setActiveVideo] = useState(null);
 
@@ -160,7 +160,9 @@ export default function Showroom() {
                   </button>
                   <a
                     href={`${WHATSAPP_URL}?text=${encodeURIComponent(
-                      `Hello Heaven Furniture Mart, I just watched your "${activeVideo.title}" video and would like to inquire about this piece.`
+                      lang === "bn"
+                        ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের "${activeVideo.title}" ভিডিওটি দেখেছি এবং এই ফার্নিচারটি সম্পর্কে বিস্তারিত জানতে আগ্রহী।`
+                        : `Hello Heaven Furniture Mart, I just watched your "${activeVideo.title}" video and would like to inquire about this piece.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

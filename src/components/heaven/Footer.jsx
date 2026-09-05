@@ -146,7 +146,11 @@ export default function Footer() {
               <span>{EMAIL}</span>
             </a>
             <a
-              href={WHATSAPP_URL}
+              href={`${WHATSAPP_URL}?text=${encodeURIComponent(
+                lang === "bn"
+                  ? "আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের ফার্নিচার ও ইন্টেরিয়র ডিজাইন সার্ভিস সম্পর্কে জানতে চাই।"
+                  : "Hello Heaven Furniture Mart, I would like to enquire about your bespoke furniture crafting and interior design services."
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-2 text-brass hover:text-bone transition-colors text-xs uppercase tracking-wider"

@@ -86,7 +86,7 @@ const PILLARS = [
 ];
 
 export default function Materials() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { openConsultation } = useConsultation();
   const [activeMaterial, setActiveMaterial] = useState(MATERIALS[0]);
 
@@ -290,7 +290,11 @@ export default function Materials() {
                   <span>{t("materials.bookShowroomTour")}</span>
                 </button>
                 <a
-                  href={WHATSAPP_URL}
+                  href={`${WHATSAPP_URL}?text=${encodeURIComponent(
+                    lang === "bn"
+                      ? "আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের সেগুন কাঠ ও প্রিমিয়াম ফিনিশের স্যাম্পল দেখতে শোরুমে আসতে চাই।"
+                      : "Hello Heaven Furniture Mart, I would like to visit your showroom to inspect your seasoned timber and fine finishes."
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-light tracking-wide transition-colors"

@@ -493,7 +493,12 @@ export default function RoomPlanner() {
   // WhatsApp Message Generator
   const waUrl = useMemo(() => {
     const templateName = t(selectedTemplate.nameKey);
-    const lines = [
+    const lines = lang === "bn" ? [
+      "*হেভেন ফার্নিচার মার্ট — কাস্টম ফ্লোরপ্ল্যান ব্লুপ্রিন্ট*",
+      `রুমের ধরন: ${templateName} (${roomWidth.toFixed(1)}মি × ${roomLength.toFixed(1)}মি · ${totalAreaM2} বর্গমিটার)`,
+      "",
+      `নির্বাচিত ফার্নিচার (${placedItems.length}টি):`,
+    ] : [
       "*Heaven Furniture Mart — Bespoke Floorplan Blueprint*",
       `Room Type: ${templateName} (${roomWidth.toFixed(1)}m × ${roomLength.toFixed(1)}m · ${totalAreaM2} m²)`,
       "",
@@ -503,22 +508,33 @@ export default function RoomPlanner() {
     placedItems.forEach((item, idx) => {
       const cat = CATALOG.find((c) => c.id === item.catId);
       if (cat) {
-        lines.push(
-          `${idx + 1}. ${cat.nameEn} (${Math.round(cat.wM * 100)}×${Math.round(cat.dM * 100)} cm) — BDT ${cat.price.toLocaleString("en-BD")}`
-        );
+        const name = lang === "bn" ? cat.nameBn : cat.nameEn;
+        const dims = lang === "bn" ? `${Math.round(cat.wM * 100)}×${Math.round(cat.dM * 100)} সেমি` : `${Math.round(cat.wM * 100)}×${Math.round(cat.dM * 100)} cm`;
+        const price = lang === "bn" ? `৳${cat.price.toLocaleString("bn-BD")}` : `BDT ${cat.price.toLocaleString("en-BD")}`;
+        lines.push(`${idx + 1}. ${name} (${dims}) — ${price}`);
       }
     });
 
-    lines.push(
-      "",
-      `Total Estimated Investment: BDT ${totalEstimate.toLocaleString("en-BD")}`,
-      `Space Occupancy: ${occupiedAreaM2} m² (${occupancyPercent}%)`,
-      "",
-      "Please contact me to review this room layout and schedule a consultation."
-    );
+    if (lang === "bn") {
+      lines.push(
+        "",
+        `মোট আনুমানিক বাজেট: ৳${totalEstimate.toLocaleString("bn-BD")}`,
+        `স্থান দখল: ${occupiedAreaM2} বর্গমিটার (${occupancyPercent}%)`,
+        "",
+        "এই ফ্লোরপ্ল্যানটি পর্যালোচনা করতে এবং একটি কনসালটেশনের জন্য আমার সাথে যোগাযোগ করুন।"
+      );
+    } else {
+      lines.push(
+        "",
+        `Total Estimated Investment: BDT ${totalEstimate.toLocaleString("en-BD")}`,
+        `Space Occupancy: ${occupiedAreaM2} m² (${occupancyPercent}%)`,
+        "",
+        "Please contact me to review this room layout and schedule a consultation."
+      );
+    }
 
     return `${WHATSAPP_URL}?text=${encodeURIComponent(lines.join("\n"))}`;
-  }, [t, selectedTemplate, roomWidth, roomLength, totalAreaM2, placedItems, totalEstimate, occupiedAreaM2, occupancyPercent]);
+  }, [t, lang, selectedTemplate, roomWidth, roomLength, totalAreaM2, placedItems, totalEstimate, occupiedAreaM2, occupancyPercent]);
 
   // PDF Blueprint Generator
   const handleDownloadPdf = async () => {

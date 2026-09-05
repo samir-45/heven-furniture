@@ -50,7 +50,7 @@ const PROJECTS = [
 ];
 
 export default function Residences() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { openConsultation } = useConsultation();
 
   return (
@@ -153,7 +153,9 @@ export default function Residences() {
                       </button>
                       <a
                         href={`${WHATSAPP_URL}?text=${encodeURIComponent(
-                          `Hello Heaven Furniture Mart, I was reviewing ${t(p.titleKey)} on your portfolio and would like to discuss a similar project.`
+                          lang === "bn"
+                            ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের "${t(p.titleKey)}" প্রজেক্টটি দেখেছি এবং একই ধরনের ইন্টেরিয়র ও ফার্নিচার প্রজেক্ট নিয়ে আলোচনা করতে চাই।`
+                            : `Hello Heaven Furniture Mart, I was reviewing ${t(p.titleKey)} on your portfolio and would like to discuss a similar project.`
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -193,7 +195,11 @@ export default function Residences() {
                   <span>{t("cta.consultation")}</span>
                 </button>
                 <a
-                  href={WHATSAPP_URL}
+                  href={`${WHATSAPP_URL}?text=${encodeURIComponent(
+                    lang === "bn"
+                      ? "আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আমার বাসার সম্পূর্ণ ইন্টেরিয়র ও কাস্টম ফার্নিচার নিয়ে আলোচনা করতে চাই।"
+                      : "Hello Heaven Furniture Mart, I would like to discuss bespoke interior furniture and architectural joinery for my home."
+                  )}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-bone/25 text-bone hover:border-brass hover:text-brass px-7 sm:px-8 py-3.5 sm:py-4 text-xs sm:text-sm font-light tracking-wide transition-colors"
