@@ -1,14 +1,26 @@
 import { motion, useScroll, useTransform } from "framer-motion";
+import { ArrowDown } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import WhatsAppButton from "./WhatsAppButton";
 import { useLang } from "./LanguageProvider";
 import { IMAGES, FOUNDED, FOUNDER } from "./constants";
 
 export default function Hero() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 700], [0, 140]);
   const scale = useTransform(scrollY, [0, 700], [1, 1.12]);
+
+  const handleExploreClick = () => {
+    const el = document.getElementById("collections");
+    if (el) {
+      if (window.lenis) {
+        window.lenis.scrollTo(el, { offset: 0, duration: 1.0 });
+      } else {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
 
   return (
     <section id="top" className="relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-depth">
@@ -43,8 +55,16 @@ export default function Hero() {
           <p className="mt-6 md:mt-8 text-bone/90 text-base md:text-lg max-w-md leading-relaxed font-light">
             {t("hero.subtitle")}
           </p>
-          <div className="mt-9 md:mt-11">
+          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
             <WhatsAppButton>{t("cta.consultation")}</WhatsAppButton>
+            <button
+              type="button"
+              onClick={handleExploreClick}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-bone/30 bg-bone/10 backdrop-blur-md text-bone hover:border-brass hover:text-brass hover:bg-depth/50 transition-all duration-300 px-6 py-3.5 text-xs uppercase tracking-wider font-light cursor-pointer group shadow-sm"
+            >
+              <span>{lang === "bn" ? "সংগ্রহসমূহ দেখুন" : "Explore Collections"}</span>
+              <ArrowDown className="h-3.5 w-3.5 text-brass group-hover:translate-y-0.5 transition-transform" />
+            </button>
           </div>
           <p className="mt-6 md:mt-8 text-bone/75 text-xs sm:text-sm uppercase tracking-[0.16em] font-medium">
             {t("hero.founded", { year: FOUNDED, founder: FOUNDER })}
@@ -52,10 +72,30 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-bone/70">
-        <span className="text-xs uppercase tracking-[0.2em] font-medium">{t("hero.scroll")}</span>
-        <span className="block h-10 w-px bg-bone/40" />
-      </div>
+      <button
+        type="button"
+        onClick={handleExploreClick}
+        aria-label={t("hero.scroll")}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-bone/70 hover:text-brass transition-colors cursor-pointer group"
+      >
+        <span className="text-[10px] uppercase tracking-[0.22em] font-medium group-hover:text-brass transition-colors">
+          {t("hero.scroll")}
+        </span>
+        <div className="relative h-10 w-[1.5px] bg-bone/25 rounded-full overflow-hidden">
+          <motion.div
+            animate={{
+              y: ["-100%", "200%"],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 2.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="w-full h-1/2 bg-brass rounded-full"
+          />
+        </div>
+      </button>
     </section>
   );
 }

@@ -1,22 +1,50 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ArrowRight } from "lucide-react";
+import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
 import { WHATSAPP_URL } from "./constants";
 
-export default function ProductDetailModal({ product, onClose, onOpen3D }) {
+export default function ProductDetailModal({ 
+  product, 
+  onClose, 
+  onOpen3D,
+  products = [],
+  onSelectProduct
+}) {
   const { lang, t } = useLang();
 
-  // Close on Escape key
+  const currentIndex = useMemo(() => {
+    if (!product || !products?.length) return -1;
+    return products.findIndex((p) => p.id === product.id);
+  }, [product, products]);
+
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < products.length - 1;
+
+  const handlePrev = useCallback(() => {
+    if (hasPrev && onSelectProduct) {
+      onSelectProduct(products[currentIndex - 1]);
+    }
+  }, [hasPrev, onSelectProduct, products, currentIndex]);
+
+  const handleNext = useCallback(() => {
+    if (hasNext && onSelectProduct) {
+      onSelectProduct(products[currentIndex + 1]);
+    }
+  }, [hasNext, onSelectProduct, products, currentIndex]);
+
+  // Keyboard navigation: Escape to close, Left/Right arrows to flip
   useEffect(() => {
     if (!product) return;
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft" && hasPrev) handlePrev();
+      if (e.key === "ArrowRight" && hasNext) handleNext();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [product, onClose]);
+  }, [product, onClose, hasPrev, hasNext, handlePrev, handleNext]);
 
   if (!product) return null;
 
@@ -53,22 +81,55 @@ export default function ProductDetailModal({ product, onClose, onOpen3D }) {
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           className="relative z-10 w-full max-w-4xl bg-bone text-ink rounded-sm overflow-hidden border border-brass/35 shadow-2xl my-auto max-h-[92vh] flex flex-col"
         >
-          {/* Top Bar */}
-          <div className="shrink-0 px-5 sm:px-8 py-4 border-b border-ink/10 flex items-center justify-between bg-sand/30">
+          {/* Top Bar with Navigation Controls */}
+          <div className="shrink-0 px-5 sm:px-8 py-3.5 sm:py-4 border-b border-ink/10 flex items-center justify-between bg-sand/30">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-bronze" />
               <span className="text-xs uppercase tracking-[0.16em] text-bronze font-semibold">
                 {lang === "bn" ? "আসবাব বিবরণী" : "Atelier Piece Specification"}
               </span>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 -mr-1.5 rounded-full text-ink/60 hover:text-ink hover:bg-sand/60 transition-colors cursor-pointer"
-              aria-label="Close modal"
-            >
-              <X className="h-5 w-5" />
-            </button>
+
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              {products.length > 1 && (
+                <div className="flex items-center gap-1 bg-bone/80 border border-ink/10 rounded-full px-2 py-0.5 mr-1 sm:mr-2 shadow-xs">
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    disabled={!hasPrev}
+                    aria-label="Previous piece"
+                    className="p-1 rounded-full text-ink/70 hover:text-ink disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                    title={lang === "bn" ? "পূর্ববর্তী আসবাব (Left Arrow)" : "Previous piece (Left Arrow)"}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+
+                  <span className="text-[11px] font-mono font-medium text-ink/70 px-1 tracking-wider select-none">
+                    {currentIndex + 1} / {products.length}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    disabled={!hasNext}
+                    aria-label="Next piece"
+                    className="p-1 rounded-full text-ink/70 hover:text-ink disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                    title={lang === "bn" ? "পরবর্তী আসবাব (Right Arrow)" : "Next piece (Right Arrow)"}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 rounded-full text-ink/60 hover:text-ink hover:bg-sand/60 transition-colors cursor-pointer"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           {/* Modal Scrollable Body */}
@@ -83,6 +144,39 @@ export default function ProductDetailModal({ product, onClose, onOpen3D }) {
                     className="h-full w-full object-cover object-left-top group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-depth/35 via-transparent to-transparent pointer-events-none" />
+
+                  {/* Floating In-Image Arrow Controls for Quick Touch/Click */}
+                  {products.length > 1 && (
+                    <>
+                      {hasPrev && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePrev();
+                          }}
+                          aria-label="Previous piece"
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer"
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </button>
+                      )}
+                      {hasNext && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleNext();
+                          }}
+                          aria-label="Next piece"
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer"
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </button>
+                      )}
+                    </>
+                  )}
+
                   <span className="absolute bottom-3 left-3 bg-depth/90 text-bone text-xs font-semibold px-3 py-1 rounded-sm border border-brass/30">
                     ৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                   </span>

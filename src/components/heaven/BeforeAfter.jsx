@@ -77,7 +77,7 @@ export default function BeforeAfter() {
   ];
 
   return (
-    <section id="styling" className="scroll-mt-24 bg-bone py-12 sm:py-16 md:py-28 relative overflow-hidden">
+    <section id="styling" className="scroll-mt-24 bg-bone pt-8 sm:pt-10 md:pt-12 pb-12 sm:pb-16 md:pb-20 relative overflow-hidden">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 sm:gap-8 mb-8 sm:mb-12 md:mb-16">
           <Reveal>

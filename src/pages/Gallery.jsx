@@ -77,6 +77,8 @@ export default function Gallery() {
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onOpen3D={handleOpen3D}
+        products={filteredProducts}
+        onSelectProduct={setSelectedProduct}
       />
 
       <main className="pt-24 sm:pt-28 md:pt-36 pb-20 overflow-x-hidden w-full max-w-full">

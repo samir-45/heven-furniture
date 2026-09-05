@@ -37,12 +37,14 @@ export default function Collections() {
   };
 
   return (
-    <section id="collections" className="scroll-mt-24 bg-bone py-14 sm:py-20 md:py-28 relative">
+    <section id="collections" className="scroll-mt-4 sm:scroll-mt-6 bg-bone pt-6 sm:pt-8 md:pt-10 pb-10 sm:pb-14 md:pb-16 relative">
       {/* Quick View Inspection Modal on Home */}
       <ProductDetailModal
         product={selectedProduct}
         onClose={() => setSelectedProduct(null)}
         onOpen3D={handleOpen3D}
+        products={displayedProducts}
+        onSelectProduct={setSelectedProduct}
       />
 
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">

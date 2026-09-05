@@ -15,7 +15,7 @@ export default function WhyChoose() {
   const { t } = useLang();
 
   return (
-    <section id="why" className="scroll-mt-24 bg-bone py-16 md:py-24">
+    <section id="why" className="scroll-mt-24 bg-bone pt-8 md:pt-12 pb-8 md:pb-12">
       <div className="mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="max-w-2xl mb-12 md:mb-16">
           <Reveal>
