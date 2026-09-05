@@ -122,7 +122,10 @@ export default function BeforeAfter() {
             {/* Before Image (Clipped overlay) */}
             <div
               className="absolute inset-0 overflow-hidden"
-              style={{ width: `${sliderPos}%` }}
+              style={{
+                width: `${sliderPos}%`,
+                transition: isDragging ? "none" : "width 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
             >
               <div
                 className="absolute inset-0 h-full"
@@ -144,7 +147,10 @@ export default function BeforeAfter() {
             {/* Drag Divider Handle */}
             <div
               className="absolute top-0 bottom-0 w-0.5 bg-bone shadow-[0_0_12px_rgba(0,0,0,0.6)] z-20 pointer-events-none"
-              style={{ left: `${sliderPos}%` }}
+              style={{
+                left: `${sliderPos}%`,
+                transition: isDragging ? "none" : "left 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
             >
               <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 h-9 w-9 sm:h-11 sm:w-11 rounded-full bg-bone text-depth shadow-2xl border-2 border-brass flex items-center justify-center pointer-events-auto cursor-ew-resize">
                 <ArrowLeftRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-bronze" />

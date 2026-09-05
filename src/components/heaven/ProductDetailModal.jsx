@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ArrowRight, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
 import { WHATSAPP_URL } from "./constants";
@@ -13,6 +13,8 @@ export default function ProductDetailModal({
   onSelectProduct
 }) {
   const { lang, t } = useLang();
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isHighZoom, setIsHighZoom] = useState(false);
 
   const currentIndex = useMemo(() => {
     if (!product || !products?.length) return -1;
@@ -38,13 +40,19 @@ export default function ProductDetailModal({
   useEffect(() => {
     if (!product) return;
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        if (isLightboxOpen) {
+          setIsLightboxOpen(false);
+        } else {
+          onClose();
+        }
+      }
       if (e.key === "ArrowLeft" && hasPrev) handlePrev();
       if (e.key === "ArrowRight" && hasNext) handleNext();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [product, onClose, hasPrev, hasNext, handlePrev, handleNext]);
+  }, [product, onClose, hasPrev, hasNext, handlePrev, handleNext, isLightboxOpen]);
 
   if (!product) return null;
 
@@ -137,13 +145,35 @@ export default function ProductDetailModal({
             <div className="grid md:grid-cols-12 gap-6 sm:gap-8 items-center">
               {/* Product Visual */}
               <div className="md:col-span-6">
-                <div className="relative aspect-[4/3] rounded-sm overflow-hidden bg-sand shadow-inner border border-ink/10 group">
+                <div 
+                  onClick={() => {
+                    setIsHighZoom(false);
+                    setIsLightboxOpen(true);
+                  }}
+                  className="relative aspect-[4/3] rounded-sm overflow-hidden bg-sand shadow-inner border border-ink/10 group cursor-zoom-in select-none"
+                  title={lang === "bn" ? "কাঠের ফিনিশ ও গ্রেইন বড় করে দেখুন" : "Click to inspect timber grain and joinery"}
+                >
                   <img
                     src={product.img}
                     alt={title}
                     className="h-full w-full object-cover object-left-top group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-depth/35 via-transparent to-transparent pointer-events-none" />
+
+                  {/* Inspect Grain Lightbox Trigger */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsHighZoom(false);
+                      setIsLightboxOpen(true);
+                    }}
+                    className="absolute top-3 right-3 z-10 inline-flex items-center gap-1.5 bg-bone/95 backdrop-blur-md text-ink text-xs font-medium px-2.5 py-1 rounded-sm shadow-md hover:bg-bone hover:text-bronze transition-all cursor-pointer border border-ink/10"
+                    title={lang === "bn" ? "কাঠের ফিনিশ ও গ্রেইন বড় করে দেখুন" : "Inspect timber grain and joinery"}
+                  >
+                    <ZoomIn className="h-3.5 w-3.5 text-bronze" />
+                    <span>{lang === "bn" ? "গ্রেইন দেখুন" : "Inspect Grain"}</span>
+                  </button>
 
                   {/* Floating In-Image Arrow Controls for Quick Touch/Click */}
                   {products.length > 1 && (
@@ -156,7 +186,7 @@ export default function ProductDetailModal({
                             handlePrev();
                           }}
                           aria-label="Previous piece"
-                          className="absolute left-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer"
+                          className="absolute left-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer z-10"
                         >
                           <ChevronLeft className="h-4 w-4" />
                         </button>
@@ -169,7 +199,7 @@ export default function ProductDetailModal({
                             handleNext();
                           }}
                           aria-label="Next piece"
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer"
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-bone/90 hover:bg-bone text-ink shadow-md flex items-center justify-center transition-all opacity-80 hover:opacity-100 hover:scale-105 cursor-pointer z-10"
                         >
                           <ChevronRight className="h-4 w-4" />
                         </button>
@@ -280,6 +310,114 @@ export default function ProductDetailModal({
             </div>
           </div>
         </motion.div>
+
+        {/* Fullscreen Wood Grain Lightbox */}
+        <AnimatePresence>
+          {isLightboxOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-[150] flex flex-col justify-between bg-depth/95 backdrop-blur-xl p-4 sm:p-6 md:p-8 select-none"
+            >
+              {/* Lightbox Header */}
+              <div className="flex items-center justify-between z-20">
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 rounded-full bg-brass/20 text-brass border border-brass/35 text-xs uppercase tracking-wider font-semibold">
+                    {timber}
+                  </span>
+                  <h3 className="font-heading font-light text-bone text-lg sm:text-2xl truncate max-w-[50vw]">
+                    {title}
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsHighZoom(!isHighZoom)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-bone/15 hover:bg-bone/25 text-bone border border-bone/25 text-xs font-medium tracking-wide transition-colors cursor-pointer"
+                  >
+                    {isHighZoom ? (
+                      <>
+                        <ZoomOut className="h-3.5 w-3.5 text-brass" />
+                        <span>{lang === "bn" ? "১× ভিউ" : "Reset Zoom"}</span>
+                      </>
+                    ) : (
+                      <>
+                        <ZoomIn className="h-3.5 w-3.5 text-brass" />
+                        <span>{lang === "bn" ? "২× বড় করুন" : "2× Close-up"}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsLightboxOpen(false)}
+                    className="p-2 rounded-full text-bone/75 hover:text-bone hover:bg-bone/15 transition-colors cursor-pointer"
+                    aria-label="Close lightbox"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Lightbox Image Stage with Zoom */}
+              <div className="relative flex-1 flex items-center justify-center my-4 overflow-hidden">
+                {/* Previous Piece Arrow */}
+                {hasPrev && (
+                  <button
+                    type="button"
+                    onClick={handlePrev}
+                    aria-label="Previous piece"
+                    className="absolute left-2 sm:left-6 z-20 h-11 w-11 rounded-full bg-depth/80 hover:bg-brass hover:text-depth text-bone border border-brass/40 flex items-center justify-center shadow-2xl transition-all cursor-pointer"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                )}
+
+                <div 
+                  onClick={() => setIsHighZoom(!isHighZoom)}
+                  className={`relative max-w-full max-h-[72vh] flex items-center justify-center transition-transform duration-500 ease-out ${
+                    isHighZoom ? "scale-[1.85] cursor-zoom-out" : "scale-100 cursor-zoom-in"
+                  }`}
+                >
+                  <img
+                    src={product.img}
+                    alt={title}
+                    className="max-h-[70vh] w-auto max-w-full object-contain rounded-sm shadow-2xl border border-bone/15"
+                  />
+                </div>
+
+                {/* Next Piece Arrow */}
+                {hasNext && (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    aria-label="Next piece"
+                    className="absolute right-2 sm:right-6 z-20 h-11 w-11 rounded-full bg-depth/80 hover:bg-brass hover:text-depth text-bone border border-brass/40 flex items-center justify-center shadow-2xl transition-all cursor-pointer"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                )}
+              </div>
+
+              {/* Lightbox Footer Note */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-bone/70 z-20 border-t border-bone/15 pt-3">
+                <p className="font-light">
+                  {lang === "bn"
+                    ? "শতভাগ অকৃত্রিম সেগুন ও আখরোট কাঠের প্রাকৃতিক গ্রেইন এবং মাস্টার হ্যান্ড-কার্ভিং জয়েন্ট ডিটেইল।"
+                    : "100% Solid Kiln-Dried Natural Timber · Hand-chiselled mortise & tenon joinery detail."}
+                </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-brass font-medium">৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                  <span>·</span>
+                  <span className="font-mono text-bone/60">{currentIndex + 1} of {products.length}</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </AnimatePresence>
   );
