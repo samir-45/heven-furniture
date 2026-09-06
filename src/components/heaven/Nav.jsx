@@ -62,6 +62,15 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
   const handleNavClick = (e, item) => {
     if (item.hash) {
       if (isHome) {

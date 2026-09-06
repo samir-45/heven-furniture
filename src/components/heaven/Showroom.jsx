@@ -13,13 +13,20 @@ export default function Showroom() {
   const [activeVideo, setActiveVideo] = useState(null);
 
   useEffect(() => {
-    if (activeVideo) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!activeVideo) return;
+
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveVideo(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [activeVideo]);
 

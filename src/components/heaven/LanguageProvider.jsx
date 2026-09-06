@@ -4,7 +4,22 @@ import { translations } from "./translations";
 const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState("en");
+  const [lang, setLangState] = useState(() => {
+    try {
+      return localStorage.getItem("haven_lang") || "en";
+    } catch {
+      return "en";
+    }
+  });
+
+  const setLang = useCallback((newLang) => {
+    setLangState(newLang);
+    try {
+      localStorage.setItem("haven_lang", newLang);
+    } catch {
+      // ignore storage error
+    }
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = lang;

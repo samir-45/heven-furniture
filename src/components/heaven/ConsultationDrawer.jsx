@@ -46,20 +46,26 @@ export default function ConsultationDrawer() {
     if (initialData?.format) setFormat(initialData.format);
   }, [initialData]);
 
-  // Lock body scroll when drawer is open
+  // Lock body scroll & listen for Escape key when drawer is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
+    if (!isOpen) return;
+
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        closeConsultation();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, closeConsultation]);
 
   const waUrl = useMemo(() => {
     const formatLabel = t(`drawer.format.${format}`);

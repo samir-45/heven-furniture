@@ -33,11 +33,12 @@ export default function Gallery() {
   const [activeTimber, setActiveTimber] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [sortBy, setSortBy] = useState("featured");
 
-  // Filtered Products
+  // Filtered & Sorted Products
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return PRODUCTS.filter((item) => {
+    const list = PRODUCTS.filter((item) => {
       const matchCat = activeCategory === "all" || item.category === activeCategory;
       const matchTimber = activeTimber === "all" || item.timber === activeTimber;
       const matchQuery =
@@ -50,14 +51,23 @@ export default function Gallery() {
         item.timberLabelBn.includes(query);
       return matchCat && matchTimber && matchQuery;
     });
-  }, [activeCategory, activeTimber, searchQuery]);
 
-  const hasActiveFilters = activeCategory !== "all" || activeTimber !== "all" || Boolean(searchQuery.trim());
+    if (sortBy === "price-asc") {
+      return [...list].sort((a, b) => a.price - b.price);
+    }
+    if (sortBy === "price-desc") {
+      return [...list].sort((a, b) => b.price - a.price);
+    }
+    return list;
+  }, [activeCategory, activeTimber, searchQuery, sortBy]);
+
+  const hasActiveFilters = activeCategory !== "all" || activeTimber !== "all" || Boolean(searchQuery.trim()) || sortBy !== "featured";
 
   const handleResetFilters = () => {
     setActiveCategory("all");
     setActiveTimber("all");
     setSearchQuery("");
+    setSortBy("featured");
   };
 
   const handleOpen3D = (configCat) => {
@@ -217,14 +227,52 @@ export default function Gallery() {
             </div>
           </div>
 
-          {/* Result Counter */}
-          <div className="mt-4 flex items-center justify-between text-xs text-ink/65 font-medium px-1">
+          {/* Result Counter & Sort Controls */}
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-ink/70 font-medium px-1">
             <span>
               {t("gallery.showing", { count: filteredProducts.length })}
             </span>
-            <span className="hidden sm:inline">
-              100% Solid Seasoned Timber · Crafted in Chattogram
-            </span>
+
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <span className="text-ink/50 text-[11px] uppercase tracking-wider font-semibold">
+                {lang === "bn" ? "সাজান:" : "Sort:"}
+              </span>
+              <div className="inline-flex items-center gap-1 bg-bone/90 p-1 rounded-sm border border-ink/10 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSortBy("featured")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${
+                    sortBy === "featured"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                  }`}
+                >
+                  {lang === "bn" ? "জনপ্রিয়" : "Featured"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-asc")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${
+                    sortBy === "price-asc"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                  }`}
+                >
+                  {lang === "bn" ? "মূল্য: কম ↑" : "Price: Low ↑"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-desc")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${
+                    sortBy === "price-desc"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                  }`}
+                >
+                  {lang === "bn" ? "মূল্য: বেশি ↓" : "Price: High ↓"}
+                </button>
+              </div>
+            </div>
           </div>
         </section>
 

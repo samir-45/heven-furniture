@@ -557,16 +557,17 @@ export default function Configurator() {
                     {t("config.priceLabel")}
                   </p>
                   <AnimatePresence mode="wait">
-                    <motion.p
+                    <motion.div
                       key={Math.round(estimate)}
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -8 }}
                       transition={{ duration: 0.25 }}
-                      className="font-heading text-3xl sm:text-4xl md:text-[2.7rem] font-light text-bone tabular-nums"
+                      className="font-body text-3xl sm:text-4xl md:text-[2.6rem] font-semibold text-bone tabular-nums tracking-tight flex items-baseline gap-1"
                     >
-                      {fmt(estimate, lang)}
-                    </motion.p>
+                      <span className="text-brass font-bold text-[0.85em]">৳</span>
+                      <span>{Math.round(estimate).toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                    </motion.div>
                   </AnimatePresence>
                   <p className="mt-2 text-xs text-bone/75 leading-relaxed font-light">
                     {t("config.priceDisclaimer")}

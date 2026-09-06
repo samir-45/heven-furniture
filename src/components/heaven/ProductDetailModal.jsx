@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { X, Sparkles, Clock, Hammer, Layers, Maximize2, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Share2, Check } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
 import { WHATSAPP_URL } from "./constants";
@@ -15,6 +15,7 @@ export default function ProductDetailModal({
   const { lang, t } = useLang();
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [isHighZoom, setIsHighZoom] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const currentIndex = useMemo(() => {
     if (!product || !products?.length) return -1;
@@ -68,6 +69,31 @@ export default function ProductDetailModal({
       ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের "${title}" (দাম: ৳${product.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে ও অর্ডার করতে চাই।`
       : `Hello Heaven Furniture Mart, I would like to enquire about the "${title}" (Starting at ৳${product.price.toLocaleString("en-BD")}). Could you share more details on bespoke ordering?`
   )}`;
+
+  const handleShare = async () => {
+    if (!product) return;
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: `${title} — Heaven Furniture Mart`,
+      text: `${title} - Bespoke Solid Timber Furniture, Chattogram`,
+      url: shareUrl,
+    };
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // user cancelled
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <AnimatePresence>
@@ -128,6 +154,17 @@ export default function ProductDetailModal({
                   </button>
                 </div>
               )}
+
+              {/* Share Spec Button */}
+              <button
+                type="button"
+                onClick={handleShare}
+                className="p-1.5 rounded-full text-ink/60 hover:text-bronze hover:bg-sand/60 transition-colors cursor-pointer"
+                aria-label={lang === "bn" ? "শেয়ার করুন" : "Share piece"}
+                title={copied ? (lang === "bn" ? "লিঙ্ক কপি হয়েছে!" : "Link copied!") : (lang === "bn" ? "শেয়ার করুন" : "Share piece")}
+              >
+                {copied ? <Check className="h-4 w-4 text-emerald-600" /> : <Share2 className="h-4 w-4" />}
+              </button>
 
               <button
                 type="button"
