@@ -1,9 +1,9 @@
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, Hammer, CheckCircle2 } from "lucide-react";
 import { Image } from "@/components/ui/image";
 import WhatsAppButton from "./WhatsAppButton";
 import { useLang } from "./LanguageProvider";
-import { IMAGES, FOUNDED, FOUNDER } from "./constants";
+import { IMAGES } from "./constants";
 
 export default function Hero() {
   const { t, lang } = useLang();
@@ -34,41 +34,61 @@ export default function Hero() {
       </motion.div>
 
       {/* Legibility veils — keep WCAG-AA contrast for the bottom-anchored copy */}
-      <div className="absolute inset-0 bg-gradient-to-t from-depth/90 via-depth/40 to-depth/30" />
-      <div className="absolute inset-0 bg-gradient-to-r from-depth/70 via-depth/20 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-depth/95 via-depth/45 to-depth/30" />
+      <div className="absolute inset-0 bg-gradient-to-r from-depth/75 via-depth/25 to-transparent" />
 
-      <div className="relative z-10 mx-auto max-w-[1400px] px-6 md:px-10 h-full flex flex-col justify-end pb-20 md:pb-28">
+      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 h-full flex flex-col justify-end pb-16 sm:pb-20 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 34 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"
         >
-          <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.24em] font-medium mb-5 md:mb-7">
-            {t("hero.tagline")}
-          </p>
-          <h1 className="font-heading font-light text-bone text-[2.4rem] leading-[1.12] sm:text-5xl md:text-6xl lg:text-[4.6rem] tracking-[-0.01em]">
+          {/* Clear Category/Atelier Eyebrow Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-bone/10 backdrop-blur-md border border-brass/40 text-brass text-xs uppercase tracking-[0.18em] font-semibold mb-4 sm:mb-6">
+            <Hammer className="h-3.5 w-3.5 text-brass shrink-0" />
+            <span>{t("hero.tagline")}</span>
+          </div>
+
+          <h1 className="font-heading font-light text-bone text-[2.2rem] leading-[1.12] sm:text-5xl md:text-6xl lg:text-[4.4rem] tracking-[-0.01em]">
             {t("hero.title1")}
             <br />
             {t("hero.title2")}
           </h1>
-          <p className="mt-6 md:mt-8 text-bone/90 text-base md:text-lg max-w-md leading-relaxed font-light">
+          <p className="mt-4 sm:mt-6 text-bone/90 text-sm sm:text-base md:text-lg max-w-xl leading-relaxed font-light">
             {t("hero.subtitle")}
           </p>
-          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
+
+          {/* Primary & Secondary Action Center */}
+          <div className="mt-7 sm:mt-9 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
             <WhatsAppButton>{t("cta.consultation")}</WhatsAppButton>
             <button
               type="button"
               onClick={handleExploreClick}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-bone/30 bg-bone/10 backdrop-blur-md text-bone hover:border-brass hover:text-brass hover:bg-depth/50 transition-all duration-300 px-6 py-3.5 text-xs uppercase tracking-wider font-light cursor-pointer group shadow-sm"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-bone/35 bg-bone/10 backdrop-blur-md text-bone hover:border-brass hover:text-brass hover:bg-depth/60 transition-all duration-300 px-6 py-3.5 text-xs uppercase tracking-wider font-medium cursor-pointer group shadow-sm"
             >
               <span>{lang === "bn" ? "সংগ্রহসমূহ দেখুন" : "Explore Collections"}</span>
               <ArrowDown className="h-3.5 w-3.5 text-brass group-hover:translate-y-0.5 transition-transform" />
             </button>
           </div>
-          <p className="mt-6 md:mt-8 text-bone/75 text-xs sm:text-sm uppercase tracking-[0.16em] font-medium">
-            {t("hero.founded", { year: FOUNDED, founder: FOUNDER })}
-          </p>
+
+          {/* Immediate Trust & Value Pillars */}
+          <div className="mt-6 sm:mt-8 pt-5 border-t border-bone/15 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-bone/85 font-medium">
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-brass shrink-0" />
+              <span>{t("hero.trust1")}</span>
+            </span>
+            <span className="hidden sm:inline text-bone/30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-brass shrink-0" />
+              <span>{t("hero.trust2")}</span>
+            </span>
+            <span className="hidden md:inline text-bone/30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-brass shrink-0" />
+              <span>{t("hero.trust3")}</span>
+            </span>
+          </div>
         </motion.div>
       </div>
 

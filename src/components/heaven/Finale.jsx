@@ -13,7 +13,7 @@ export default function Finale() {
           backgroundImage: "radial-gradient(circle at 50% 38%, #C9A66B 0, transparent 62%)",
         }}
       />
-      <div className="relative mx-auto max-w-[1400px] px-6 md:px-10 text-center">
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 text-center">
         <Reveal>
           <p className="text-brass text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-6 md:mb-8">
             {t("cta.begin")}

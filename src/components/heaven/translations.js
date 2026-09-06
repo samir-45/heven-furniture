@@ -18,7 +18,7 @@ export const translations = {
     "nav.planner": "Room Planner",
     "nav.contact": "Contact",
     "nav.consultation": "Consultation",
-    "nav.furnitureMart": "Furniture Mart",
+    "nav.brandTag": "Solid Wood Furniture Atelier · Chattogram",
 
     // Product Gallery
     "gallery.eyebrow": "Atelier Masterpieces",
@@ -45,12 +45,15 @@ export const translations = {
     "cta.whatsappUs": "WhatsApp Us",
 
     // Hero
-    "hero.tagline": "Designed. Crafted. Customized.",
-    "hero.title1": "Furniture,",
-    "hero.title2": "Crafted Around You",
-    "hero.subtitle": "Bespoke furniture and interior styling, handcrafted in Chattogram since 2020.",
+    "hero.tagline": "Bespoke Solid Wood Furniture Atelier · Chattogram",
+    "hero.title1": "Handcrafted Solid Wood Furniture,",
+    "hero.title2": "Custom Built for Your Home",
+    "hero.subtitle": "Custom living, dining, and bedroom furniture handcrafted from 100% seasoned Chittagong Teak, Sil Karoi & Walnut. Built to your room's exact dimensions with lifetime structural joinery.",
+    "hero.trust1": "100% Seasoned Solid Hardwood",
+    "hero.trust2": "Custom Built to Your Dimensions",
+    "hero.trust3": "Agrabad Showroom & Workshop",
     "hero.founded": "Founded {year} · {founder}",
-    "hero.scroll": "Scroll",
+    "hero.scroll": "Scroll to Explore",
 
     // BrandIntro
     "brand.eyebrow": "The Atelier",
@@ -59,7 +62,7 @@ export const translations = {
     "brand.showroom": "Agrabad showroom",
     "brand.solidTimber": "Solid timber, in-house",
     "brand.delivery": "Delivery & installation",
-    "brand.body": "Heaven Furniture Mart is a bespoke furniture house and interior-styling atelier, founded by {founder}. We design, craft, and customize each piece around the way you live — turning rooms into reflections of taste, comfort, and lasting elegance.",
+    "brand.body": "Heaven Furniture Mart is a premier solid hardwood atelier and custom furniture house based in Agrabad, Chattogram, founded by {founder}. We handcraft made-to-order living, dining, and bedroom suites from seasoned Chittagong Teak, Sil Karoi, and Walnut—customized to your room's exact architectural dimensions with lifetime structural joinery.",
     "brand.visitCta": "Visit Our Showroom",
 
     // WhyChoose
@@ -428,7 +431,7 @@ export const translations = {
     "nav.planner": "রুম প্ল্যানার",
     "nav.contact": "যোগাযোগ",
     "nav.consultation": "পরামর্শ নিন",
-    "nav.furnitureMart": "ফার্নিচার মার্ট",
+    "nav.brandTag": "সলিড কাঠের আসবাব · চট্টগ্রাম",
 
     // Product Gallery
     "gallery.eyebrow": "অ্যাটেলিয়ার মাস্টারপিস",
@@ -455,12 +458,15 @@ export const translations = {
     "cta.whatsappUs": "হোয়াটসঅ্যাপে কথা বলুন",
 
     // Hero
-    "hero.tagline": "ডিজাইন · কারুকাজ · কাস্টমাইজেশন",
-    "hero.title1": "স্বপ্নের ঘরের জন্য,",
-    "hero.title2": "অভিজাত আসবাব",
-    "hero.subtitle": "২০২০ সাল থেকে চট্টগ্রামে সেরা মানের কাঠে নিপুণ হাতে তৈরি প্রিমিয়াম আসবাব ও ইন্টেরিয়র সলিউশন।",
+    "hero.tagline": "চট্টগ্রামের অভিজাত সলিড কাঠের আসবাব প্রস্তুতকারক",
+    "hero.title1": "১০০% খাঁটি কাঠে হস্তনির্মিত আসবাব,",
+    "hero.title2": "আপনার ঘরের নিখুঁত পরিমাপে",
+    "hero.subtitle": "চিটাগাং সেগুন, শিল কড়ই ও আমেরিকান আখরোট কাঠে নিপুণ হাতে তৈরি প্রিমিয়াম লিভিং, ডাইনিং ও বেডরুম আসবাব। আপনার পছন্দ, ড্রয়িং ও ঘরের নির্দিষ্ট মাপে তৈরি—আগ্রাবাদ শোরুম ও নিজস্ব কারখানায় প্রস্তুত।",
+    "hero.trust1": "১০০% খাঁটি সিজনড সলিড কাঠ",
+    "hero.trust2": "রুমের মাপ অনুযায়ী কাস্টমাইজেশন",
+    "hero.trust3": "আগ্রাবাদ শোরুম ও নিজস্ব কারখানা",
     "hero.founded": "প্রতিষ্ঠা {year} · {founder}",
-    "hero.scroll": "নিচে স্ক্রল করুন",
+    "hero.scroll": "নিচে ঘুরে দেখুন",
 
     // BrandIntro
     "brand.eyebrow": "আমাদের পরিচয়",
@@ -469,7 +475,7 @@ export const translations = {
     "brand.showroom": "আগ্রাবাদ শোরুম",
     "brand.solidTimber": "খাঁটি কাঠ, নিজস্ব কারিগর",
     "brand.delivery": "হোম ডেলিভারি ও ফিটিং",
-    "brand.body": "হেভেন ফার্নিচার মার্ট একটি প্রিমিয়াম কাস্টম ফার্নিচার হাউস ও ইন্টেরিয়র স্টাইলিং প্রতিষ্ঠান, যার প্রতিষ্ঠাতা {founder}। আমরা আপনার রুচি ও ঘরের পরিমাপ অনুযায়ী নিখুঁত আসবাব তৈরি করি — যেন আপনার ঘর হয়ে ওঠে আরামদায়ক ও চিরকালীন সৌন্দর্যের প্রতীক।",
+    "brand.body": "হেভেন ফার্নিচার মার্ট চট্টগ্রামের আগ্রাবাদে অবস্থিত একটি প্রিমিয়াম সলিড কাঠের আসবাব প্রস্তুতকারক ও ইন্টেরিয়র স্টাইলিং প্রতিষ্ঠান, যার প্রতিষ্ঠাতা {founder}। আমরা খাঁটি চিটাগাং সেগুন, শিল কড়ই ও আমেরিকান আখরোট কাঠে আপনার ড্রয়িং, পছন্দ ও রুমের নির্দিষ্ট মাপে নিখুঁত আসবাব তৈরি করি—যা আজীবন স্থায়িত্ব ও আভিজাত্যের প্রতীক।",
     "brand.visitCta": "শোরুম ভিজিট করুন",
 
     // WhyChoose

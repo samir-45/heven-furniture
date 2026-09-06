@@ -32,7 +32,7 @@ export default function Showroom() {
 
   return (
     <section id="showroom" className="scroll-mt-24 bg-sand/60 pt-8 sm:pt-10 md:pt-12 pb-16 md:pb-24">
-      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12 md:mb-16">
           <Reveal>
             <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-5">

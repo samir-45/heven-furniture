@@ -5,6 +5,8 @@ import { Menu, X, Sparkles } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 import { useConsultation } from "./ConsultationContext";
 import BrandLogo from "./BrandLogo";
+import WhatsAppIcon from "./WhatsAppIcon";
+import { WHATSAPP_URL } from "./constants";
 
 const navItems = [
   { key: "nav.home", path: "/" },
@@ -107,15 +109,21 @@ export default function Nav() {
             : "bg-transparent border-b border-transparent"
           }`}
       >
-        <nav className="mx-auto max-w-[1400px] px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group py-1" aria-label="Heaven Furniture Mart Home">
+        <nav className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 h-16 md:h-20 flex items-center justify-between">
+          {/* Logo with explicit Business Category Subtitle */}
+          <Link to="/" className="flex flex-col group py-1 select-none" aria-label="Heaven Furniture Mart Home">
             <BrandLogo
               theme={navThemeScrolled ? "light" : "dark"}
               size="md"
-              showSubtitle={true}
               className="items-start transition-transform duration-300 group-hover:scale-[1.02]"
             />
+            <span
+              className={`text-[8.5px] sm:text-[9.5px] tracking-[0.18em] uppercase font-semibold transition-colors mt-0.5 ${
+                navThemeScrolled ? "text-bronze" : "text-brass"
+              }`}
+            >
+              {t("nav.brandTag")}
+            </span>
           </Link>
 
           {/* Center Links */}
@@ -168,15 +176,29 @@ export default function Nav() {
             </button>
           </div>
 
-          {/* Mobile Hamburger */}
-          <button
-            className={`lg:hidden p-2 -mr-2 transition-colors cursor-pointer ${navThemeScrolled ? "text-ink" : "text-bone"
+          {/* Mobile Actions: 1-Tap WhatsApp + Hamburger */}
+          <div className="lg:hidden flex items-center gap-2">
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`p-2 rounded-full transition-colors cursor-pointer ${
+                navThemeScrolled ? "text-emerald-700 hover:bg-ink/5" : "text-emerald-400 hover:bg-bone/10"
               }`}
-            onClick={() => setOpen((v) => !v)}
-            aria-label="Toggle menu"
-          >
-            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+              aria-label="WhatsApp Us"
+              title="WhatsApp Us"
+            >
+              <WhatsAppIcon className="h-5 w-5 fill-current" />
+            </a>
+            <button
+              className={`p-2 -mr-2 transition-colors cursor-pointer ${navThemeScrolled ? "text-ink" : "text-bone"
+                }`}
+              onClick={() => setOpen((v) => !v)}
+              aria-label="Toggle menu"
+            >
+              {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </nav>
       </div>
 
