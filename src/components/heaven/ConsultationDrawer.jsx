@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, MapPin, Home as HomeIcon, Video, MessageCircle, Calendar, Clock, Sparkles } from "lucide-react";
+import { X, MapPin, Home as HomeIcon, Video, Calendar, Clock, Sparkles } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 import { useConsultation } from "./ConsultationContext";
 import { WHATSAPP_URL, PHONE_DISPLAY, ADDRESS } from "./constants";

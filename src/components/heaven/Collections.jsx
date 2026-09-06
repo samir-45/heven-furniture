@@ -1,6 +1,6 @@
 import { useRef, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Eye, Sparkles, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Reveal from "./Reveal";
 import ProductDetailModal from "./ProductDetailModal";

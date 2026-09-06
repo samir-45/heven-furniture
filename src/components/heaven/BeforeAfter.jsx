@@ -103,7 +103,7 @@ export default function BeforeAfter() {
             onMouseDown={() => setIsDragging(true)}
             onTouchStart={() => setIsDragging(true)}
             onClick={(e) => handleMove(e.clientX)}
-            className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/10] rounded-sm overflow-hidden select-none cursor-ew-resize bg-sand shadow-2xl border border-ink/10"
+            className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/10] rounded-sm overflow-hidden select-none cursor-ew-resize bg-sand shadow-2xl border border-ink/10 touch-none"
           >
             {/* After Image (Full background) */}
             <div className="absolute inset-0">

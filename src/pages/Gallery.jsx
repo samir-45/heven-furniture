@@ -1,16 +1,14 @@
 import { useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Sparkles, 
   Phone, 
-  ArrowUpRight, 
   Eye, 
   Maximize2, 
   Clock, 
   SlidersHorizontal, 
   RotateCcw,
-  CheckCircle2,
   Search,
   X
 } from "lucide-react";
