@@ -207,9 +207,8 @@ export default function ProductDetailModal({
                     </>
                   )}
 
-                  <span className="absolute bottom-3 left-3 bg-depth/90 backdrop-blur-md text-bone border border-brass/40 font-body text-xs sm:text-sm font-medium px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-                    <span className="text-brass font-bold text-[0.85em] leading-none">৳</span>
-                    <span className="tracking-tight tabular-nums font-semibold leading-none">{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                  <span className="absolute bottom-3 left-3 bg-depth/90 text-bone text-xs font-semibold px-3 py-1 rounded-sm border border-brass/30 font-body tracking-tight tabular-nums">
+                    ৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                   </span>
                 </div>
               </div>

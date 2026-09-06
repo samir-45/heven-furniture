@@ -295,9 +295,8 @@ export default function Gallery() {
                       </div>
 
                       {/* Price Badge */}
-                      <span className="absolute bottom-3 right-3 bg-depth/90 backdrop-blur-md text-bone border border-brass/40 font-body text-xs sm:text-sm font-medium px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1">
-                        <span className="text-brass font-bold text-[0.85em] leading-none">৳</span>
-                        <span className="tracking-tight tabular-nums font-semibold leading-none">{p.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                      <span className="absolute bottom-3 right-3 bg-bone/95 backdrop-blur-md text-ink font-body text-xs sm:text-sm font-semibold px-3 py-1 rounded-sm shadow-sm tracking-tight tabular-nums">
+                        ৳{p.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                       </span>
                     </div>
 
