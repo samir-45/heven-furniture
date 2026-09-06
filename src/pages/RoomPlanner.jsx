@@ -946,7 +946,7 @@ export default function RoomPlanner() {
                           {lang === "bn" ? selectedItemData.cat.nameBn : selectedItemData.cat.nameEn}
                         </h4>
                         <p className="text-[0.6rem] sm:text-[0.64rem] uppercase tracking-wider text-bronze font-medium truncate">
-                          {selectedItemData.cat.timber} · ৳{selectedItemData.cat.price.toLocaleString("en-BD")}
+                          {selectedItemData.cat.timber} · ৳{selectedItemData.cat.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                         </p>
                       </div>
                     </div>
@@ -1110,8 +1110,8 @@ export default function RoomPlanner() {
                       </div>
 
                       <div className="text-right shrink-0 flex items-center gap-2">
-                        <span className="text-xs sm:text-sm font-bold text-ink whitespace-nowrap">
-                          ৳{catItem.price.toLocaleString("en-BD")}
+                        <span className="text-xs sm:text-sm font-bold text-ink whitespace-nowrap tabular-nums">
+                          ৳{catItem.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                         </span>
                         <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-sand/60 text-ink/60 group-hover:bg-brass group-hover:text-depth flex items-center justify-center transition-colors shrink-0">
                           <Plus className="h-3 w-3" />

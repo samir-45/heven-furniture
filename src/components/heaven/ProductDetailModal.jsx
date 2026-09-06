@@ -207,8 +207,9 @@ export default function ProductDetailModal({
                     </>
                   )}
 
-                  <span className="absolute bottom-3 left-3 bg-depth/90 text-bone text-xs font-semibold px-3 py-1 rounded-sm border border-brass/30">
-                    ৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
+                  <span className="absolute bottom-3 left-3 bg-depth/90 backdrop-blur-md text-bone border border-brass/40 font-body text-xs sm:text-sm font-medium px-3.5 py-1.5 rounded-full shadow-lg flex items-center gap-1">
+                    <span className="text-brass font-bold text-[0.85em] leading-none">৳</span>
+                    <span className="tracking-tight tabular-nums font-semibold leading-none">{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
                   </span>
                 </div>
               </div>
@@ -231,9 +232,10 @@ export default function ProductDetailModal({
                   <span className="text-xs uppercase tracking-wider text-ink/60 block font-medium">
                     {lang === "bn" ? "আনুমানিক প্রস্তুত মূল্য:" : "Bespoke Price Guidance:"}
                   </span>
-                  <p className="text-2xl sm:text-3xl font-heading font-light text-bronze mt-0.5">
-                    ৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
-                    <span className="text-xs font-sans text-ink/55 ml-2 font-normal">
+                  <p className="text-2xl sm:text-3xl font-body font-semibold text-ink mt-0.5 tracking-tight flex items-baseline gap-1.5 flex-wrap">
+                    <span className="text-bronze font-bold text-[0.9em]">৳</span>
+                    <span className="tabular-nums">{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                    <span className="text-xs font-normal text-ink/55 ml-2">
                       {lang === "bn" ? "(কাস্টম মাপ অনুযায়ী চূড়ান্ত হবে)" : "(Subject to custom sizing)"}
                     </span>
                   </p>
@@ -410,7 +412,7 @@ export default function ProductDetailModal({
                     : "100% Solid Kiln-Dried Natural Timber · Hand-chiselled mortise & tenon joinery detail."}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="text-brass font-medium">৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
+                  <span className="text-brass font-semibold font-body tracking-tight tabular-nums">৳{product.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
                   <span>·</span>
                   <span className="font-mono text-bone/60">{currentIndex + 1} of {products.length}</span>
                 </div>
