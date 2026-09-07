@@ -1009,8 +1009,8 @@ export default function RoomPlanner() {
                   })}
                 </div>
 
-                {/* Canvas Floating Hints */}
-                <div className="absolute top-3 right-3 bg-bone/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-[0.6rem] text-ink/60 font-medium pointer-events-none shadow-sm flex items-center gap-1.5">
+                {/* Canvas Floating Hints - hidden on mobile/tablet to avoid obscuring furniture */}
+                <div className="hidden lg:flex absolute top-3 right-3 bg-bone/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-[0.6rem] text-ink/60 font-medium pointer-events-none shadow-sm items-center gap-1.5">
                   <Sparkles className="h-3 w-3 text-bronze" />
                   <span>{t("planner.dragHint")}</span>
                 </div>
@@ -1085,11 +1085,12 @@ export default function RoomPlanner() {
                     <span className="text-xs uppercase tracking-[0.16em] text-brass font-medium">
                       {t("planner.totalEstimate")}
                     </span>
-                    <h3 className="font-heading text-2xl sm:text-4xl text-bone font-light mt-0.5 tracking-tight">
-                      ৳{totalEstimate.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
+                    <h3 className="font-body text-2xl sm:text-4xl text-bone font-semibold mt-0.5 tracking-tight tabular-nums flex items-baseline gap-1">
+                      <span className="text-brass font-bold text-[0.85em]">৳</span>
+                      <span>{totalEstimate.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
                     </h3>
                   </div>
-                  <span className="text-xs uppercase tracking-wider text-bone/85 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0 font-medium">
+                  <span className="text-xs uppercase tracking-wider text-bone/85 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0 font-medium font-body tabular-nums">
                     {lang === "bn" ? `${placedItems.length.toLocaleString("bn-BD")}টি আসবাব` : `${placedItems.length} Pieces`}
                   </span>
                 </div>
@@ -1098,7 +1099,7 @@ export default function RoomPlanner() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs sm:text-sm text-bone/85 font-medium">
                     <span>{t("planner.spaceUtilized")}</span>
-                    <span className="font-bold text-brass">
+                    <span className="font-bold text-brass font-body tabular-nums">
                       {occupiedAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"} ({occupancyPercent}%)
                     </span>
                   </div>
