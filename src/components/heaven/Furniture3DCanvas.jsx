@@ -15,11 +15,76 @@ import {
   ChevronDown,
   ChevronUp,
   MessageCircle,
+  Ruler,
 } from "lucide-react";
 import { useLang } from "./LanguageProvider";
 
 const fmt = (n, lang = "en") =>
   "৳" + Math.round(n).toLocaleString(lang === "bn" ? "bn-BD" : "en-BD", { maximumFractionDigits: 0 });
+
+/**
+ * Procedural Realistic 3D Dimension Annotation Badge Sprite (High-Contrast Minimal Luxury Tag)
+ */
+function createDimensionBadgeSprite(text, subtext = "", isEvening = false) {
+  const canvas = document.createElement("canvas");
+  // High-DPI canvas for razor-sharp legibility across all displays
+  canvas.width = 320;
+  canvas.height = 76;
+  const ctx = canvas.getContext("2d");
+
+  // Generous margin so drop shadow is soft and unclipped
+  const x = 12;
+  const y = 10;
+  const w = 296;
+  const h = 54;
+  const r = 12; // Architectural modern rounded rectangle
+
+  // 1. Ambient Drop Shadow (natural 3D floating separation)
+  ctx.save();
+  ctx.shadowColor = isEvening ? "rgba(0, 0, 0, 0.55)" : "rgba(30, 24, 18, 0.22)";
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetY = 3;
+
+  // 2. Card Background: Solid Pure White (Day) / Deep Obsidian (Evening)
+  ctx.fillStyle = isEvening ? "#14171A" : "#FFFFFF";
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Crisp High-Contrast Border (Deep Artisan Bronze in Day, Radiant Gold in Evening)
+  ctx.strokeStyle = isEvening ? "#C9A66B" : "#4E3B2B";
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+  ctx.stroke();
+
+  // 4. Unified High-Contrast Typography (Both Metric & Imperial in Bold Jet Black)
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  const centerY = y + h / 2 + 0.5;
+
+  // Unified crisp bold sans-serif across both units
+  ctx.font = "bold 24px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  ctx.fillStyle = isEvening ? "#FFFFFF" : "#0A0A0A";
+
+  const displayText = subtext ? `${text}  ·  ${subtext}` : text;
+  ctx.fillText(displayText, x + w / 2, centerY);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+
+  const mat = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+    depthTest: false,
+  });
+
+  const sprite = new THREE.Sprite(mat);
+  sprite.scale.set(0.34, 0.08, 1);
+  return sprite;
+}
 
 /**
  * Procedural Realistic Woodgrain Texture Generator
@@ -177,6 +242,7 @@ export default function Furniture3DCanvas({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(true);
   const [customizerTab, setCustomizerTab] = useState("piece"); // "piece" | "wood" | "fabric" | "finish" | "size"
+  const [showMeasurements, setShowMeasurements] = useState(true);
 
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
@@ -188,6 +254,7 @@ export default function Furniture3DCanvas({
   const spotLightRef = useRef(null);
   const ambientLightRef = useRef(null);
   const floorDiskRef = useRef(null);
+  const measurementsGroupRef = useRef(null);
 
   // 1. Scene Initialization
   useEffect(() => {
@@ -289,6 +356,11 @@ export default function Furniture3DCanvas({
     const furnitureGroup = new THREE.Group();
     scene.add(furnitureGroup);
     furnitureGroupRef.current = furnitureGroup;
+
+    // Architectural Measurements Group
+    const measurementsGroup = new THREE.Group();
+    scene.add(measurementsGroup);
+    measurementsGroupRef.current = measurementsGroup;
 
     // Resize Observer
     const resizeObserver = new ResizeObserver(() => {
@@ -824,6 +896,92 @@ export default function Furniture3DCanvas({
     }
   }, [category, wood, fabric, finish, width, depth, height]);
 
+  // 3. Dynamic Architectural Dimension Bounding Box & Badges
+  useEffect(() => {
+    const group = measurementsGroupRef.current;
+    if (!group) return;
+
+    // Clear previous measurement children
+    while (group.children.length > 0) {
+      const obj = group.children[0];
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) {
+        if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
+        else obj.material.dispose();
+      }
+      group.remove(obj);
+    }
+
+    if (!isFullscreen || !showMeasurements) return;
+
+    const W = width / 100;
+    const D = depth / 100;
+    const H = height / 100;
+
+    // 1. Architectural Bounding Box (Delicate Hairline Bronze)
+    const boxGeo = new THREE.BoxGeometry(W, H, D);
+    const edgesGeo = new THREE.EdgesGeometry(boxGeo);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: "#B89A6C",
+      transparent: true,
+      opacity: 0.35,
+    });
+    const wireframeBox = new THREE.LineSegments(edgesGeo, lineMat);
+    wireframeBox.position.set(0, H / 2, 0);
+    group.add(wireframeBox);
+
+    // 2. Floor Footprint Projection (Dashed Ground Perimeter at floor level)
+    const floorEdgesGeo = new THREE.EdgesGeometry(new THREE.PlaneGeometry(W, D));
+    const floorLineMat = new THREE.LineDashedMaterial({
+      color: "#B89A6C",
+      dashSize: 0.08,
+      gapSize: 0.04,
+      transparent: true,
+      opacity: 0.25,
+    });
+    const floorLine = new THREE.LineSegments(floorEdgesGeo, floorLineMat);
+    floorLine.computeLineDistances();
+    floorLine.rotation.x = -Math.PI / 2;
+    floorLine.position.y = 0.002;
+    group.add(floorLine);
+
+    // 3. Delicate Corner Floor Crosshair Markers
+    const tickGeo = new THREE.BoxGeometry(0.04, 0.002, 0.04);
+    const tickMat = new THREE.MeshBasicMaterial({ color: "#B89A6C", transparent: true, opacity: 0.4 });
+    [
+      [W / 2, D / 2],
+      [-W / 2, D / 2],
+      [W / 2, -D / 2],
+      [-W / 2, -D / 2],
+    ].forEach(([cx, cz]) => {
+      const tick = new THREE.Mesh(tickGeo, tickMat);
+      tick.position.set(cx, 0.003, cz);
+      group.add(tick);
+    });
+
+    // 4. Floating 3D Dimension Annotation Badges (Metric + Imperial Feet)
+    const isEve = lightingMood === "evening";
+
+    // Width Badge (Front bottom center)
+    const widthFt = (width / 30.48).toFixed(1);
+    const widthSprite = createDimensionBadgeSprite(`${width} cm`, `${widthFt} ft`, isEve);
+    widthSprite.position.set(0, 0.08, D / 2 + 0.14);
+    group.add(widthSprite);
+
+    // Depth Badge (Right side bottom center)
+    const depthFt = (depth / 30.48).toFixed(1);
+    const depthSprite = createDimensionBadgeSprite(`${depth} cm`, `${depthFt} ft`, isEve);
+    depthSprite.position.set(W / 2 + 0.14, 0.08, 0);
+    group.add(depthSprite);
+
+    // Height Badge (Left front vertical midpoint)
+    const heightFt = (height / 30.48).toFixed(1);
+    const heightSprite = createDimensionBadgeSprite(`${height} cm`, `${heightFt} ft`, isEve);
+    heightSprite.position.set(-W / 2 - 0.14, H / 2, D / 2);
+    group.add(heightSprite);
+
+  }, [width, depth, height, isFullscreen, showMeasurements, lightingMood]);
+
   // Set Camera Preset Angle
   const setCameraPreset = useCallback(
     (preset) => {
@@ -940,6 +1098,22 @@ export default function Furniture3DCanvas({
           </span>
         </div>
 
+        {/* 3D Visible Dimension Guides Toggle (Fullscreen Only) */}
+        {isFullscreen && (
+          <button
+            type="button"
+            onClick={() => setShowMeasurements((v) => !v)}
+            title={showMeasurements ? t("config.toggleMeasurements") : t("config.toggleMeasurements")}
+            className={`p-2 rounded-full border backdrop-blur-md transition-all shadow-xs cursor-pointer ${
+              showMeasurements
+                ? "bg-depth text-bone border-depth font-bold"
+                : "bg-bone/90 text-ink/70 border-ink/10 hover:text-ink hover:bg-bone"
+            }`}
+          >
+            <Ruler className="h-3.5 w-3.5" />
+          </button>
+        )}
+
         {/* Day / Evening Mood Switcher */}
         <button
           type="button"
@@ -1012,10 +1186,10 @@ export default function Furniture3DCanvas({
                   <button
                     type="button"
                     onClick={() => setCustomizerTab("piece")}
-                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                       customizerTab === "piece"
-                        ? "bg-depth text-bone font-medium shadow-xs"
-                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                        ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                        : "border-transparent text-ink/70 hover:text-ink hover:bg-sand/50"
                     }`}
                   >
                     {t("config.tab.piece")}
@@ -1024,10 +1198,10 @@ export default function Furniture3DCanvas({
                   <button
                     type="button"
                     onClick={() => setCustomizerTab("wood")}
-                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                       customizerTab === "wood"
-                        ? "bg-depth text-bone font-medium shadow-xs"
-                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                        ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                        : "border-transparent text-ink/70 hover:text-ink hover:bg-sand/50"
                     }`}
                   >
                     {t("config.tab.timber")}
@@ -1037,10 +1211,10 @@ export default function Furniture3DCanvas({
                     <button
                       type="button"
                       onClick={() => setCustomizerTab("fabric")}
-                      className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                         customizerTab === "fabric"
-                          ? "bg-depth text-bone font-medium shadow-xs"
-                          : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                          ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                          : "border-transparent text-ink/70 hover:text-ink hover:bg-sand/50"
                       }`}
                     >
                       {t("config.tab.fabric")}
@@ -1050,10 +1224,10 @@ export default function Furniture3DCanvas({
                   <button
                     type="button"
                     onClick={() => setCustomizerTab("finish")}
-                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                       customizerTab === "finish"
-                        ? "bg-depth text-bone font-medium shadow-xs"
-                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                        ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                        : "border-transparent text-ink/70 hover:text-ink hover:bg-sand/50"
                     }`}
                   >
                     {t("config.tab.finish")}
@@ -1062,10 +1236,10 @@ export default function Furniture3DCanvas({
                   <button
                     type="button"
                     onClick={() => setCustomizerTab("size")}
-                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
                       customizerTab === "size"
-                        ? "bg-depth text-bone font-medium shadow-xs"
-                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                        ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                        : "border-transparent text-ink/70 hover:text-ink hover:bg-sand/50"
                     }`}
                   >
                     {t("config.tab.size")}
@@ -1073,6 +1247,18 @@ export default function Furniture3DCanvas({
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setShowMeasurements((v) => !v)}
+                    title={t("config.toggleMeasurements")}
+                    className={`p-1.5 rounded-full transition-colors cursor-pointer border ${
+                      showMeasurements 
+                        ? "bg-brass/20 border-brass text-ink shadow-xs" 
+                        : "border-transparent hover:bg-sand/60 text-ink/60 hover:text-ink"
+                    }`}
+                  >
+                    <Ruler className="h-3.5 w-3.5" />
+                  </button>
                   {estimate && (
                     <span className="text-xs font-bold text-ink tabular-nums hidden xs:inline-block">
                       {fmt(estimate, lang)}
@@ -1267,10 +1453,10 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setCameraPreset("perspective")}
           title="3D Showcase Perspective"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer ${
+          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
             activePreset === "perspective"
-              ? "bg-depth text-bone font-medium shadow-xs"
-              : "text-ink/65 hover:text-ink font-medium"
+              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+              : "border-transparent text-ink/65 hover:text-ink font-medium"
           }`}
         >
           3D
@@ -1280,10 +1466,10 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setCameraPreset("front")}
           title="Front Profile View"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer ${
+          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
             activePreset === "front"
-              ? "bg-depth text-bone font-medium shadow-xs"
-              : "text-ink/65 hover:text-ink font-medium"
+              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+              : "border-transparent text-ink/65 hover:text-ink font-medium"
           }`}
         >
           Front
@@ -1293,10 +1479,10 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setCameraPreset("top")}
           title="Top-Down Plan View"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer ${
+          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
             activePreset === "top"
-              ? "bg-depth text-bone font-medium shadow-xs"
-              : "text-ink/65 hover:text-ink font-medium"
+              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+              : "border-transparent text-ink/65 hover:text-ink font-medium"
           }`}
         >
           Top
@@ -1306,10 +1492,10 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setCameraPreset("detail")}
           title="Close-Up Detail View"
-          className={`p-1.5 rounded-full transition-all cursor-pointer ${
+          className={`p-1.5 rounded-full transition-all cursor-pointer border ${
             activePreset === "detail"
-              ? "bg-depth text-bone shadow-xs"
-              : "text-ink/65 hover:text-ink"
+              ? "bg-brass/20 border-brass text-ink shadow-xs"
+              : "border-transparent text-ink/65 hover:text-ink"
           }`}
         >
           <Eye className="h-3 w-3" />
@@ -1321,10 +1507,10 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setAutoRotate((v) => !v)}
           title={autoRotate ? "Pause Auto-Rotation" : "Start Auto-Rotation"}
-          className={`p-1.5 rounded-full transition-all cursor-pointer ${
+          className={`p-1.5 rounded-full transition-all cursor-pointer border ${
             autoRotate
-              ? "bg-depth text-bone"
-              : "text-ink/65 hover:text-ink"
+              ? "bg-brass/20 border-brass text-ink shadow-xs"
+              : "border-transparent text-ink/65 hover:text-ink"
           }`}
         >
           <Rotate3d className="h-3 w-3" />
