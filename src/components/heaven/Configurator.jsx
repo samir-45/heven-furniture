@@ -4,8 +4,7 @@ import { Check, MessageCircle, Download, FileText, Rotate3d } from "lucide-react
 import Reveal from "./Reveal";
 import { useLang } from "./LanguageProvider";
 import { WHATSAPP_URL, ADDRESS, PHONE_DISPLAY, EMAIL } from "./constants";
-
-const Furniture3DCanvas = lazy(() => import("./Furniture3DCanvas"));
+import Furniture3DCanvas from "./Furniture3DCanvas";
 
 const CATEGORIES = [
   {
@@ -407,32 +406,27 @@ export default function Configurator() {
             <div className="lg:col-span-8 bg-bone rounded-sm border border-ink/8 p-4 sm:p-7 md:p-10 space-y-6 sm:space-y-9">
               {/* Dynamic 3D WebGL Studio Visualizer */}
               <div>
-                <p className="text-xs uppercase tracking-[0.16em] text-ink/75 font-semibold mb-2.5 flex items-center justify-between">
-                  <span>{t("config.visualPreview")}</span>
-                  <span className="text-bronze font-bold">3D Studio WebGL</span>
-                </p>
-                <Suspense
-                  fallback={
-                    <div className="w-full aspect-[4/3] sm:aspect-[16/10] md:aspect-[2.1/1] rounded-sm bg-[#F4F1EA] border border-ink/10 flex items-center justify-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <Rotate3d className="h-6 w-6 text-bronze animate-spin-slow" />
-                        <span className="text-xs uppercase tracking-[0.16em] text-ink/70 font-medium">
-                          Loading 3D Studio...
-                        </span>
-                      </div>
-                    </div>
-                  }
-                >
-                  <Furniture3DCanvas
-                    category={category}
-                    wood={wood}
-                    fabric={fabric}
-                    finish={finish}
-                    width={width}
-                    depth={depth}
-                    height={height}
-                  />
-                </Suspense>
+                <div className="text-xs uppercase tracking-[0.16em] text-ink/75 font-semibold mb-2.5 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <span className="flex h-2 w-2 relative">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                    <span>{t("config.visualPreview")}</span>
+                  </span>
+                  <span className="text-bronze font-medium tracking-wider text-xs">
+                    3D Studio WebGL
+                  </span>
+                </div>
+                <Furniture3DCanvas
+                  category={category}
+                  wood={wood}
+                  fabric={fabric}
+                  finish={finish}
+                  width={width}
+                  depth={depth}
+                  height={height}
+                />
               </div>
 
               <div>

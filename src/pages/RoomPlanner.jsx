@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo, useEffect, useCallback } from "react";
+import { useState, useRef, useMemo, useEffect, useCallback, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Sparkles,
@@ -12,6 +12,7 @@ import {
   Layers,
   Ruler,
   Copy,
+  Box,
 } from "lucide-react";
 import Nav from "@/components/heaven/Nav";
 import Footer from "@/components/heaven/Footer";
@@ -22,6 +23,7 @@ import Reveal from "@/components/heaven/Reveal";
 import { useLang } from "@/components/heaven/LanguageProvider";
 import { useConsultation } from "@/components/heaven/ConsultationContext";
 import { WHATSAPP_URL, PHONE_DISPLAY, ADDRESS } from "@/components/heaven/constants";
+import Room3DCanvas from "@/components/heaven/Room3DCanvas";
 
 // Room Templates
 const ROOM_TEMPLATES = [
@@ -286,6 +288,134 @@ const CATEGORIES = [
   { id: "accents", labelEn: "Accents & Rugs", labelBn: "কার্পেট" },
 ];
 
+/**
+ * Architectural CAD Furniture Piece Renderer
+ * Renders authentic blueprint vector line-art (cushions, headboards, armrests, table profiles)
+ */
+function CADFurniturePiece({ cat, isSelected, isDark, lang }) {
+  const isSofa = cat.type === "sofa";
+  const isBed = cat.type === "bed";
+  const isDining = cat.type === "dining_set" || cat.id.includes("dining");
+  const isTable = cat.type === "table" && !isDining;
+  const isChair = cat.type === "chair";
+  const isDesk = cat.type === "desk";
+  const isCabinet = cat.type === "cabinet";
+  const isRug = cat.type === "rug";
+
+  return (
+    <div
+      className="w-full h-full relative overflow-hidden rounded-xs border border-depth/45 shadow-inner flex flex-col items-center justify-center p-1"
+      style={{ backgroundColor: cat.fill }}
+    >
+      {/* 1. SOFA: Armrests, backrest, and cushion split lines */}
+      {isSofa && (
+        <>
+          <div className="absolute top-0 inset-x-0 h-[22%] bg-black/20 border-b border-white/20 pointer-events-none" />
+          <div className="absolute top-0 left-0 bottom-0 w-[14%] bg-black/20 border-r border-white/20 rounded-l-xs pointer-events-none" />
+          <div className="absolute top-0 right-0 bottom-0 w-[14%] bg-black/20 border-l border-white/20 rounded-r-xs pointer-events-none" />
+          <div className="absolute top-[22%] bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-white/30 pointer-events-none" />
+          <div className="absolute bottom-[8%] left-[16%] right-[16%] h-[1px] bg-white/20 pointer-events-none" />
+        </>
+      )}
+
+      {/* 2. BED: Wooden Headboard, pillows, duvet runner */}
+      {isBed && (
+        <>
+          <div className="absolute top-0 inset-x-0 h-[16%] bg-black/35 border-b border-brass/50 flex items-center justify-center pointer-events-none">
+            <div className="w-4/5 h-[2px] bg-brass/60 rounded-full" />
+          </div>
+          <div className="absolute top-[18%] left-[10%] w-[36%] h-[20%] rounded-xs bg-white/35 border border-white/40 shadow-2xs pointer-events-none flex items-center justify-center">
+            <div className="w-1/2 h-[1px] bg-white/50" />
+          </div>
+          <div className="absolute top-[18%] right-[10%] w-[36%] h-[20%] rounded-xs bg-white/35 border border-white/40 shadow-2xs pointer-events-none flex items-center justify-center">
+            <div className="w-1/2 h-[1px] bg-white/50" />
+          </div>
+          <div className="absolute bottom-0 inset-x-0 h-[36%] bg-white/10 border-t border-white/25 pointer-events-none" />
+        </>
+      )}
+
+      {/* 3. DINING SET: Solid table with surrounding chairs */}
+      {isDining && (
+        <>
+          <div className="absolute inset-[10%] border border-white/30 rounded-xs pointer-events-none" />
+          <div className="absolute top-0 left-[22%] w-[24%] h-[6px] rounded-t-xs bg-black/25 border-b border-white/20 pointer-events-none" />
+          <div className="absolute top-0 right-[22%] w-[24%] h-[6px] rounded-t-xs bg-black/25 border-b border-white/20 pointer-events-none" />
+          <div className="absolute bottom-0 left-[22%] w-[24%] h-[6px] rounded-b-xs bg-black/25 border-t border-white/20 pointer-events-none" />
+          <div className="absolute bottom-0 right-[22%] w-[24%] h-[6px] rounded-b-xs bg-black/25 border-t border-white/20 pointer-events-none" />
+        </>
+      )}
+
+      {/* 4. COFFEE TABLE: Chamfered timber inset */}
+      {isTable && (
+        <div className="absolute inset-[12%] border border-white/35 rounded-xs pointer-events-none flex items-center justify-center">
+          <div className="w-1/2 h-[1px] bg-white/20" />
+        </div>
+      )}
+
+      {/* 5. ARMCHAIR: Curved bucket profile and deep seat */}
+      {isChair && (
+        <>
+          <div className="absolute top-0 inset-x-0 h-[28%] bg-black/20 rounded-b-lg border-b border-white/25 pointer-events-none" />
+          <div className="absolute top-0 left-0 bottom-0 w-[18%] bg-black/15 border-r border-white/20 pointer-events-none" />
+          <div className="absolute top-0 right-0 bottom-0 w-[18%] bg-black/15 border-l border-white/20 pointer-events-none" />
+        </>
+      )}
+
+      {/* 6. DESK: Executive writing surface with leather blotter */}
+      {isDesk && (
+        <>
+          <div className="absolute inset-[6%] border border-white/20 pointer-events-none" />
+          <div className="absolute inset-x-[22%] inset-y-[18%] bg-black/25 rounded-xs border border-brass/30 pointer-events-none flex items-center justify-center" />
+          <div className="absolute top-[12%] right-[12%] h-1.5 w-1.5 rounded-full border border-brass bg-brass/60 pointer-events-none" />
+        </>
+      )}
+
+      {/* 7. CABINET / CREDENZA: Vertical panels and brass pulls */}
+      {isCabinet && (
+        <>
+          <div className="absolute inset-y-0 left-1/3 w-[1px] bg-white/25 pointer-events-none" />
+          <div className="absolute inset-y-0 right-1/3 w-[1px] bg-white/25 pointer-events-none" />
+          <div className="absolute bottom-[10%] left-[30%] w-2 h-0.5 bg-brass rounded-full pointer-events-none" />
+          <div className="absolute bottom-[10%] right-[30%] w-2 h-0.5 bg-brass rounded-full pointer-events-none" />
+        </>
+      )}
+
+      {/* 8. RUG: Woven texture and fringe */}
+      {isRug && (
+        <>
+          <div className="absolute inset-[6%] border border-ink/15 rounded-xs pointer-events-none" />
+          <div className="absolute inset-[12%] border border-dashed border-ink/10 rounded-xs pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-[3px] border-b border-dotted border-ink/25 pointer-events-none" />
+          <div className="absolute bottom-0 inset-x-0 h-[3px] border-t border-dotted border-ink/25 pointer-events-none" />
+        </>
+      )}
+
+      {/* Item Label & Dimensions (Crisp Architectural Typography) */}
+      <span
+        className={`text-[0.55rem] font-bold text-center leading-tight truncate px-1 z-10 ${
+          isDark ? "text-bone drop-shadow-sm" : "text-depth"
+        }`}
+        style={{ maxWidth: "100%" }}
+      >
+        {lang === "bn" ? cat.nameBn : cat.nameEn}
+      </span>
+
+      <span
+        className={`text-[0.48rem] font-mono mt-0.5 z-10 ${
+          isDark ? "text-bone/80" : "text-depth/70"
+        }`}
+      >
+        {cat.wM}m × {cat.dM}m
+      </span>
+
+      {/* Selected Active Indicator Dot */}
+      {isSelected && (
+        <div className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-brass ring-2 ring-bone shadow-sm z-20" />
+      )}
+    </div>
+  );
+}
+
 export default function RoomPlanner() {
   const { t, lang } = useLang();
   const { openConsultation } = useConsultation();
@@ -300,6 +430,7 @@ export default function RoomPlanner() {
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [activeCatalogCategory, setActiveCatalogCategory] = useState("all");
   const [pdfGenerating, setPdfGenerating] = useState(false);
+  const [viewMode, setViewMode] = useState("3d"); // "3d" | "2d"
 
   // Dragging state
   const canvasRef = useRef(null);
@@ -797,10 +928,10 @@ export default function RoomPlanner() {
         {/* Hero Header */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-6 sm:mb-8 md:mb-12">
           <Reveal>
-            <p className="text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 flex items-center gap-2">
-              <Compass className="h-3.5 w-3.5" />
-              <span>{t("planner.eyebrow")}</span>
-            </p>
+            <div className="inline-flex items-center gap-2 bg-depth/5 border border-brass/35 px-3.5 py-1.5 rounded-full text-bronze text-xs sm:text-sm uppercase tracking-[0.22em] font-medium mb-3 sm:mb-4 shadow-2xs">
+              <Sparkles className="h-3.5 w-3.5 text-brass animate-pulse" />
+              <span>{t("planner.eyebrow")} · WebGL Spatial Studio</span>
+            </div>
             <h1 className="font-heading font-light text-ink text-3xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.06] sm:leading-[1.04] max-w-3xl">
               {t("planner.title")}
             </h1>
@@ -812,11 +943,11 @@ export default function RoomPlanner() {
 
         {/* Preset Selector & Dimensions Bar */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-6">
-          <div className="bg-sand/50 border border-ink/10 rounded-sm p-3.5 sm:p-5 md:p-6 shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
+          <div className="bg-sand/60 backdrop-blur-md border border-brass/30 rounded-sm p-3.5 sm:p-5 md:p-6 shadow-md flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 sm:gap-6">
             {/* Presets */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 w-full lg:w-auto">
-              <span className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/70 font-semibold mr-1 flex items-center gap-1.5 shrink-0">
-                <Layers className="h-3.5 w-3.5 text-bronze" />
+              <span className="text-xs sm:text-sm uppercase tracking-[0.16em] text-ink/75 font-semibold mr-1 flex items-center gap-1.5 shrink-0">
+                <Layers className="h-3.5 w-3.5 text-brass" />
                 <span>{t("planner.templates")}:</span>
               </span>
               <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
@@ -827,10 +958,10 @@ export default function RoomPlanner() {
                       key={tmpl.id}
                       type="button"
                       onClick={() => handleSelectTemplate(tmpl)}
-                      className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
+                      className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full border text-xs sm:text-sm tracking-wide transition-all duration-300 cursor-pointer ${
                         active
-                          ? "border-brass bg-depth text-bone shadow-md font-medium"
-                          : "border-ink/15 bg-bone text-ink/70 hover:border-ink/35"
+                          ? "border-brass bg-depth text-bone shadow-md font-medium scale-[1.02]"
+                          : "border-ink/15 bg-bone/80 text-ink/75 hover:border-brass/50 hover:bg-bone"
                       }`}
                     >
                       {t(tmpl.nameKey)}
@@ -842,8 +973,8 @@ export default function RoomPlanner() {
 
             {/* Custom Dimensions & Reset Bar */}
             <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-5 w-full lg:w-auto pt-3 lg:pt-0 border-t border-ink/8 lg:border-t-0 shrink-0">
-              <div className="flex items-center gap-2.5 sm:gap-3.5 text-xs text-ink/75 whitespace-nowrap">
-                <Ruler className="h-3.5 w-3.5 text-bronze shrink-0" />
+              <div className="flex items-center gap-2.5 sm:gap-3.5 text-xs text-ink/80 whitespace-nowrap bg-bone/70 px-3 py-1.5 rounded-full border border-ink/10 shadow-2xs">
+                <Ruler className="h-3.5 w-3.5 text-brass shrink-0" />
 
                 <label className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
                   <span>{lang === "bn" ? "প্রস্থ" : "Width"}:</span>
@@ -855,10 +986,12 @@ export default function RoomPlanner() {
                     value={roomWidth}
                     onChange={(e) => handleWidthChange(e.target.value)}
                     onBlur={handleWidthBlur}
-                    className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs shadow-2xs focus:outline-none focus:border-brass"
+                    className="w-12 sm:w-14 bg-bone border border-brass/30 rounded-xs px-1.5 sm:px-2 py-0.5 text-ink text-center font-bold text-xs shadow-inner focus:outline-none focus:border-brass"
                   />
-                  <span className="text-ink/60">{lang === "bn" ? "মি" : "m"}</span>
+                  <span className="text-ink/60 font-mono">{lang === "bn" ? "মি" : "m"}</span>
                 </label>
+
+                <span className="text-ink/20">|</span>
 
                 <label className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
                   <span>{lang === "bn" ? "দৈর্ঘ্য" : "Length"}:</span>
@@ -870,20 +1003,20 @@ export default function RoomPlanner() {
                     value={roomLength}
                     onChange={(e) => handleLengthChange(e.target.value)}
                     onBlur={handleLengthBlur}
-                    className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs shadow-2xs focus:outline-none focus:border-brass"
+                    className="w-12 sm:w-14 bg-bone border border-brass/30 rounded-xs px-1.5 sm:px-2 py-0.5 text-ink text-center font-bold text-xs shadow-inner focus:outline-none focus:border-brass"
                   />
-                  <span className="text-ink/60">{lang === "bn" ? "মি" : "m"}</span>
+                  <span className="text-ink/60 font-mono">{lang === "bn" ? "মি" : "m"}</span>
                 </label>
               </div>
 
               <button
                 type="button"
                 onClick={handleResetPreset}
-                className="inline-flex items-center gap-1.5 text-xs text-ink/50 hover:text-ink transition-colors cursor-pointer shrink-0 whitespace-nowrap ml-auto sm:ml-0"
+                className="inline-flex items-center gap-1.5 text-xs text-ink/60 hover:text-ink transition-colors cursor-pointer shrink-0 whitespace-nowrap ml-auto sm:ml-0 bg-bone/60 hover:bg-bone px-3 py-1.5 rounded-full border border-ink/10 shadow-2xs"
                 title="Reset to Template Default"
               >
-                <RefreshCw className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{t("planner.reset")}</span>
+                <RefreshCw className="h-3.5 w-3.5 text-bronze" />
+                <span className="hidden sm:inline font-medium">{t("planner.reset")}</span>
               </button>
             </div>
           </div>
@@ -892,129 +1025,195 @@ export default function RoomPlanner() {
         {/* Main Planner Grid: Left Canvas & Right Catalog */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-10">
           <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-            {/* Interactive Floorplan Canvas (8 Cols) */}
-            <div className="lg:col-span-8 space-y-4 w-full min-w-0">
-              <div
-                ref={canvasRef}
-                onClick={(e) => {
-                  if (e.target === canvasRef.current || e.target.id === "room-floor") {
-                    setSelectedItemId(null);
-                  }
-                }}
-                className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#F3EFE6] border-2 border-ink/15 rounded-sm overflow-hidden flex items-center justify-center p-3 sm:p-6 select-none shadow-xl cursor-default touch-none"
-                style={{
-                  backgroundImage: `
-                    linear-gradient(to right, rgba(22, 41, 43, 0.05) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(22, 41, 43, 0.05) 1px, transparent 1px)
-                  `,
-                  backgroundSize: `${pixelsPerMeter * 0.5}px ${pixelsPerMeter * 0.5}px`,
-                }}
-              >
-                {/* Scaled Room Container Wall */}
-                <div
-                  id="room-floor"
-                  className="relative bg-[#FAF7F0] border-4 border-depth shadow-2xl transition-all duration-300"
-                  style={{
-                    width: `${roomWidth * pixelsPerMeter}px`,
-                    height: `${roomLength * pixelsPerMeter}px`,
-                  }}
-                >
-                  {/* Subtle Wood Floorboard Lines */}
-                  <div
-                    className="absolute inset-0 pointer-events-none opacity-20"
-                    style={{
-                      backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(92, 58, 33, 0.15) 19px)`,
-                    }}
-                  />
-
-                  {/* Room North / Orientation Tag */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1 text-[0.56rem] tracking-[0.24em] uppercase text-ink/35 font-bold pointer-events-none">
-                    <Compass className="h-3 w-3 text-bronze" />
-                    <span>{lang === "bn" ? "উত্তর প্রবেশদ্বার" : "North Entrance"}</span>
+            {/* Interactive Floorplan / 3D Canvas (8 Cols) */}
+            <div className="lg:col-span-8 space-y-3.5 w-full min-w-0">
+              {/* Dual View Switcher: 3D Spatial Studio vs 2D CAD Blueprint */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-2.5 bg-bone rounded-sm border border-brass/35 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-[0.68rem] uppercase tracking-widest text-ink/60 font-semibold font-mono hidden sm:inline">
+                    {lang === "bn" ? "ভিউ মোড:" : "VIEWPORT:"}
+                  </span>
+                  <div className="inline-flex items-center p-1 bg-sand/60 border border-ink/10 rounded-full shadow-inner">
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("3d")}
+                      className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all cursor-pointer ${
+                        viewMode === "3d"
+                          ? "bg-depth text-bone shadow-md"
+                          : "text-ink/65 hover:text-ink"
+                      }`}
+                    >
+                      <Box className="h-3.5 w-3.5 text-brass" />
+                      <span>{t("planner.view3d")}</span>
+                      {viewMode === "3d" && (
+                        <span className="flex h-2 w-2 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setViewMode("2d")}
+                      className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all cursor-pointer ${
+                        viewMode === "2d"
+                          ? "bg-depth text-bone shadow-md"
+                          : "text-ink/65 hover:text-ink"
+                      }`}
+                    >
+                      <Compass className="h-3.5 w-3.5 text-brass" />
+                      <span>{t("planner.view2d")}</span>
+                    </button>
                   </div>
-
-                  {/* Room Dimensions Stamp */}
-                  <div className="absolute bottom-2 right-2 bg-bone/80 px-2 py-0.5 rounded-xs border border-ink/8 text-[0.58rem] tracking-wider text-ink/50 font-medium pointer-events-none">
-                    {roomWidth.toFixed(1)}{lang === "bn" ? "মি" : "m"} × {roomLength.toFixed(1)}{lang === "bn" ? "মি" : "m"} · {totalAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"}
-                  </div>
-
-                  {/* Placed Furniture Items */}
-                  {placedItems.map((item) => {
-                    const cat = CATALOG.find((c) => c.id === item.catId);
-                    if (!cat) return null;
-
-                    const isSelected = selectedItemId === item.id;
-                    const isDark = cat.fill === "#5C3A21" || cat.fill === "#9C6B3C" || cat.fill === "#6D2E1F" || cat.fill === "#4A3528";
-                    const itemWidthPx = cat.wM * pixelsPerMeter;
-                    const itemDepthPx = cat.dM * pixelsPerMeter;
-
-                    return (
-                      <div
-                        key={item.id}
-                        onPointerDown={(e) => handlePointerDownItem(e, item)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedItemId(item.id);
-                        }}
-                        style={{
-                          left: `${item.x * pixelsPerMeter}px`,
-                          top: `${item.y * pixelsPerMeter}px`,
-                          width: `${itemWidthPx}px`,
-                          height: `${itemDepthPx}px`,
-                          transform: `rotate(${item.rot}deg)`,
-                          transformOrigin: "center center",
-                          zIndex: cat.category === "accents" ? 5 : isSelected ? 30 : 15,
-                        }}
-                        className={`absolute cursor-move transition-shadow touch-none select-none ${
-                          isSelected
-                            ? "ring-2 ring-brass shadow-2xl scale-[1.02]"
-                            : "hover:ring-1 hover:ring-bronze/50 shadow-md"
-                        }`}
-                      >
-                        {/* Top-Down Architectural Vector Piece */}
-                        <div
-                          className="w-full h-full rounded-xs flex flex-col items-center justify-center p-1.5 relative overflow-hidden border border-depth/35 shadow-inner"
-                          style={{ backgroundColor: cat.fill }}
-                        >
-                          {/* Inner timber trim detail */}
-                          <div
-                            className="absolute inset-0 border border-white/20 pointer-events-none"
-                          />
-
-                          {/* Item Label & Dimensions */}
-                          <span
-                            className={`text-[0.55rem] font-bold text-center leading-tight truncate px-1 ${
-                              isDark ? "text-bone drop-shadow-sm" : "text-depth"
-                            }`}
-                            style={{ maxWidth: "100%" }}
-                          >
-                            {lang === "bn" ? cat.nameBn : cat.nameEn}
-                          </span>
-
-                          <span
-                            className={`text-[0.48rem] font-mono mt-0.5 ${
-                              isDark ? "text-bone/75" : "text-depth/65"
-                            }`}
-                          >
-                            {cat.wM}m × {cat.dM}m
-                          </span>
-
-                          {/* Selected Active Indicator Dots */}
-                          {isSelected && (
-                            <div className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-brass ring-2 ring-bone shadow-sm" />
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
                 </div>
 
-                {/* Canvas Floating Hints - hidden on mobile/tablet to avoid obscuring furniture */}
-                <div className="hidden lg:flex absolute top-3 right-3 bg-bone/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-[0.6rem] text-ink/60 font-medium pointer-events-none shadow-sm items-center gap-1.5">
-                  <Sparkles className="h-3 w-3 text-bronze" />
-                  <span>{t("planner.dragHint")}</span>
+                <div className="flex items-center gap-2 text-[0.7rem] text-ink/70 font-mono">
+                  {viewMode === "3d" ? (
+                    <span className="inline-flex items-center gap-1.5 text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 shadow-2xs">
+                      <Sparkles className="h-3 w-3 text-emerald-600" />
+                      <span className="font-semibold">
+                        {lang === "bn" ? "৩ডি লাইভ ওয়েবজিএল ইঞ্জিন সক্রিয়" : "3D Live WebGL Engine Active"}
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1.5 text-bronze bg-sand/40 px-2.5 py-1 rounded-full border border-brass/30 shadow-2xs">
+                      <Ruler className="h-3 w-3 text-bronze" />
+                      <span className="font-semibold">
+                        {lang === "bn" ? "আর্কিটেকচারাল সিএডি ব্লুপ্রিন্ট" : "Architectural CAD Blueprint"}
+                      </span>
+                    </span>
+                  )}
                 </div>
               </div>
+
+              {/* Viewport Canvas: 3D Engine or 2D Architectural Editor */}
+              {viewMode === "3d" ? (
+                <Room3DCanvas
+                  roomWidth={roomWidth}
+                  roomLength={roomLength}
+                  placedItems={placedItems}
+                  selectedItemId={selectedItemId}
+                  catalog={CATALOG}
+                  onSelectItem={(id) => setSelectedItemId(id)}
+                />
+              ) : (
+                <div
+                  ref={canvasRef}
+                  onClick={(e) => {
+                    if (e.target === canvasRef.current || e.target.id === "room-floor") {
+                      setSelectedItemId(null);
+                    }
+                  }}
+                  className="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#F3EFE6] border-2 border-ink/15 rounded-sm overflow-hidden flex items-center justify-center p-4 sm:p-8 select-none shadow-xl cursor-default touch-none"
+                  style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(22, 41, 43, 0.06) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(22, 41, 43, 0.06) 1px, transparent 1px)
+                    `,
+                    backgroundSize: `${pixelsPerMeter * 0.5}px ${pixelsPerMeter * 0.5}px`,
+                  }}
+                >
+                  {/* Scaled Room Container Wall */}
+                  <div
+                    id="room-floor"
+                    className="relative bg-[#FAF7F0] border-4 border-depth shadow-2xl transition-all duration-300"
+                    style={{
+                      width: `${roomWidth * pixelsPerMeter}px`,
+                      height: `${roomLength * pixelsPerMeter}px`,
+                    }}
+                  >
+                    {/* Architectural Outer Dimension Guides */}
+                    <div className="absolute -top-6 left-0 right-0 flex items-center justify-between text-[0.62rem] font-mono text-ink/60 pointer-events-none px-1">
+                      <span>├</span>
+                      <span className="bg-bone px-1.5 py-0.2 border border-ink/10 rounded-2xs font-bold text-depth">
+                        {roomWidth.toFixed(1)}m
+                      </span>
+                      <span>┤</span>
+                    </div>
+
+                    <div className="absolute -left-6 top-0 bottom-0 flex flex-col items-center justify-between text-[0.62rem] font-mono text-ink/60 pointer-events-none py-1">
+                      <span>┬</span>
+                      <span className="bg-bone px-1 py-0.2 border border-ink/10 rounded-2xs font-bold text-depth -rotate-90">
+                        {roomLength.toFixed(1)}m
+                      </span>
+                      <span>┴</span>
+                    </div>
+
+                    {/* Subtle Wood Floorboard Lines */}
+                    <div
+                      className="absolute inset-0 pointer-events-none opacity-20"
+                      style={{
+                        backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(92, 58, 33, 0.15) 19px)`,
+                      }}
+                    />
+
+                    {/* Architectural Entrance Swing Door Symbol */}
+                    <div className="absolute top-0 left-0 w-10 h-10 border-r border-b border-depth/40 rounded-br-full pointer-events-none opacity-40">
+                      <div className="absolute top-0 left-0 w-full h-[1px] bg-depth" />
+                    </div>
+
+                    {/* Room North / Orientation Tag */}
+                    <div className="absolute top-2 left-12 flex items-center gap-1 text-[0.56rem] tracking-[0.24em] uppercase text-ink/40 font-bold pointer-events-none">
+                      <Compass className="h-3 w-3 text-bronze" />
+                      <span>{lang === "bn" ? "উত্তর প্রবেশদ্বার" : "North Entrance"}</span>
+                    </div>
+
+                    {/* Room Dimensions Stamp */}
+                    <div className="absolute bottom-2 right-2 bg-bone/90 px-2 py-0.5 rounded-xs border border-ink/10 text-[0.58rem] tracking-wider text-ink/60 font-medium font-mono pointer-events-none shadow-2xs">
+                      {roomWidth.toFixed(1)}{lang === "bn" ? "মি" : "m"} × {roomLength.toFixed(1)}{lang === "bn" ? "মি" : "m"} · {totalAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"}
+                    </div>
+
+                    {/* Placed Furniture Items */}
+                    {placedItems.map((item) => {
+                      const cat = CATALOG.find((c) => c.id === item.catId);
+                      if (!cat) return null;
+
+                      const isSelected = selectedItemId === item.id;
+                      const isDark = cat.fill === "#5C3A21" || cat.fill === "#9C6B3C" || cat.fill === "#6D2E1F" || cat.fill === "#4A3528";
+                      const itemWidthPx = cat.wM * pixelsPerMeter;
+                      const itemDepthPx = cat.dM * pixelsPerMeter;
+
+                      return (
+                        <div
+                          key={item.id}
+                          onPointerDown={(e) => handlePointerDownItem(e, item)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedItemId(item.id);
+                          }}
+                          style={{
+                            left: `${item.x * pixelsPerMeter}px`,
+                            top: `${item.y * pixelsPerMeter}px`,
+                            width: `${itemWidthPx}px`,
+                            height: `${itemDepthPx}px`,
+                            transform: `rotate(${item.rot}deg)`,
+                            transformOrigin: "center center",
+                            zIndex: cat.category === "accents" ? 5 : isSelected ? 30 : 15,
+                          }}
+                          className={`absolute cursor-move transition-shadow touch-none select-none ${
+                            isSelected
+                              ? "ring-2 ring-brass shadow-2xl scale-[1.02]"
+                              : "hover:ring-1 hover:ring-bronze/50 shadow-md"
+                          }`}
+                        >
+                          <CADFurniturePiece
+                            cat={cat}
+                            isSelected={isSelected}
+                            isDark={isDark}
+                            lang={lang}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Canvas Floating Hints - hidden on mobile/tablet to avoid obscuring furniture */}
+                  <div className="hidden lg:flex absolute top-3 right-3 bg-bone/90 backdrop-blur-md px-3 py-1 rounded-full border border-ink/10 text-[0.6rem] text-ink/60 font-medium pointer-events-none shadow-sm items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 text-bronze" />
+                    <span>{t("planner.dragHint")}</span>
+                  </div>
+                </div>
+              )}
 
               {/* Selected Item Floating Toolbar */}
               <AnimatePresence>
@@ -1079,51 +1278,57 @@ export default function RoomPlanner() {
             {/* Right Catalog & Analytics Panel (4 Cols) */}
             <div className="lg:col-span-4 space-y-6 w-full min-w-0">
               {/* Spatial Analytics Card */}
-              <div className="p-4 sm:p-6 rounded-sm bg-depth text-bone shadow-xl space-y-4 sm:space-y-5">
-                <div className="flex items-center justify-between border-b border-bone/15 pb-3 sm:pb-4 gap-2">
+              <div className="p-4 sm:p-6 rounded-sm bg-gradient-to-br from-[#122325] via-[#162A2D] to-[#0E1B1D] text-bone shadow-2xl space-y-4 sm:space-y-5 border border-brass/35 relative overflow-hidden">
+                {/* Subtle Luxury Radial Highlight */}
+                <div className="absolute -top-10 -right-10 w-48 h-48 bg-brass/15 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="flex items-center justify-between border-b border-bone/15 pb-3 sm:pb-4 gap-2 relative z-10">
                   <div>
-                    <span className="text-xs uppercase tracking-[0.16em] text-brass font-medium">
-                      {t("planner.totalEstimate")}
+                    <span className="text-xs uppercase tracking-[0.18em] text-brass font-semibold flex items-center gap-1.5">
+                      <Sparkles className="h-3 w-3 text-brass" />
+                      <span>{t("planner.totalEstimate")}</span>
                     </span>
-                    <h3 className="font-body text-2xl sm:text-4xl text-bone font-semibold mt-0.5 tracking-tight tabular-nums flex items-baseline gap-1">
+                    <h3 className="font-body text-2xl sm:text-4xl text-bone font-semibold mt-1 tracking-tight tabular-nums flex items-baseline gap-1">
                       <span className="text-brass font-bold text-[0.85em]">৳</span>
                       <span>{totalEstimate.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}</span>
                     </h3>
                   </div>
-                  <span className="text-xs uppercase tracking-wider text-bone/85 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0 font-medium font-body tabular-nums">
+                  <span className="text-xs uppercase tracking-wider text-brass bg-brass/15 px-3 py-1.5 rounded-full border border-brass/30 whitespace-nowrap shrink-0 font-medium font-body tabular-nums shadow-sm">
                     {lang === "bn" ? `${placedItems.length.toLocaleString("bn-BD")}টি আসবাব` : `${placedItems.length} Pieces`}
                   </span>
                 </div>
 
                 {/* Flow Bar */}
-                <div className="space-y-2">
+                <div className="space-y-2 relative z-10">
                   <div className="flex justify-between text-xs sm:text-sm text-bone/85 font-medium">
                     <span>{t("planner.spaceUtilized")}</span>
                     <span className="font-bold text-brass font-body tabular-nums">
                       {occupiedAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"} ({occupancyPercent}%)
                     </span>
                   </div>
-                  <div className="h-2 w-full bg-bone/15 rounded-full overflow-hidden">
+                  <div className="h-2.5 w-full bg-bone/10 rounded-full overflow-hidden p-0.5 border border-bone/10">
                     <div
-                      className="h-full bg-brass transition-all duration-500 rounded-full"
+                      className="h-full bg-gradient-to-r from-brass via-amber-400 to-brass transition-all duration-500 rounded-full shadow-sm"
                       style={{ width: `${occupancyPercent}%` }}
                     />
                   </div>
                   <p className="text-xs text-bone/80 flex items-center justify-between pt-1">
                     <span>{t("planner.flowRating")}:</span>
-                    <span className="text-bone font-medium">{t(`planner.${flowStatus}`)}</span>
+                    <span className="text-bone font-medium bg-bone/10 px-2 py-0.5 rounded-xs border border-bone/10">
+                      {t(`planner.${flowStatus}`)}
+                    </span>
                   </p>
                 </div>
 
                 {/* Primary Action Buttons */}
-                <div className="pt-2 space-y-2.5">
+                <div className="pt-2 space-y-2.5 relative z-10">
                   <a
                     href={waUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-brass text-depth hover:bg-bone rounded-full py-3 sm:py-3.5 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-medium transition-colors shadow-lg cursor-pointer text-center"
+                    className="w-full inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-brass via-[#DEB778] to-brass text-depth hover:from-bone hover:to-bone rounded-full py-3.5 px-4 text-xs sm:text-sm uppercase tracking-[0.14em] font-bold transition-all shadow-xl hover:shadow-2xl cursor-pointer text-center group"
                   >
-                    <MessageCircle className="h-4 w-4 shrink-0" />
+                    <MessageCircle className="h-4 w-4 shrink-0 group-hover:scale-110 transition-transform" />
                     <span>{t("planner.sendWa")}</span>
                   </a>
 
@@ -1131,7 +1336,7 @@ export default function RoomPlanner() {
                     type="button"
                     onClick={handleDownloadPdf}
                     disabled={pdfGenerating || placedItems.length === 0}
-                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-light transition-colors disabled:opacity-50 cursor-pointer text-center"
+                    className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-medium transition-colors disabled:opacity-50 cursor-pointer text-center bg-bone/5 hover:bg-bone/10"
                   >
                     <Download className="h-4 w-4 shrink-0" />
                     <span>{pdfGenerating ? (lang === "bn" ? "প্রস্তুত হচ্ছে..." : "Generating...") : t("planner.exportPdf")}</span>
@@ -1158,15 +1363,16 @@ export default function RoomPlanner() {
               </div>
 
               {/* Furniture Catalog Drawer */}
-              <div className="p-4 sm:p-6 rounded-sm bg-sand/40 border border-ink/10 shadow-sm space-y-4">
+              <div className="p-4 sm:p-6 rounded-sm bg-sand/50 border border-brass/25 shadow-md space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-heading text-lg sm:text-xl text-ink font-light">
-                    {t("planner.catalog")}
+                  <h3 className="font-heading text-lg sm:text-xl text-ink font-medium flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-brass" />
+                    <span>{t("planner.catalog")}</span>
                   </h3>
                   <button
                     type="button"
                     onClick={handleClearCanvas}
-                    className="text-[0.64rem] uppercase tracking-wider text-ink/45 hover:text-red-600 transition-colors cursor-pointer"
+                    className="text-[0.64rem] uppercase tracking-wider text-ink/45 hover:text-red-600 transition-colors cursor-pointer font-medium"
                   >
                     {t("planner.clear")}
                   </button>
@@ -1181,10 +1387,10 @@ export default function RoomPlanner() {
                         key={c.id}
                         type="button"
                         onClick={() => setActiveCatalogCategory(c.id)}
-                        className={`px-2.5 sm:px-3 py-1 rounded-full text-[0.65rem] sm:text-[0.68rem] transition-colors cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-full text-[0.65rem] sm:text-xs transition-all cursor-pointer ${
                           active
-                            ? "bg-depth text-bone font-medium"
-                            : "bg-bone border border-ink/10 text-ink/70 hover:border-ink/30"
+                            ? "bg-depth text-bone font-medium shadow-sm"
+                            : "bg-bone border border-ink/10 text-ink/75 hover:border-brass/50 hover:bg-bone"
                         }`}
                       >
                         {lang === "bn" ? c.labelBn : c.labelEn}
@@ -1204,11 +1410,11 @@ export default function RoomPlanner() {
                       key={catItem.id}
                       type="button"
                       onClick={() => handleAddItem(catItem)}
-                      className="w-full p-2.5 sm:p-3 rounded-sm bg-bone border border-ink/8 hover:border-brass hover:shadow-md transition-all flex items-center justify-between text-left group cursor-pointer gap-2"
+                      className="w-full p-3 rounded-sm bg-bone border border-ink/8 hover:border-brass hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center justify-between text-left group cursor-pointer gap-2.5"
                     >
-                      <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
+                      <div className="flex items-center gap-3 min-w-0 flex-1">
                         <div
-                          className="h-8 w-8 rounded-xs border flex items-center justify-center font-bold text-[0.62rem] sm:text-[0.65rem] shrink-0"
+                          className="h-9 w-9 rounded-xs border flex items-center justify-center font-bold text-[0.65rem] shrink-0 shadow-inner group-hover:scale-105 transition-transform"
                           style={{ backgroundColor: catItem.fill, color: catItem.color }}
                         >
                           {catItem.wM}m
@@ -1217,7 +1423,7 @@ export default function RoomPlanner() {
                           <p className="text-xs sm:text-sm font-medium text-ink group-hover:text-bronze transition-colors truncate">
                             {lang === "bn" ? catItem.nameBn : catItem.nameEn}
                           </p>
-                          <p className="text-[0.6rem] sm:text-[0.62rem] text-ink/50 font-mono truncate">
+                          <p className="text-[0.6rem] sm:text-[0.64rem] text-ink/50 font-mono truncate">
                             {catItem.wM}m × {catItem.dM}m · {catItem.timber}
                           </p>
                         </div>
@@ -1227,8 +1433,8 @@ export default function RoomPlanner() {
                         <span className="text-xs sm:text-sm font-bold text-ink whitespace-nowrap tabular-nums">
                           ৳{catItem.price.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                         </span>
-                        <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-sand/60 text-ink/60 group-hover:bg-brass group-hover:text-depth flex items-center justify-center transition-colors shrink-0">
-                          <Plus className="h-3 w-3" />
+                        <div className="h-6 w-6 rounded-full bg-sand/80 text-ink/70 group-hover:bg-brass group-hover:text-depth flex items-center justify-center transition-all shrink-0 shadow-2xs group-hover:scale-110">
+                          <Plus className="h-3.5 w-3.5" />
                         </div>
                       </div>
                     </button>
