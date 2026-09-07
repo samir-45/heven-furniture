@@ -11,7 +11,15 @@ import {
   Maximize2,
   Minimize2,
   Eye,
+  Sliders,
+  ChevronDown,
+  ChevronUp,
+  MessageCircle,
 } from "lucide-react";
+import { useLang } from "./LanguageProvider";
+
+const fmt = (n, lang = "en") =>
+  "৳" + Math.round(n).toLocaleString(lang === "bn" ? "bn-BD" : "en-BD", { maximumFractionDigits: 0 });
 
 /**
  * Procedural Realistic Woodgrain Texture Generator
@@ -144,7 +152,21 @@ export default function Furniture3DCanvas({
   width,
   depth,
   height,
+  categories = [],
+  woods = [],
+  fabrics = [],
+  finishes = [],
+  estimate = null,
+  onSelectCategory = () => {},
+  onSelectWood = () => {},
+  onSelectFabric = () => {},
+  onSelectFinish = () => {},
+  onUpdateWidth = () => {},
+  onUpdateDepth = () => {},
+  onUpdateHeight = () => {},
+  waMessage = "",
 }) {
+  const { t, lang } = useLang();
   const rootRef = useRef(null);
   const mountRef = useRef(null);
   const [autoRotate, setAutoRotate] = useState(true);
@@ -153,6 +175,8 @@ export default function Furniture3DCanvas({
   const [isSnapshotting, setIsSnapshotting] = useState(false);
   const [flashEffect, setFlashEffect] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(true);
+  const [customizerTab, setCustomizerTab] = useState("piece"); // "piece" | "wood" | "fabric" | "finish" | "size"
 
   const controlsRef = useRef(null);
   const cameraRef = useRef(null);
@@ -579,34 +603,53 @@ export default function Furniture3DCanvas({
       addMesh(aprGeoX, woodMat, [0, topOfTable - topThick - 0.03, D / 2 - 0.12]);
       addMesh(aprGeoX, woodMat, [0, topOfTable - topThick - 0.03, -D / 2 + 0.12]);
 
-      // Surrounding Dining Chairs with Upholstered Seats
+      // Surrounding Dining Chairs with Upholstered Seats (Zero Z-fighting joinery)
       const createChair = (x, z, rotY) => {
         const chairGroup = new THREE.Group();
         chairGroup.position.set(x, 0, z);
         chairGroup.rotation.y = rotY;
 
-        // Seat Cushion
-        const cSeat = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.06, 0.44), fabricMat);
-        cSeat.position.y = 0.46;
+        // Solid Timber Seat Base Support Frame
+        const cFrame = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.03, 0.40), woodMat);
+        cFrame.position.set(0, 0.425, 0);
+        cFrame.castShadow = true;
+        cFrame.receiveShadow = true;
+        chairGroup.add(cFrame);
+
+        // Tailored Inset Seat Cushion (resting cleanly on frame with clearance from backrest)
+        const cSeat = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.045, 0.36), fabricMat);
+        cSeat.position.set(0, 0.46, 0.015);
         cSeat.castShadow = true;
+        cSeat.receiveShadow = true;
         chairGroup.add(cSeat);
 
-        // Curved Backrest
-        const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.44, 0.42, 0.04), woodMat);
-        cBack.position.set(0, 0.67, -0.2);
+        // Solid Hardwood Ergonomic Backrest Panel (clearly separated in Y and Z, zero coplanar overlap)
+        const cBack = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.26, 0.024), woodMat);
+        cBack.position.set(0, 0.68, -0.20);
         cBack.castShadow = true;
+        cBack.receiveShadow = true;
         chairGroup.add(cBack);
 
-        // Chair Legs
-        const cLegGeo = new THREE.CylinderGeometry(0.018, 0.014, 0.46, 12);
+        // 2 Front Turned Legs
+        const frontLegGeo = new THREE.CylinderGeometry(0.018, 0.013, 0.41, 12);
         [
-          [0.18, 0.18],
-          [-0.18, 0.18],
-          [0.18, -0.18],
-          [-0.18, -0.18],
+          [0.17, 0.16],
+          [-0.17, 0.16],
         ].forEach(([cx, cz]) => {
-          const cl = new THREE.Mesh(cLegGeo, woodMat);
-          cl.position.set(cx, 0.23, cz);
+          const cl = new THREE.Mesh(frontLegGeo, woodMat);
+          cl.position.set(cx, 0.205, cz);
+          cl.castShadow = true;
+          chairGroup.add(cl);
+        });
+
+        // 2 Rear Upright Legs that gracefully extend upward to support the backrest
+        const rearLegGeo = new THREE.CylinderGeometry(0.018, 0.013, 0.78, 12);
+        [
+          [0.18, -0.19],
+          [-0.18, -0.19],
+        ].forEach(([cx, cz]) => {
+          const cl = new THREE.Mesh(rearLegGeo, woodMat);
+          cl.position.set(cx, 0.39, cz);
           cl.castShadow = true;
           chairGroup.add(cl);
         });
@@ -689,6 +732,67 @@ export default function Furniture3DCanvas({
       const lumbarGeo = new THREE.BoxGeometry(W * 0.55, 0.18, 0.08);
       const lumbarMat = new THREE.MeshStandardMaterial({ color: "#C9A66B", roughness: 0.75 });
       addMesh(lumbarGeo, lumbarMat, [0, legH + seatH + 0.08, -D / 2 + 0.22], [-0.1, 0, 0]);
+
+    } else if (category.id === "desk") {
+      // Bespoke Executive Study Desk
+      const topThick = 0.045;
+      const legH = H - topThick;
+
+      // Solid Hardwood Beveled Desktop Surface
+      const topGeo = new THREE.BoxGeometry(W, topThick, D);
+      addMesh(topGeo, woodMat, [0, H - topThick / 2, 0]);
+
+      // Luxury Inlaid Leather / Fabric Writing Blotter Pad
+      const blotterW = Math.min(0.85, W * 0.54);
+      const blotterD = Math.min(0.50, D * 0.65);
+      const blotterThick = 0.006;
+      const blotterGeo = new THREE.BoxGeometry(blotterW, blotterThick, blotterD);
+      addMesh(blotterGeo, fabricMat, [0, H + blotterThick / 2, 0.02]);
+
+      // Dual Storage Drawer Cassettes (Left & Right)
+      const boxW = Math.min(0.38, (W - 0.56) / 2);
+      const boxH = 0.14;
+      const boxD = D * 0.82;
+      const boxY = H - topThick - boxH / 2;
+      const boxGeo = new THREE.BoxGeometry(boxW, boxH, boxD);
+
+      const leftBoxX = -W / 2 + boxW / 2 + 0.06;
+      const rightBoxX = W / 2 - boxW / 2 - 0.06;
+
+      addMesh(boxGeo, woodMat, [leftBoxX, boxY, 0]);
+      addMesh(boxGeo, woodMat, [rightBoxX, boxY, 0]);
+
+      // Drawer Faces with Subtle Shadow Reveal
+      const frontGeo = new THREE.BoxGeometry(boxW - 0.015, boxH - 0.015, 0.018);
+      addMesh(frontGeo, woodMat, [leftBoxX, boxY, boxD / 2 + 0.009]);
+      addMesh(frontGeo, woodMat, [rightBoxX, boxY, boxD / 2 + 0.009]);
+
+      // Architectural Brushed Brass Pull Handles
+      const pullGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.12, 16);
+      addMesh(pullGeo, brassMat, [leftBoxX, boxY, boxD / 2 + 0.024], [0, 0, Math.PI / 2]);
+      addMesh(pullGeo, brassMat, [rightBoxX, boxY, boxD / 2 + 0.024], [0, 0, Math.PI / 2]);
+
+      // Recessed Privacy Modesty Panel
+      const modestyW = W - 2 * boxW - 0.16;
+      const modestyH = 0.28;
+      const modestyGeo = new THREE.BoxGeometry(modestyW, modestyH, 0.02);
+      addMesh(modestyGeo, woodMat, [0, H - topThick - modestyH / 2, -D / 2 + 0.10]);
+
+      // 4 Turned Timber Legs with Polished Brass Ferrules
+      const legGeo = new THREE.CylinderGeometry(0.034, 0.022, legH, 16);
+      const ferruleGeo = new THREE.CylinderGeometry(0.025, 0.022, legH * 0.32, 16);
+      const legX = W / 2 - 0.08;
+      const legZ = D / 2 - 0.08;
+
+      [
+        [legX, legZ],
+        [-legX, legZ],
+        [legX, -legZ],
+        [-legX, -legZ],
+      ].forEach(([lx, lz]) => {
+        addMesh(legGeo, woodMat, [lx, legH / 2, lz]);
+        addMesh(ferruleGeo, brassMat, [lx, (legH * 0.32) / 2, lz]);
+      });
     }
 
     // 3. Dynamic Camera Auto-Framing: Calibrated so furniture fills 75% of viewport!
@@ -811,10 +915,17 @@ export default function Furniture3DCanvas({
         }`}
       />
 
-      {/* Top Left Floating Dimension Badge */}
-      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 bg-bone/90 backdrop-blur-md border border-ink/10 px-3 py-1.5 rounded-full text-xs tracking-wider uppercase text-ink/80 font-medium z-10 flex items-center gap-1.5 shadow-xs pointer-events-none">
-        <Sparkles className="h-3.5 w-3.5 text-bronze shrink-0" />
-        <span className="font-mono text-[0.72rem] tracking-tight">{width} × {depth} × {height} cm</span>
+      {/* Top Left Floating Dimension Badge & Fullscreen Price */}
+      <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex items-center gap-1.5 z-10 pointer-events-none">
+        <div className="bg-bone/90 backdrop-blur-md border border-ink/10 px-3 py-1.5 rounded-full text-xs tracking-wider uppercase text-ink/80 font-medium flex items-center gap-1.5 shadow-xs">
+          <Sparkles className="h-3.5 w-3.5 text-bronze shrink-0" />
+          <span className="font-mono text-[0.72rem] tracking-tight">{width} × {depth} × {height} cm</span>
+        </div>
+        {isFullscreen && estimate && (
+          <div className="bg-bone/90 backdrop-blur-md border border-ink/10 px-3 py-1.5 rounded-full text-xs tracking-wider text-ink/85 font-semibold hidden xs:flex items-center gap-1 shadow-xs">
+            <span className="text-bronze font-bold">{fmt(estimate, lang)}</span>
+          </div>
+        )}
       </div>
 
       {/* Top Right Studio Tools */}
@@ -822,7 +933,11 @@ export default function Furniture3DCanvas({
         {/* Material Tag */}
         <div className="bg-bone/90 backdrop-blur-md border border-ink/10 px-3 py-1.5 rounded-full text-xs tracking-wider text-ink/75 font-medium shadow-xs uppercase pointer-events-none hidden sm:inline-flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-bronze" />
-          <span>{wood.id} {category.hasFabric && `· ${fabric.id}`}</span>
+          <span>
+            {t(`config.wood.${wood.id}`)}
+            {category.hasFabric && ` · ${t(`config.fabric.${fabric.id}`)}`}
+            {isFullscreen && finish && ` · ${t(`config.finish.${finish.id}`)}`}
+          </span>
         </div>
 
         {/* Day / Evening Mood Switcher */}
@@ -865,11 +980,286 @@ export default function Furniture3DCanvas({
         </button>
       </div>
 
-      {/* Bottom Center 360° Drag Hint */}
-      <div className="hidden xs:flex absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 bg-bone/85 backdrop-blur-md border border-ink/10 px-3 py-1 rounded-full text-[0.62rem] font-mono tracking-wider uppercase text-ink/60 font-medium z-10 items-center gap-1.5 shadow-xs pointer-events-none">
-        <Rotate3d className="h-3 w-3 text-bronze animate-spin-slow" />
-        <span>360° Studio · Drag to Rotate</span>
-      </div>
+      {/* Bottom Center 360° Drag Hint (hidden in fullscreen to leave space for customizer) */}
+      {!isFullscreen && (
+        <div className="hidden xs:flex absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 bg-bone/85 backdrop-blur-md border border-ink/10 px-3 py-1 rounded-full text-[0.62rem] font-mono tracking-wider uppercase text-ink/60 font-medium z-10 items-center gap-1.5 shadow-xs pointer-events-none">
+          <Rotate3d className="h-3 w-3 text-bronze animate-spin-slow" />
+          <span>360° Studio · Drag to Rotate</span>
+        </div>
+      )}
+
+      {/* Fullscreen Studio Customizer Dock */}
+      {isFullscreen && (
+        <>
+          {!isCustomizerOpen ? (
+            <button
+              type="button"
+              onClick={() => setIsCustomizerOpen(true)}
+              className="absolute bottom-14 sm:bottom-4 left-3 sm:left-4 z-20 bg-bone/95 hover:bg-bone backdrop-blur-xl border border-ink/10 text-ink/85 px-3.5 py-2 rounded-full text-xs font-medium tracking-wide shadow-lg flex items-center gap-2 transition-all cursor-pointer group"
+            >
+              <Sliders className="h-3.5 w-3.5 text-bronze group-hover:rotate-45 transition-transform" />
+              <span className="font-semibold">{t("config.customize")}</span>
+              <span className="text-[0.68rem] text-ink/50 capitalize hidden xs:inline">
+                ({t(`config.cat.${category.id}`)} · {t(`config.wood.${wood.id}`)})
+              </span>
+              <ChevronUp className="h-3.5 w-3.5 text-ink/40" />
+            </button>
+          ) : (
+            <div className="absolute bottom-14 sm:bottom-4 left-3 right-3 sm:left-4 sm:right-auto sm:max-w-xl z-20 bg-bone/95 backdrop-blur-xl border border-ink/10 rounded-2xl p-3 sm:p-4 shadow-2xl transition-all animate-fadeIn">
+              {/* Dock Header: Category / Tab Pills + Minimize */}
+              <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-ink/8">
+                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setCustomizerTab("piece")}
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      customizerTab === "piece"
+                        ? "bg-depth text-bone font-medium shadow-xs"
+                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                    }`}
+                  >
+                    {t("config.tab.piece")}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomizerTab("wood")}
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      customizerTab === "wood"
+                        ? "bg-depth text-bone font-medium shadow-xs"
+                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                    }`}
+                  >
+                    {t("config.tab.timber")}
+                  </button>
+
+                  {category.hasFabric && (
+                    <button
+                      type="button"
+                      onClick={() => setCustomizerTab("fabric")}
+                      className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                        customizerTab === "fabric"
+                          ? "bg-depth text-bone font-medium shadow-xs"
+                          : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                      }`}
+                    >
+                      {t("config.tab.fabric")}
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomizerTab("finish")}
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      customizerTab === "finish"
+                        ? "bg-depth text-bone font-medium shadow-xs"
+                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                    }`}
+                  >
+                    {t("config.tab.finish")}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCustomizerTab("size")}
+                    className={`px-2.5 py-1 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap ${
+                      customizerTab === "size"
+                        ? "bg-depth text-bone font-medium shadow-xs"
+                        : "text-ink/65 hover:text-ink hover:bg-sand/40"
+                    }`}
+                  >
+                    {t("config.tab.size")}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {estimate && (
+                    <span className="text-xs font-bold text-ink tabular-nums hidden xs:inline-block">
+                      {fmt(estimate, lang)}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsCustomizerOpen(false)}
+                    title={t("config.hideControls")}
+                    className="p-1 rounded-full hover:bg-sand/60 text-ink/60 hover:text-ink transition-colors cursor-pointer"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Dock Body */}
+              {customizerTab === "piece" && (
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                  {categories.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => onSelectCategory(c)}
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer whitespace-nowrap border ${
+                        category.id === c.id
+                          ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                          : "border-ink/12 text-ink/70 hover:border-ink/30 bg-sand/30"
+                      }`}
+                    >
+                      {t(`config.cat.${c.id}`)}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {customizerTab === "wood" && (
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                  {woods.map((w) => (
+                    <button
+                      key={w.id}
+                      type="button"
+                      onClick={() => onSelectWood(w)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer border ${
+                        wood.id === w.id
+                          ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                          : "border-ink/12 text-ink/70 hover:border-ink/30 bg-sand/30"
+                      }`}
+                    >
+                      <span
+                        className="h-3 w-3 rounded-full border border-ink/20 shrink-0"
+                        style={{ backgroundColor: w.swatch }}
+                      />
+                      <span>{t(`config.wood.${w.id}`)}</span>
+                      {w.mult > 1 && (
+                        <span className="text-[0.62rem] text-ink/50 font-mono">
+                          +{Math.round((w.mult - 1) * 100)}%
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {customizerTab === "fabric" && category.hasFabric && (
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                  {fabrics.map((f) => (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => onSelectFabric(f)}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer border ${
+                        fabric.id === f.id
+                          ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                          : "border-ink/12 text-ink/70 hover:border-ink/30 bg-sand/30"
+                      }`}
+                    >
+                      <span
+                        className="h-3 w-3 rounded-full border border-ink/20 shrink-0"
+                        style={{ backgroundColor: f.swatch }}
+                      />
+                      <span>{t(`config.fabric.${f.id}`)}</span>
+                      {f.mult > 1 && (
+                        <span className="text-[0.62rem] text-ink/50 font-mono">
+                          +{Math.round((f.mult - 1) * 100)}%
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {customizerTab === "finish" && (
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                  {finishes.map((fn) => (
+                    <button
+                      key={fn.id}
+                      type="button"
+                      onClick={() => onSelectFinish(fn)}
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer border ${
+                        finish.id === fn.id
+                          ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
+                          : "border-ink/12 text-ink/70 hover:border-ink/30 bg-sand/30"
+                      }`}
+                    >
+                      <span>{t(`config.finish.${fn.id}`)}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {customizerTab === "size" && category.dims && (
+                <div className="grid grid-cols-3 gap-2.5 py-1">
+                  {/* Width */}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[0.68rem] text-ink/75 font-medium">
+                      <span>{t("config.width")}</span>
+                      <span className="font-mono text-ink font-bold">{width}cm</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={category.dims.w.min}
+                      max={category.dims.w.max}
+                      step={category.dims.w.step || 1}
+                      value={width}
+                      onChange={(e) => onUpdateWidth(Number(e.target.value))}
+                      className="haven-range-slider w-full h-1.5 rounded-lg cursor-pointer appearance-none bg-ink/15"
+                    />
+                  </div>
+
+                  {/* Depth */}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[0.68rem] text-ink/75 font-medium">
+                      <span>{t("config.depth")}</span>
+                      <span className="font-mono text-ink font-bold">{depth}cm</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={category.dims.d.min}
+                      max={category.dims.d.max}
+                      step={category.dims.d.step || 1}
+                      value={depth}
+                      onChange={(e) => onUpdateDepth(Number(e.target.value))}
+                      className="haven-range-slider w-full h-1.5 rounded-lg cursor-pointer appearance-none bg-ink/15"
+                    />
+                  </div>
+
+                  {/* Height */}
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[0.68rem] text-ink/75 font-medium">
+                      <span>{t("config.height")}</span>
+                      <span className="font-mono text-ink font-bold">{height}cm</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={category.dims.h.min}
+                      max={category.dims.h.max}
+                      step={category.dims.h.step || 1}
+                      value={height}
+                      onChange={(e) => onUpdateHeight(Number(e.target.value))}
+                      className="haven-range-slider w-full h-1.5 rounded-lg cursor-pointer appearance-none bg-ink/15"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Dock Footer: WhatsApp Enquiry Shortcut */}
+              {waMessage && (
+                <div className="mt-2.5 pt-2 border-t border-ink/8 flex items-center justify-between text-xs">
+                  <span className="text-ink/60 text-[0.68rem] hidden xs:inline">
+                    {t("config.noObligation")}
+                  </span>
+                  <a
+                    href={waMessage}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-700 hover:bg-emerald-800 text-bone text-xs font-medium shadow-xs transition-colors ml-auto"
+                  >
+                    <MessageCircle className="h-3 w-3 fill-current" />
+                    <span>{t("config.send")}</span>
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
 
       {/* Bottom Right Camera Presets & Orbit Action Controls */}
       <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 flex items-center gap-1 z-10 bg-bone/90 backdrop-blur-md p-1 rounded-full border border-ink/10 shadow-sm">

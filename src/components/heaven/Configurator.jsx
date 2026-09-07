@@ -57,6 +57,16 @@ const CATEGORIES = [
       h: { min: 75, max: 100, default: 85, step: 1 },
     },
   },
+  {
+    id: "desk",
+    base: 42000,
+    hasFabric: true,
+    dims: {
+      w: { min: 120, max: 210, default: 160, step: 2 },
+      d: { min: 60, max: 95, default: 75, step: 2 },
+      h: { min: 72, max: 80, default: 76, step: 1 },
+    },
+  },
 ];
 
 const WOODS = [
@@ -407,13 +417,7 @@ export default function Configurator() {
               {/* Dynamic 3D WebGL Studio Visualizer */}
               <div>
                 <div className="text-xs uppercase tracking-[0.16em] text-ink/75 font-semibold mb-2.5 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 font-medium">
-                    <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                    </span>
-                    <span>{t("config.visualPreview")}</span>
-                  </span>
+                  <span>{t("config.visualPreview")}</span>
                   <span className="text-bronze font-medium tracking-wider text-xs">
                     3D Studio WebGL
                   </span>
@@ -426,6 +430,19 @@ export default function Configurator() {
                   width={width}
                   depth={depth}
                   height={height}
+                  categories={CATEGORIES}
+                  woods={WOODS}
+                  fabrics={FABRICS}
+                  finishes={FINISHES}
+                  estimate={estimate}
+                  onSelectCategory={handleCategoryChange}
+                  onSelectWood={setWood}
+                  onSelectFabric={setFabric}
+                  onSelectFinish={setFinish}
+                  onUpdateWidth={setWidth}
+                  onUpdateDepth={setDepth}
+                  onUpdateHeight={setHeight}
+                  waMessage={waMessage}
                 />
               </div>
 
