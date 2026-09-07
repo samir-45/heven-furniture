@@ -11,6 +11,7 @@ import {
   RefreshCw,
   Layers,
   Ruler,
+  Copy,
 } from "lucide-react";
 import Nav from "@/components/heaven/Nav";
 import Footer from "@/components/heaven/Footer";
@@ -339,14 +340,40 @@ export default function RoomPlanner() {
     setSelectedItemId(null);
   };
 
-  // Add item from catalog
+  // Add item from catalog (safely centered and clamped within room bounds)
   const handleAddItem = (catItem) => {
+    const startX = Math.max(0, Math.min(roomWidth - catItem.wM, (roomWidth - catItem.wM) / 2));
+    const startY = Math.max(0, Math.min(roomLength - catItem.dM, (roomLength - catItem.dM) / 2));
     const newItem = {
       id: `item-${Date.now()}`,
       catId: catItem.id,
-      x: Math.max(0.2, (roomWidth - catItem.wM) / 2),
-      y: Math.max(0.2, (roomLength - catItem.dM) / 2),
+      x: Math.round(startX * 10) / 10,
+      y: Math.round(startY * 10) / 10,
       rot: 0,
+    };
+    setPlacedItems((prev) => [...prev, newItem]);
+    setSelectedItemId(newItem.id);
+  };
+
+  // Duplicate selected item with slight offset
+  const handleDuplicateSelected = () => {
+    if (!selectedItemId) return;
+    const original = placedItems.find((p) => p.id === selectedItemId);
+    if (!original) return;
+    const cat = CATALOG.find((c) => c.id === original.catId);
+    const isRot = original.rot % 180 !== 0;
+    const wM = cat ? (isRot ? cat.dM : cat.wM) : 1;
+    const dM = cat ? (isRot ? cat.wM : cat.dM) : 1;
+
+    const newX = Math.min(Math.max(0, roomWidth - wM * 0.5), original.x + 0.3);
+    const newY = Math.min(Math.max(0, roomLength - dM * 0.5), original.y + 0.3);
+
+    const newItem = {
+      id: `item-${Date.now()}`,
+      catId: original.catId,
+      x: Math.round(newX * 10) / 10,
+      y: Math.round(newY * 10) / 10,
+      rot: original.rot,
     };
     setPlacedItems((prev) => [...prev, newItem]);
     setSelectedItemId(newItem.id);
@@ -386,13 +413,80 @@ export default function RoomPlanner() {
     setSelectedItemId(null);
   };
 
+  // Room dimension update handlers with boundary clamping
+  const clampItemsWithinBounds = (newW, newL) => {
+    setPlacedItems((prev) =>
+      prev.map((item) => {
+        const cat = CATALOG.find((c) => c.id === item.catId);
+        const isRot = item.rot % 180 !== 0;
+        const wM = cat ? (isRot ? cat.dM : cat.wM) : 1;
+        const dM = cat ? (isRot ? cat.wM : cat.dM) : 1;
+        const maxX = Math.max(0, newW - wM * 0.5);
+        const maxY = Math.max(0, newL - dM * 0.5);
+        const clampedX = Math.min(Math.max(0, item.x), maxX);
+        const clampedY = Math.min(Math.max(0, item.y), maxY);
+        return item.x !== clampedX || item.y !== clampedY
+          ? { ...item, x: clampedX, y: clampedY }
+          : item;
+      })
+    );
+  };
+
+  const handleWidthChange = (val) => {
+    if (val === "") {
+      setRoomWidth("");
+      return;
+    }
+    const num = parseFloat(val);
+    if (isNaN(num)) return;
+    setRoomWidth(num);
+    if (num >= 3 && num <= 12) {
+      clampItemsWithinBounds(num, roomLength);
+    }
+  };
+
+  const handleWidthBlur = () => {
+    const num = parseFloat(roomWidth);
+    const safe = isNaN(num) || num < 3 ? 3 : Math.min(12, num);
+    const rounded = Math.round(safe * 10) / 10;
+    setRoomWidth(rounded);
+    clampItemsWithinBounds(rounded, roomLength);
+  };
+
+  const handleLengthChange = (val) => {
+    if (val === "") {
+      setRoomLength("");
+      return;
+    }
+    const num = parseFloat(val);
+    if (isNaN(num)) return;
+    setRoomLength(num);
+    if (num >= 3 && num <= 12) {
+      clampItemsWithinBounds(roomWidth, num);
+    }
+  };
+
+  const handleLengthBlur = () => {
+    const num = parseFloat(roomLength);
+    const safe = isNaN(num) || num < 3 ? 3 : Math.min(12, num);
+    const rounded = Math.round(safe * 10) / 10;
+    setRoomLength(rounded);
+    clampItemsWithinBounds(roomWidth, rounded);
+  };
+
   // Dragging logic
   const handlePointerDownItem = (e, item) => {
     e.stopPropagation();
     setSelectedItemId(item.id);
 
-    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+    const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY);
+    if (clientX === undefined || clientY === undefined) return;
+
+    const cat = CATALOG.find((c) => c.id === item.catId);
+    const isRot = item.rot % 180 !== 0;
+    const wM = cat ? (isRot ? cat.dM : cat.wM) : 1;
+    const dM = cat ? (isRot ? cat.wM : cat.dM) : 1;
 
     setDragState({
       itemId: item.id,
@@ -400,6 +494,8 @@ export default function RoomPlanner() {
       startY: clientY,
       origItemX: item.x,
       origItemY: item.y,
+      wM,
+      dM,
     });
   };
 
@@ -407,23 +503,15 @@ export default function RoomPlanner() {
     (e) => {
       if (!dragState) return;
 
-      const clientX = e.clientX || (e.touches && e.touches[0]?.clientX);
-      const clientY = e.clientY || (e.touches && e.touches[0]?.clientY);
+      const clientX = e.clientX ?? (e.touches && e.touches[0]?.clientX);
+      const clientY = e.clientY ?? (e.touches && e.touches[0]?.clientY);
       if (clientX === undefined || clientY === undefined) return;
 
       const deltaX = (clientX - dragState.startX) / pixelsPerMeter;
       const deltaY = (clientY - dragState.startY) / pixelsPerMeter;
 
-      const catInfo = CATALOG.find((c) => {
-        const it = placedItems.find((p) => p.id === dragState.itemId);
-        return it && c.id === it.catId;
-      });
-
-      const wM = catInfo ? catInfo.wM : 1;
-      const dM = catInfo ? catInfo.dM : 1;
-
-      const newX = Math.max(0, Math.min(roomWidth - wM * 0.5, dragState.origItemX + deltaX));
-      const newY = Math.max(0, Math.min(roomLength - dM * 0.5, dragState.origItemY + deltaY));
+      const newX = Math.max(0, Math.min(roomWidth - dragState.wM * 0.5, dragState.origItemX + deltaX));
+      const newY = Math.max(0, Math.min(roomLength - dragState.dM * 0.5, dragState.origItemY + deltaY));
 
       setPlacedItems((prev) =>
         prev.map((item) =>
@@ -431,7 +519,7 @@ export default function RoomPlanner() {
         )
       );
     },
-    [dragState, pixelsPerMeter, roomWidth, roomLength, placedItems]
+    [dragState, pixelsPerMeter, roomWidth, roomLength]
   );
 
   const handlePointerUp = useCallback(() => {
@@ -439,23 +527,21 @@ export default function RoomPlanner() {
   }, []);
 
   useEffect(() => {
+    if (!dragState) return;
+
+    const handleWindowPointerMove = (e) => {
+      handlePointerMove(e);
+    };
     const endDrag = () => setDragState(null);
+
+    window.addEventListener("pointermove", handleWindowPointerMove);
     window.addEventListener("pointerup", endDrag);
-    window.addEventListener("mouseup", endDrag);
-    window.addEventListener("touchend", endDrag);
     window.addEventListener("pointercancel", endDrag);
 
-    if (dragState) {
-      window.addEventListener("pointermove", handlePointerMove);
-      window.addEventListener("touchmove", handlePointerMove);
-    }
     return () => {
+      window.removeEventListener("pointermove", handleWindowPointerMove);
       window.removeEventListener("pointerup", endDrag);
-      window.removeEventListener("mouseup", endDrag);
-      window.removeEventListener("touchend", endDrag);
       window.removeEventListener("pointercancel", endDrag);
-      window.removeEventListener("pointermove", handlePointerMove);
-      window.removeEventListener("touchmove", handlePointerMove);
     };
   }, [dragState, handlePointerMove]);
 
@@ -648,15 +734,20 @@ export default function RoomPlanner() {
       doc.setLineWidth(1.2);
       doc.rect(offsetDrawX, offsetDrawY, drawnW, drawnH);
 
-      // Draw Placed Items on Plan
+      // Draw Placed Items on Plan (accurately accounting for center-origin rotation)
       doc.setLineWidth(0.3);
       placedItems.forEach((item) => {
         const cat = CATALOG.find((c) => c.id === item.catId);
         if (cat) {
-          const itemDrawW = (item.rot % 180 === 0 ? cat.wM : cat.dM) * scaleDrawing;
-          const itemDrawH = (item.rot % 180 === 0 ? cat.dM : cat.wM) * scaleDrawing;
-          const ix = offsetDrawX + item.x * scaleDrawing;
-          const iy = offsetDrawY + item.y * scaleDrawing;
+          const isRotated = item.rot % 180 !== 0;
+          const visualW = isRotated ? cat.dM : cat.wM;
+          const visualH = isRotated ? cat.wM : cat.dM;
+          const cx = item.x + cat.wM / 2;
+          const cy = item.y + cat.dM / 2;
+          const ix = offsetDrawX + (cx - visualW / 2) * scaleDrawing;
+          const iy = offsetDrawY + (cy - visualH / 2) * scaleDrawing;
+          const itemDrawW = visualW * scaleDrawing;
+          const itemDrawH = visualH * scaleDrawing;
 
           doc.setFillColor(156, 107, 60);
           doc.rect(ix, iy, itemDrawW, itemDrawH, "F");
@@ -749,45 +840,46 @@ export default function RoomPlanner() {
               </div>
             </div>
 
-            {/* Custom Sliders (if custom or tweakable) */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 sm:gap-6 w-full lg:w-auto pt-2 sm:pt-0 border-t border-ink/8 lg:border-t-0">
-              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {/* Custom Dimensions & Reset Bar */}
+            <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-5 w-full lg:w-auto pt-3 lg:pt-0 border-t border-ink/8 lg:border-t-0 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3.5 text-xs text-ink/75 whitespace-nowrap">
                 <Ruler className="h-3.5 w-3.5 text-bronze shrink-0" />
-                <div className="flex items-center gap-2.5 sm:gap-4 text-xs text-ink/70">
-                  <label className="flex items-center gap-1 sm:gap-1.5 font-medium">
-                    <span>{t("planner.width")}:</span>
-                    <input
-                      type="number"
-                      min={3}
-                      max={12}
-                      step={0.5}
-                      value={roomWidth}
-                      onChange={(e) => setRoomWidth(Math.max(3, Math.min(12, Number(e.target.value))))}
-                      className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs"
-                    />
-                    <span>m</span>
-                  </label>
 
-                  <label className="flex items-center gap-1 sm:gap-1.5 font-medium">
-                    <span>{t("planner.length")}:</span>
-                    <input
-                      type="number"
-                      min={3}
-                      max={12}
-                      step={0.5}
-                      value={roomLength}
-                      onChange={(e) => setRoomLength(Math.max(3, Math.min(12, Number(e.target.value))))}
-                      className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs"
-                    />
-                    <span>m</span>
-                  </label>
-                </div>
+                <label className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
+                  <span>{lang === "bn" ? "প্রস্থ" : "Width"}:</span>
+                  <input
+                    type="number"
+                    min={3}
+                    max={12}
+                    step={0.5}
+                    value={roomWidth}
+                    onChange={(e) => handleWidthChange(e.target.value)}
+                    onBlur={handleWidthBlur}
+                    className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs shadow-2xs focus:outline-none focus:border-brass"
+                  />
+                  <span className="text-ink/60">{lang === "bn" ? "মি" : "m"}</span>
+                </label>
+
+                <label className="inline-flex items-center gap-1.5 font-medium whitespace-nowrap">
+                  <span>{lang === "bn" ? "দৈর্ঘ্য" : "Length"}:</span>
+                  <input
+                    type="number"
+                    min={3}
+                    max={12}
+                    step={0.5}
+                    value={roomLength}
+                    onChange={(e) => handleLengthChange(e.target.value)}
+                    onBlur={handleLengthBlur}
+                    className="w-12 sm:w-14 bg-bone border border-ink/15 rounded-xs px-1.5 sm:px-2 py-1 text-ink text-center font-bold text-xs shadow-2xs focus:outline-none focus:border-brass"
+                  />
+                  <span className="text-ink/60">{lang === "bn" ? "মি" : "m"}</span>
+                </label>
               </div>
 
               <button
                 type="button"
                 onClick={handleResetPreset}
-                className="inline-flex items-center gap-1.5 text-xs text-ink/50 hover:text-ink transition-colors ml-auto cursor-pointer shrink-0"
+                className="inline-flex items-center gap-1.5 text-xs text-ink/50 hover:text-ink transition-colors cursor-pointer shrink-0 whitespace-nowrap ml-auto sm:ml-0"
                 title="Reset to Template Default"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -838,12 +930,12 @@ export default function RoomPlanner() {
                   {/* Room North / Orientation Tag */}
                   <div className="absolute top-2 left-2 flex items-center gap-1 text-[0.56rem] tracking-[0.24em] uppercase text-ink/35 font-bold pointer-events-none">
                     <Compass className="h-3 w-3 text-bronze" />
-                    <span>North Entrance</span>
+                    <span>{lang === "bn" ? "উত্তর প্রবেশদ্বার" : "North Entrance"}</span>
                   </div>
 
                   {/* Room Dimensions Stamp */}
                   <div className="absolute bottom-2 right-2 bg-bone/80 px-2 py-0.5 rounded-xs border border-ink/8 text-[0.58rem] tracking-wider text-ink/50 font-medium pointer-events-none">
-                    {roomWidth.toFixed(1)}m × {roomLength.toFixed(1)}m · {totalAreaM2} m²
+                    {roomWidth.toFixed(1)}{lang === "bn" ? "মি" : "m"} × {roomLength.toFixed(1)}{lang === "bn" ? "মি" : "m"} · {totalAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"}
                   </div>
 
                   {/* Placed Furniture Items */}
@@ -864,7 +956,6 @@ export default function RoomPlanner() {
                           e.stopPropagation();
                           setSelectedItemId(item.id);
                         }}
-                        onPointerUp={() => setDragState(null)}
                         style={{
                           left: `${item.x * pixelsPerMeter}px`,
                           top: `${item.y * pixelsPerMeter}px`,
@@ -874,7 +965,7 @@ export default function RoomPlanner() {
                           transformOrigin: "center center",
                           zIndex: cat.category === "accents" ? 5 : isSelected ? 30 : 15,
                         }}
-                        className={`absolute cursor-move transition-shadow ${
+                        className={`absolute cursor-move transition-shadow touch-none select-none ${
                           isSelected
                             ? "ring-2 ring-brass shadow-2xl scale-[1.02]"
                             : "hover:ring-1 hover:ring-bronze/50 shadow-md"
@@ -954,6 +1045,16 @@ export default function RoomPlanner() {
                     <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
                       <button
                         type="button"
+                        onClick={handleDuplicateSelected}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
+                        title={lang === "bn" ? "কপি করুন" : "Duplicate Piece"}
+                      >
+                        <Copy className="h-3.5 w-3.5 text-bronze" />
+                        <span>{lang === "bn" ? "কপি" : "Duplicate"}</span>
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={handleRotateSelected}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
                       >
@@ -985,11 +1086,11 @@ export default function RoomPlanner() {
                       {t("planner.totalEstimate")}
                     </span>
                     <h3 className="font-heading text-2xl sm:text-4xl text-bone font-light mt-0.5 tracking-tight">
-                      ৳{totalEstimate.toLocaleString("en-BD")}
+                      ৳{totalEstimate.toLocaleString(lang === "bn" ? "bn-BD" : "en-BD")}
                     </h3>
                   </div>
                   <span className="text-xs uppercase tracking-wider text-bone/85 bg-bone/10 px-2.5 py-1 rounded-full border border-bone/10 whitespace-nowrap shrink-0 font-medium">
-                    {placedItems.length} Pieces
+                    {lang === "bn" ? `${placedItems.length.toLocaleString("bn-BD")}টি আসবাব` : `${placedItems.length} Pieces`}
                   </span>
                 </div>
 
@@ -997,7 +1098,9 @@ export default function RoomPlanner() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs sm:text-sm text-bone/85 font-medium">
                     <span>{t("planner.spaceUtilized")}</span>
-                    <span className="font-bold text-brass">{occupiedAreaM2} m² ({occupancyPercent}%)</span>
+                    <span className="font-bold text-brass">
+                      {occupiedAreaM2} {lang === "bn" ? "বর্গমিটার" : "m²"} ({occupancyPercent}%)
+                    </span>
                   </div>
                   <div className="h-2 w-full bg-bone/15 rounded-full overflow-hidden">
                     <div
@@ -1030,12 +1133,22 @@ export default function RoomPlanner() {
                     className="w-full inline-flex items-center justify-center gap-2 border border-bone/25 hover:border-brass text-bone hover:text-brass rounded-full py-2.5 sm:py-3 px-3 sm:px-5 text-xs sm:text-sm uppercase tracking-[0.12em] font-light transition-colors disabled:opacity-50 cursor-pointer text-center"
                   >
                     <Download className="h-4 w-4 shrink-0" />
-                    <span>{pdfGenerating ? "Generating..." : t("planner.exportPdf")}</span>
+                    <span>{pdfGenerating ? (lang === "bn" ? "প্রস্তুত হচ্ছে..." : "Generating...") : t("planner.exportPdf")}</span>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => openConsultation({ format: "home_visit" })}
+                    onClick={() =>
+                      openConsultation({
+                        format: "home",
+                        scope:
+                          selectedTemplate.id === "study"
+                            ? "office"
+                            : selectedTemplate.id === "custom"
+                            ? "living"
+                            : selectedTemplate.id,
+                      })
+                    }
                     className="w-full text-center text-xs sm:text-sm uppercase tracking-[0.14em] text-bone/80 hover:text-brass font-medium transition-colors pt-2 cursor-pointer"
                   >
                     {t("planner.bookMeasure")} →
