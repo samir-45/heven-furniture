@@ -4,10 +4,8 @@ import { ArrowLeft, ArrowRight, Eye, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Reveal from "./Reveal";
 import ProductDetailModal from "./ProductDetailModal";
-import WhatsAppIcon from "./WhatsAppIcon";
 import { useLang } from "./LanguageProvider";
 import { PRODUCTS, CATEGORIES } from "./products";
-import { WHATSAPP_URL } from "./constants";
 
 export default function Collections() {
   const { lang, t } = useLang();
@@ -16,16 +14,6 @@ export default function Collections() {
 
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  const categoryCounts = useMemo(() => {
-    const counts = { all: PRODUCTS.length };
-    CATEGORIES.forEach((c) => {
-      if (c.id !== "all") {
-        counts[c.id] = PRODUCTS.filter((p) => p.category === c.id).length;
-      }
-    });
-    return counts;
-  }, []);
 
   const displayedProducts = useMemo(() => {
     if (activeCategory === "all") return PRODUCTS;
@@ -99,11 +87,10 @@ export default function Collections() {
           </div>
         </div>
 
-        {/* Fluid Category Filter Tabs with Item Count Badges */}
+        {/* Fluid Category Filter Tabs (Framer Motion Pill) */}
         <div className="mb-6 sm:mb-8 flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
           {CATEGORIES.map((c) => {
             const active = activeCategory === c.id;
-            const count = categoryCounts[c.id] ?? 0;
             return (
               <button
                 key={c.id}
@@ -114,9 +101,8 @@ export default function Collections() {
                     trackRef.current.scrollTo({ left: 0, behavior: "smooth" });
                   }
                 }}
-                className={`relative inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all shrink-0 cursor-pointer ${
-                  active ? "text-bone shadow-sm" : "text-ink/75 hover:text-ink bg-sand/50 border border-ink/10"
-                }`}
+                className={`relative px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors shrink-0 cursor-pointer ${active ? "text-bone" : "text-ink/75 hover:text-ink bg-sand/50 border border-ink/10"
+                  }`}
               >
                 {active && (
                   <motion.span
@@ -127,13 +113,6 @@ export default function Collections() {
                 )}
                 <span className="relative z-10">
                   {lang === "bn" ? c.labelBn : c.labelEn}
-                </span>
-                <span
-                  className={`relative z-10 text-[10.5px] px-1.5 py-0.2 rounded-full font-semibold tabular-nums ${
-                    active ? "bg-bone/20 text-bone" : "bg-ink/8 text-ink/65"
-                  }`}
-                >
-                  {count}
                 </span>
               </button>
             );
@@ -147,16 +126,10 @@ export default function Collections() {
         className="no-scrollbar flex gap-4 sm:gap-5 md:gap-6 overflow-x-auto snap-x snap-mandatory px-4 sm:px-6 md:px-10 scroll-pl-4 sm:scroll-pl-6 md:scroll-pl-10 pb-4"
       >
         <AnimatePresence mode="popLayout">
-          {displayedProducts.map((p) => {
+          {displayedProducts.map((p, i) => {
             const title = lang === "bn" ? p.titleBn : p.titleEn;
             const desc = lang === "bn" ? p.descBn : p.descEn;
             const timber = lang === "bn" ? p.timberLabelBn : p.timberLabelEn;
-            const waUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(
-              lang === "bn"
-                ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের হোমপেজের কালেকশন থেকে "${title}" (দাম: ৳${p.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে ও অর্ডার করতে চাই।`
-                : `Hello Heaven Furniture Mart, I would like to enquire about the "${title}" (Starting at ৳${p.price.toLocaleString("en-BD")}) from your featured collection.`
-            )}`;
-
             return (
               <motion.div
                 key={p.id}
@@ -201,50 +174,24 @@ export default function Collections() {
 
                 {/* Content Box */}
                 <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-1.5">
-                    <h3 className="font-heading font-light text-xl sm:text-2xl text-ink group-hover:text-bronze transition-colors line-clamp-1" title={title}>
+                  <div>
+                    <h3 className="font-heading font-light text-xl sm:text-2xl text-ink group-hover:text-bronze transition-colors">
                       {title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-ink/75 line-clamp-2 leading-relaxed font-light min-h-[2.4rem]">
+                    <p className="mt-1.5 text-xs sm:text-sm text-ink/75 line-clamp-2 leading-relaxed font-light">
                       {desc}
                     </p>
                   </div>
 
-                  {/* Card Footer: Dimensions */}
-                  <div className="pt-3 border-t border-ink/10 flex items-center justify-between text-xs text-ink/65 font-medium">
-                    <span>
+                  {/* Card Footer: Dimensions & Elegant View Details link */}
+                  <div className="pt-3 border-t border-ink/10 flex items-center justify-between">
+                    <span className="text-xs text-ink/60 font-light">
                       {p.dimensions ? `${p.dimensions.w} × ${p.dimensions.d} × ${p.dimensions.h} cm` : timber}
                     </span>
-                    <span className="text-bronze font-medium">
-                      {lang === "bn" ? p.leadTimeBn : p.leadTimeEn}
-                    </span>
-                  </div>
-
-                  {/* Clear Card Action Center */}
-                  <div className="pt-1 flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedProduct(p);
-                      }}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/20 hover:border-brass hover:bg-sand/30 text-ink hover:text-bronze py-2 px-3 text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer shadow-xs"
-                    >
-                      <Eye className="h-3.5 w-3.5" />
+                    <span className="inline-flex items-center gap-1.5 text-xs text-bronze group-hover:text-ink font-medium transition-colors">
                       <span>{t("gallery.viewDetails")}</span>
-                    </button>
-
-                    <a
-                      href={waUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-bronze hover:bg-bronze-dark text-bone py-2 px-3 text-xs font-semibold tracking-wide shadow-sm transition-all cursor-pointer"
-                      title="Order or inquire on WhatsApp"
-                    >
-                      <WhatsAppIcon className="h-3.5 w-3.5 fill-current shrink-0" />
-                      <span>{lang === "bn" ? "অর্ডার / দাম" : "Custom Order"}</span>
-                    </a>
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
                   </div>
                 </div>
               </motion.div>

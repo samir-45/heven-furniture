@@ -15,7 +15,7 @@ export default function Founder() {
       id="founder"
       className="scroll-mt-24 bg-cocoa text-bone py-16 md:py-24 relative overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-center">
           <div className="md:col-span-5">
             <Reveal>

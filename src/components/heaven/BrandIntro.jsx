@@ -10,7 +10,7 @@ export default function BrandIntro() {
 
   return (
     <section id="about" className="scroll-mt-24 bg-bone pt-16 md:pt-24 pb-8 md:pb-10">
-      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
+      <div className="mx-auto max-w-[1400px] px-6 md:px-10">
         <div className="grid md:grid-cols-12 gap-10 md:gap-16">
           <div className="md:col-span-5">
             <Reveal>

@@ -1,13 +1,13 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Sparkles, 
-  Phone, 
-  Eye, 
-  Maximize2, 
-  Clock, 
-  SlidersHorizontal, 
+import {
+  Sparkles,
+  Phone,
+  Eye,
+  Maximize2,
+  Clock,
+  SlidersHorizontal,
   RotateCcw,
   Search,
   X
@@ -35,30 +35,12 @@ export default function Gallery() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [sortBy, setSortBy] = useState("featured");
 
-  // Category product counts
-  const categoryCounts = useMemo(() => {
-    const counts = { all: PRODUCTS.length };
-    CATEGORIES.forEach((c) => {
-      if (c.id !== "all") {
-        counts[c.id] = PRODUCTS.filter((p) => p.category === c.id).length;
-      }
-    });
-    return counts;
-  }, []);
-
   // Filtered & Sorted Products
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     const list = PRODUCTS.filter((item) => {
       const matchCat = activeCategory === "all" || item.category === activeCategory;
       const matchTimber = activeTimber === "all" || item.timber === activeTimber;
-
-      const categoryObj = CATEGORIES.find((c) => c.id === item.category);
-      const catMatches = categoryObj && (
-        categoryObj.labelEn.toLowerCase().includes(query) ||
-        categoryObj.labelBn.includes(query)
-      );
-
       const matchQuery =
         !query ||
         item.titleEn.toLowerCase().includes(query) ||
@@ -66,9 +48,7 @@ export default function Gallery() {
         item.descEn.toLowerCase().includes(query) ||
         item.descBn.includes(query) ||
         item.timberLabelEn.toLowerCase().includes(query) ||
-        item.timberLabelBn.includes(query) ||
-        catMatches;
-
+        item.timberLabelBn.includes(query);
       return matchCat && matchTimber && matchQuery;
     });
 
@@ -92,17 +72,6 @@ export default function Gallery() {
 
   const handleOpen3D = (configCat) => {
     navigate(`/#design`);
-  };
-
-  const activeCategoryObj = CATEGORIES.find((c) => c.id === activeCategory);
-  const activeTimberObj = TIMBERS.find((t) => t.id === activeTimber);
-
-  const TIMBER_SWATCHES = {
-    all: "bg-ink/30",
-    teak: "bg-[#8A5A36]",
-    karoi: "bg-[#4A3222]",
-    walnut: "bg-[#3D2817]",
-    mahogany: "bg-[#5E2B2B]",
   };
 
   return (
@@ -159,106 +128,62 @@ export default function Gallery() {
           </Reveal>
         </section>
 
-        {/* Interactive Filter & Search Control Center */}
+        {/* Interactive Filter Control Center */}
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 mb-8 sm:mb-12">
-          <div className="bg-sand/40 border border-ink/10 rounded-sm p-4 sm:p-6 shadow-sm space-y-5">
-            {/* Top Toolbar: Search + Sort Controls */}
-            <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-              {/* Prominent Search Bar */}
-              <div className="relative flex-1 max-w-xl">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-ink/40 pointer-events-none" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={
-                    lang === "bn"
-                      ? "আসবাবের নাম, কাঠ বা ক্যাটাগরি খুঁজুন (যেমনঃ সেগুন, সোফা, ডাইনিং)..."
-                      : "Search by piece name, wood species, or room (e.g. Teak, Sofa, Bed)..."
-                  }
-                  className="w-full bg-bone border border-ink/15 rounded-full pl-10 pr-10 py-2.5 text-xs sm:text-sm text-ink placeholder:text-ink/45 focus:outline-none focus:border-brass focus:ring-2 focus:ring-brass/20 transition-all shadow-xs"
-                />
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink cursor-pointer p-0.5 rounded-full hover:bg-ink/5"
-                    aria-label="Clear search"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
+          <div className="bg-sand/40 border border-ink/10 rounded-sm p-4 sm:p-6 shadow-sm space-y-4">
+            {/* Category Filter Pills (Fluid animated slider) */}
+            <div>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-ink/75 font-semibold flex items-center gap-1.5">
+                    <SlidersHorizontal className="h-3.5 w-3.5 text-bronze" />
+                    <span>{t("gallery.filterRoom")}</span>
+                  </span>
 
-              {/* Sort Segmented Control */}
-              <div className="flex items-center gap-2 self-end md:self-auto shrink-0">
-                <span className="text-ink/60 text-[11px] uppercase tracking-wider font-semibold">
-                  {lang === "bn" ? "সাজান:" : "Sort:"}
-                </span>
-                <div className="inline-flex items-center gap-1 bg-bone p-1 rounded-full border border-ink/10 text-xs shadow-2xs">
-                  <button
-                    type="button"
-                    onClick={() => setSortBy("featured")}
-                    className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer font-medium ${
-                      sortBy === "featured"
-                        ? "bg-depth text-bone font-semibold shadow-xs"
-                        : "text-ink/70 hover:text-ink"
-                    }`}
-                  >
-                    {lang === "bn" ? "জনপ্রিয়" : "Featured"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSortBy("price-asc")}
-                    className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer font-medium ${
-                      sortBy === "price-asc"
-                        ? "bg-depth text-bone font-semibold shadow-xs"
-                        : "text-ink/70 hover:text-ink"
-                    }`}
-                  >
-                    {lang === "bn" ? "মূল্য: কম ↑" : "Price: Low ↑"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSortBy("price-desc")}
-                    className={`px-3 py-1.5 rounded-full transition-colors cursor-pointer font-medium ${
-                      sortBy === "price-desc"
-                        ? "bg-depth text-bone font-semibold shadow-xs"
-                        : "text-ink/70 hover:text-ink"
-                    }`}
-                  >
-                    {lang === "bn" ? "মূল্য: বেশি ↓" : "Price: High ↓"}
-                  </button>
+                  {hasActiveFilters && (
+                    <button
+                      type="button"
+                      onClick={handleResetFilters}
+                      className="inline-flex items-center gap-1 text-xs text-bronze hover:underline font-medium cursor-pointer"
+                    >
+                      <RotateCcw className="h-3 w-3" />
+                      <span>{t("gallery.clearFilters")}</span>
+                    </button>
+                  )}
                 </div>
-              </div>
-            </div>
 
-            {/* Room Category Tabs with Item Count Badges */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between text-xs text-ink/75 font-semibold uppercase tracking-[0.14em]">
-                <span className="flex items-center gap-1.5">
-                  <SlidersHorizontal className="h-3.5 w-3.5 text-bronze" />
-                  <span>{t("gallery.filterRoom")}</span>
-                </span>
-                <span className="text-ink/60 font-medium normal-case tracking-normal">
-                  {t("gallery.showing", { count: filteredProducts.length })}
-                </span>
+                {/* Instant Search Bar */}
+                <div className="relative w-full sm:w-64 md:w-72">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink/40" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={lang === "bn" ? "আসবাবের নাম খুঁজুন..." : "Search pieces by name..."}
+                    className="w-full bg-bone border border-ink/15 rounded-full pl-9 pr-8 py-1.5 text-xs text-ink placeholder:text-ink/40 focus:outline-none focus:border-brass focus:ring-1 focus:ring-brass transition-all"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-ink/40 hover:text-ink cursor-pointer"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
                 {CATEGORIES.map((c) => {
                   const active = activeCategory === c.id;
-                  const count = categoryCounts[c.id] ?? 0;
                   return (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => setActiveCategory(c.id)}
-                      className={`relative inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-all cursor-pointer ${
-                        active
-                          ? "text-bone shadow-sm"
-                          : "text-ink/75 hover:text-ink bg-bone/80 hover:bg-bone border border-ink/10"
-                      }`}
+                      className={`relative px-4 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium tracking-wide transition-colors cursor-pointer ${active ? "text-bone" : "text-ink/75 hover:text-ink bg-bone/70 border border-ink/10"
+                        }`}
                     >
                       {active && (
                         <motion.span
@@ -270,108 +195,79 @@ export default function Gallery() {
                       <span className="relative z-10">
                         {lang === "bn" ? c.labelBn : c.labelEn}
                       </span>
-                      <span
-                        className={`relative z-10 text-[10.5px] px-1.5 py-0.2 rounded-full font-semibold tabular-nums ${
-                          active
-                            ? "bg-bone/20 text-bone"
-                            : "bg-ink/8 text-ink/65"
-                        }`}
-                      >
-                        {count}
-                      </span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            {/* Timber Species Selector with Natural Wood Dots */}
-            <div className="pt-3 border-t border-ink/10 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-ink/70 font-semibold mr-1">
+            {/* Timber Filter Chips */}
+            <div className="pt-2 border-t border-ink/10 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-ink/65 font-medium mr-2">
                 {t("gallery.filterTimber")}:
               </span>
               {TIMBERS.map((tb) => {
                 const active = activeTimber === tb.id;
-                const swatchClass = TIMBER_SWATCHES[tb.id] || "bg-ink/30";
                 return (
                   <button
                     key={tb.id}
                     type="button"
                     onClick={() => setActiveTimber(tb.id)}
-                    className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-xs font-medium transition-all cursor-pointer ${
-                      active
-                        ? "bg-brass/20 text-ink border border-brass font-bold shadow-2xs"
-                        : "bg-bone/80 text-ink/75 hover:text-ink hover:bg-bone border border-ink/10"
-                    }`}
+                    className={`px-3 py-1.5 rounded-sm text-xs font-medium transition-all cursor-pointer ${active
+                        ? "bg-brass/20 text-ink border border-brass font-bold shadow-xs"
+                        : "bg-bone/80 text-ink/70 hover:text-ink border border-ink/10"
+                      }`}
                   >
-                    <span className={`h-2 w-2 rounded-full ${swatchClass} shrink-0`} />
-                    <span>{lang === "bn" ? tb.labelBn : tb.labelEn}</span>
+                    {lang === "bn" ? tb.labelBn : tb.labelEn}
                   </button>
                 );
               })}
             </div>
+          </div>
 
-            {/* Active Filter Tags Bar (1-Click Remove) */}
-            {hasActiveFilters && (
-              <div className="pt-3 border-t border-ink/10 flex flex-wrap items-center gap-2 text-xs">
-                <span className="text-ink/60 font-medium mr-1">
-                  {lang === "bn" ? "সক্রিয় ফিল্টার:" : "Active filters:"}
-                </span>
+          {/* Result Counter & Sort Controls */}
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-ink/70 font-medium px-1">
+            <span>
+              {t("gallery.showing", { count: filteredProducts.length })}
+            </span>
 
-                {activeCategory !== "all" && activeCategoryObj && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory("all")}
-                    className="inline-flex items-center gap-1.5 bg-bone border border-ink/15 text-ink/85 px-2.5 py-1 rounded-full hover:border-bronze hover:text-bronze transition-colors cursor-pointer"
-                  >
-                    <span>{lang === "bn" ? activeCategoryObj.labelBn : activeCategoryObj.labelEn}</span>
-                    <X className="h-3 w-3 text-ink/50" />
-                  </button>
-                )}
-
-                {activeTimber !== "all" && activeTimberObj && (
-                  <button
-                    type="button"
-                    onClick={() => setActiveTimber("all")}
-                    className="inline-flex items-center gap-1.5 bg-bone border border-ink/15 text-ink/85 px-2.5 py-1 rounded-full hover:border-bronze hover:text-bronze transition-colors cursor-pointer"
-                  >
-                    <span>{lang === "bn" ? activeTimberObj.labelBn : activeTimberObj.labelEn}</span>
-                    <X className="h-3 w-3 text-ink/50" />
-                  </button>
-                )}
-
-                {Boolean(searchQuery.trim()) && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery("")}
-                    className="inline-flex items-center gap-1.5 bg-bone border border-ink/15 text-ink/85 px-2.5 py-1 rounded-full hover:border-bronze hover:text-bronze transition-colors cursor-pointer"
-                  >
-                    <span>&ldquo;{searchQuery}&rdquo;</span>
-                    <X className="h-3 w-3 text-ink/50" />
-                  </button>
-                )}
-
-                {sortBy !== "featured" && (
-                  <button
-                    type="button"
-                    onClick={() => setSortBy("featured")}
-                    className="inline-flex items-center gap-1.5 bg-bone border border-ink/15 text-ink/85 px-2.5 py-1 rounded-full hover:border-bronze hover:text-bronze transition-colors cursor-pointer"
-                  >
-                    <span>{sortBy === "price-asc" ? (lang === "bn" ? "মূল্য: কম ↑" : "Price: Low ↑") : (lang === "bn" ? "মূল্য: বেশি ↓" : "Price: High ↓")}</span>
-                    <X className="h-3 w-3 text-ink/50" />
-                  </button>
-                )}
-
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <span className="text-ink/50 text-[11px] uppercase tracking-wider font-semibold">
+                {lang === "bn" ? "সাজান:" : "Sort:"}
+              </span>
+              <div className="inline-flex items-center gap-1 bg-bone/90 p-1 rounded-sm border border-ink/10 text-xs">
                 <button
                   type="button"
-                  onClick={handleResetFilters}
-                  className="inline-flex items-center gap-1 text-bronze hover:underline font-semibold ml-2 cursor-pointer"
+                  onClick={() => setSortBy("featured")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${sortBy === "featured"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                    }`}
                 >
-                  <RotateCcw className="h-3 w-3" />
-                  <span>{t("gallery.clearFilters")}</span>
+                  {lang === "bn" ? "জনপ্রিয়" : "Featured"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-asc")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${sortBy === "price-asc"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                    }`}
+                >
+                  {lang === "bn" ? "মূল্য: কম ↑" : "Price: Low ↑"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSortBy("price-desc")}
+                  className={`px-2.5 py-1 rounded-xs transition-colors cursor-pointer ${sortBy === "price-desc"
+                      ? "bg-depth text-bone font-semibold shadow-xs"
+                      : "text-ink/70 hover:text-ink"
+                    }`}
+                >
+                  {lang === "bn" ? "মূল্য: বেশি ↓" : "Price: High ↓"}
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </section>
 
@@ -379,21 +275,16 @@ export default function Gallery() {
         <section className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
           {filteredProducts.length === 0 ? (
             <div className="text-center py-20 bg-sand/30 rounded-sm border border-ink/10 p-8 space-y-4">
-              <p className="text-xl text-ink font-heading font-light">
+              <p className="text-lg text-ink font-heading">
                 {lang === "bn" ? "কোনো আসবাব পাওয়া যায়নি" : "No furniture found matching these filters."}
-              </p>
-              <p className="text-xs sm:text-sm text-ink/70 max-w-md mx-auto leading-relaxed">
-                {lang === "bn"
-                  ? "অন্য কোনো কাঠের ধরন বা ক্যাটাগরি বেছে দেখুন, অথবা সমস্ত ফিল্টার মুছে পুরো ক্যাটালগ দেখুন।"
-                  : "Try clearing your search query or selecting a different room category or timber species."}
               </p>
               <button
                 type="button"
                 onClick={handleResetFilters}
-                className="inline-flex items-center gap-2 rounded-full bg-bronze text-bone hover:bg-bronze-dark px-6 py-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer shadow-sm"
+                className="inline-flex items-center gap-2 rounded-full bg-bronze text-bone px-5 py-2.5 text-xs uppercase tracking-wider font-medium cursor-pointer"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                <span>{lang === "bn" ? "সকল ১২টি আসবাব দেখুন" : "View All 12 Signature Pieces"}</span>
+                <span>{t("gallery.clearFilters")}</span>
               </button>
             </div>
           ) : (
@@ -405,8 +296,8 @@ export default function Gallery() {
                   const timber = lang === "bn" ? p.timberLabelBn : p.timberLabelEn;
                   const waUrl = `${WHATSAPP_URL}?text=${encodeURIComponent(
                     lang === "bn"
-                      ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের গ্যালারি থেকে "${title}" (দাম: ৳${p.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে ও কাস্টম অর্ডার করতে চাই।`
-                      : `Hello Heaven Furniture Mart, I am enquiring about custom ordering the "${title}" (Starting at ৳${p.price.toLocaleString("en-BD")}) from your catalog.`
+                      ? `আসসালামু আলাইকুম হেভেন ফার্নিচার মার্ট, আমি আপনাদের গ্যালারি থেকে "${title}" (৳${p.price.toLocaleString("bn-BD")}) সম্পর্কে জানতে চাই।`
+                      : `Hello Heaven Furniture Mart, I am enquiring about the "${title}" (৳${p.price.toLocaleString("en-BD")}) from your catalog.`
                   )}`;
 
                   return (
@@ -418,10 +309,10 @@ export default function Gallery() {
                       exit={{ opacity: 0, scale: 0.96 }}
                       transition={{ duration: 0.24, ease: "easeOut" }}
                       whileHover={{ y: -4 }}
-                      className="group flex flex-col bg-bone rounded-sm border border-ink/10 overflow-hidden shadow-sm hover:shadow-xl hover:border-brass/35 transition-all duration-300"
+                      className="group flex flex-col bg-bone rounded-sm border border-ink/10 overflow-hidden shadow-sm hover:shadow-xl hover:border-brass/35 transition-shadow duration-300"
                     >
                       {/* Visual Container */}
-                      <div 
+                      <div
                         onClick={() => setSelectedProduct(p)}
                         className="relative aspect-[4/3] overflow-hidden bg-sand cursor-pointer select-none"
                       >
@@ -453,40 +344,41 @@ export default function Gallery() {
                         </span>
                       </div>
 
-                      {/* Content Container - Flex Justified for Strict Row Alignment */}
+                      {/* Content */}
                       <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
                         <div className="space-y-2">
-                          <h3 
-                            onClick={() => setSelectedProduct(p)}
-                            className="font-heading text-xl sm:text-2xl font-light text-ink group-hover:text-bronze transition-colors cursor-pointer leading-snug line-clamp-1"
-                            title={title}
-                          >
-                            {title}
-                          </h3>
+                          <div className="flex items-baseline justify-between gap-2">
+                            <h3
+                              onClick={() => setSelectedProduct(p)}
+                              className="font-heading text-xl sm:text-2xl font-light text-ink group-hover:text-bronze transition-colors cursor-pointer leading-snug"
+                            >
+                              {title}
+                            </h3>
+                          </div>
 
-                          <p className="text-ink/75 text-xs sm:text-sm line-clamp-2 leading-relaxed font-light min-h-[2.5rem]">
+                          <p className="text-ink/75 text-xs sm:text-sm line-clamp-2 leading-relaxed font-light">
                             {desc}
                           </p>
                         </div>
 
-                        {/* Standardized Meta Strip */}
-                        <div className="pt-3.5 border-t border-ink/8 flex items-center justify-between text-xs text-ink/70 font-medium">
+                        {/* Quick Meta Strip */}
+                        <div className="pt-3 border-t border-ink/8 flex items-center justify-between text-xs text-ink/70 font-medium">
                           <span className="flex items-center gap-1.5 truncate">
                             <Maximize2 className="h-3.5 w-3.5 text-bronze shrink-0" />
                             <span>{p.dims}</span>
                           </span>
-                          <span className="flex items-center gap-1.5 shrink-0 text-bronze font-medium">
+                          <span className="flex items-center gap-1.5 shrink-0 text-bronze">
                             <Clock className="h-3.5 w-3.5" />
                             <span>{lang === "bn" ? p.leadTimeBn : p.leadTimeEn}</span>
                           </span>
                         </div>
 
-                        {/* Dual Action Center */}
+                        {/* Action Buttons */}
                         <div className="pt-2 flex items-center gap-2.5">
                           <button
                             type="button"
                             onClick={() => setSelectedProduct(p)}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/20 hover:border-brass hover:bg-sand/30 text-ink hover:text-bronze py-2.5 px-3 text-xs uppercase tracking-wider font-semibold transition-all cursor-pointer shadow-xs"
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-ink/20 hover:border-brass text-ink hover:text-bronze py-2.5 px-3 text-xs uppercase tracking-wider font-semibold transition-colors cursor-pointer"
                           >
                             <Eye className="h-3.5 w-3.5" />
                             <span>{t("gallery.viewDetails")}</span>
@@ -496,11 +388,11 @@ export default function Gallery() {
                             href={waUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full bg-bronze hover:bg-bronze-dark text-bone py-2.5 px-3.5 text-xs font-semibold tracking-wide shadow-sm transition-all cursor-pointer shrink-0"
-                            title="Inquire or order on WhatsApp"
+                            className="inline-flex items-center justify-center gap-1.5 rounded-full bg-bronze text-bone hover:bg-bronze-dark py-2.5 px-4 text-xs font-medium tracking-wide shadow-sm transition-all cursor-pointer shrink-0"
+                            title="Inquire on WhatsApp"
                           >
                             <WhatsAppIcon className="h-4 w-4 fill-current shrink-0" />
-                            <span>{lang === "bn" ? "অর্ডার / দাম" : "Custom Order"}</span>
+                            <span>{t("gallery.enquire")}</span>
                           </a>
                         </div>
                       </div>
