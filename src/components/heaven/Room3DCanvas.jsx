@@ -11,8 +11,16 @@ import {
   Sparkles,
   Layers,
   ChevronDown,
+  RotateCw,
+  RotateCcw,
+  RefreshCw,
+  Eye,
+  Trash2,
+  Copy,
+  X,
 } from "lucide-react";
 import { useLang } from "./LanguageProvider";
+import { resolveSlidePosition } from "@/utils/plannerCollision";
 
 /**
  * Procedural Luxury Flooring Texture Generator
@@ -20,118 +28,119 @@ import { useLang } from "./LanguageProvider";
  */
 function createFloorTexture(type = "teak_parquet") {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 1024;
+  canvas.height = 1024;
   const ctx = canvas.getContext("2d");
 
   if (type === "walnut_herringbone") {
-    // Rich dark espresso walnut herringbone
-    ctx.fillStyle = "#362114";
-    ctx.fillRect(0, 0, 512, 512);
+    // Rich dark espresso walnut herringbone (broad architectural planks)
+    ctx.fillStyle = "#331E12";
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    const step = 64;
-    for (let y = -step; y < 512 + step; y += step) {
-      for (let x = -step; x < 512 + step; x += step) {
+    const step = 256;
+    for (let y = -step; y < 1024 + step; y += step) {
+      for (let x = -step; x < 1024 + step; x += step) {
         const alt = ((x + y) / step) % 2 === 0;
-        const variance = Math.floor((Math.sin(x * 0.15 + y * 0.22) * 0.5 + 0.5) * 20) - 10;
-        const r = Math.max(0, Math.min(255, 62 + variance));
-        const g = Math.max(0, Math.min(255, 38 + variance));
-        const b = Math.max(0, Math.min(255, 24 + variance));
+        const v = Math.floor((Math.sin(x * 0.02 + y * 0.03) * 0.5 + 0.5) * 16) - 8;
+        const r = Math.max(0, Math.min(255, 60 + v));
+        const g = Math.max(0, Math.min(255, 36 + v));
+        const b = Math.max(0, Math.min(255, 22 + v));
 
         ctx.save();
         ctx.translate(x + step / 2, y + step / 2);
         ctx.rotate(alt ? Math.PI / 4 : -Math.PI / 4);
         ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.fillRect(-step / 2 + 1, -step / 4 + 1, step - 2, step / 2 - 2);
+        ctx.fillRect(-step / 2 + 2, -step / 4 + 2, step - 4, step / 2 - 4);
 
-        // Subtle woodgrain
-        ctx.fillStyle = "rgba(20, 10, 5, 0.2)";
-        ctx.fillRect(-step / 2 + 2, 0, step - 4, 1);
+        // Soft subtle woodgrain gradient
+        ctx.fillStyle = "rgba(15, 8, 4, 0.12)";
+        ctx.fillRect(-step / 2 + 4, 0, step - 8, 3);
         ctx.restore();
       }
     }
   } else if (type === "white_oak") {
-    // Pale Scandinavian / Japandi White Oak
+    // Pale Scandinavian / Japandi White Oak (wide planks)
     ctx.fillStyle = "#D6CBB9";
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    const plankH = 40;
-    for (let y = 0; y < 512; y += plankH) {
-      const v = Math.floor((Math.sin(y * 0.24) * 0.5 + 0.5) * 16) - 8;
+    const plankH = 128;
+    for (let y = 0; y < 1024; y += plankH) {
+      const v = Math.floor((Math.sin(y * 0.05) * 0.5 + 0.5) * 12) - 6;
       ctx.fillStyle = `rgb(${216 + v},${205 + v},${187 + v})`;
-      ctx.fillRect(0, y + 1, 512, plankH - 2);
+      ctx.fillRect(0, y + 2, 1024, plankH - 4);
 
-      // Fine grain striations
-      ctx.fillStyle = "rgba(110, 95, 75, 0.08)";
+      // Subtle warm woodgrain
+      ctx.fillStyle = "rgba(120, 105, 85, 0.05)";
       for (let s = 0; s < 3; s++) {
-        ctx.fillRect(0, y + s * 12 + 4, 512, 1);
+        ctx.fillRect(0, y + s * 36 + 16, 1024, 2);
       }
-      ctx.strokeStyle = "rgba(130, 115, 95, 0.25)";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(0, y + 0.5, 512, plankH - 1);
+
+      // Soft bevel seam
+      ctx.fillStyle = "rgba(100, 85, 68, 0.15)";
+      ctx.fillRect(0, y, 1024, 2);
     }
   } else if (type === "travertine") {
-    // Luxury Travertine Stone Tiles with organic clouding
+    // Luxury Travertine Stone Slabs (large format 512x256)
     ctx.fillStyle = "#ECE7DE";
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    for (let i = 0; i < 300; i++) {
-      const rx = Math.random() * 512;
-      const ry = Math.random() * 512;
-      const rw = 25 + Math.random() * 45;
-      ctx.fillStyle = `rgba(${195 + Math.random() * 20}, ${185 + Math.random() * 20}, ${170 + Math.random() * 20}, 0.09)`;
+    for (let i = 0; i < 150; i++) {
+      const rx = Math.random() * 1024;
+      const ry = Math.random() * 1024;
+      const rw = 60 + Math.random() * 90;
+      ctx.fillStyle = `rgba(${195 + Math.random() * 15}, ${185 + Math.random() * 15}, ${170 + Math.random() * 15}, 0.06)`;
       ctx.beginPath();
-      ctx.ellipse(rx, ry, rw, rw * 0.45, Math.random() * Math.PI, 0, Math.PI * 2);
+      ctx.ellipse(rx, ry, rw, rw * 0.4, Math.random() * Math.PI, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    // Large-format tile grid (256x128)
-    ctx.strokeStyle = "rgba(150, 140, 125, 0.35)";
-    ctx.lineWidth = 1.5;
-    for (let y = 0; y <= 512; y += 128) {
+    // Architectural grout lines (512x256 tiles)
+    ctx.strokeStyle = "rgba(140, 130, 115, 0.2)";
+    ctx.lineWidth = 2;
+    for (let y = 0; y <= 1024; y += 256) {
       ctx.beginPath();
       ctx.moveTo(0, y);
-      ctx.lineTo(512, y);
+      ctx.lineTo(1024, y);
       ctx.stroke();
     }
-    for (let x = 0; x <= 512; x += 256) {
-      for (let y = 0; y < 512; y += 128) {
-        const off = (y / 128) % 2 === 0 ? 0 : 128;
+    for (let x = 0; x <= 1024; x += 512) {
+      for (let y = 0; y < 1024; y += 256) {
+        const off = (y / 256) % 2 === 0 ? 0 : 256;
         ctx.beginPath();
         ctx.moveTo(x + off, y);
-        ctx.lineTo(x + off, y + 128);
+        ctx.lineTo(x + off, y + 256);
         ctx.stroke();
       }
     }
   } else {
-    // Default: Golden Chittagong Teak Parquet
+    // Default: Golden Chittagong Teak Parquet (wide luxurious planks)
     ctx.fillStyle = "#C8A375";
-    ctx.fillRect(0, 0, 512, 512);
+    ctx.fillRect(0, 0, 1024, 1024);
 
-    const plankH = 32;
-    const plankW = 128;
-    for (let y = 0; y < 512; y += plankH) {
+    const plankH = 128; // 8 broad planks per repeat
+    const plankW = 512; // 2 planks per row
+    for (let y = 0; y < 1024; y += plankH) {
       const rowOffset = (Math.floor(y / plankH) % 2) * (plankW / 2);
-      for (let x = -plankW; x < 512 + plankW; x += plankW) {
+      for (let x = -plankW; x < 1024 + plankW; x += plankW) {
         const px = x + rowOffset;
-        const toneVariance = Math.floor((Math.sin(px * 12.3 + y * 7.1) * 0.5 + 0.5) * 20) - 10;
+        const toneVariance = Math.floor((Math.sin(px * 0.02 + y * 0.04) * 0.5 + 0.5) * 14) - 7;
         const r = Math.max(0, Math.min(255, 185 + toneVariance));
         const g = Math.max(0, Math.min(255, 142 + toneVariance));
         const b = Math.max(0, Math.min(255, 96 + toneVariance));
 
         ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.fillRect(px + 1, y + 1, plankW - 2, plankH - 2);
+        ctx.fillRect(px + 2, y + 2, plankW - 4, plankH - 4);
 
-        // Fine woodgrain striations
-        ctx.fillStyle = "rgba(90, 55, 25, 0.08)";
-        for (let s = 0; s < 4; s++) {
-          ctx.fillRect(px + 1, y + s * 8 + 2, plankW - 2, 1);
+        // Soft subtle woodgrain striations
+        ctx.fillStyle = "rgba(80, 48, 20, 0.05)";
+        for (let s = 0; s < 3; s++) {
+          ctx.fillRect(px + 2, y + s * 36 + 18, plankW - 4, 2);
         }
 
-        // Plank seams
-        ctx.strokeStyle = "rgba(45, 25, 10, 0.25)";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(px + 0.5, y + 0.5, plankW - 1, plankH - 1);
+        // Soft natural bevel seams
+        ctx.fillStyle = "rgba(50, 25, 10, 0.15)";
+        ctx.fillRect(px, y, plankW, 2);
+        ctx.fillRect(px, y, 2, plankH);
       }
     }
   }
@@ -139,6 +148,11 @@ function createFloorTexture(type = "teak_parquet") {
   const texture = new THREE.CanvasTexture(canvas);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.anisotropy = 16;
   return texture;
 }
 
@@ -147,35 +161,59 @@ function createFloorTexture(type = "teak_parquet") {
  */
 function createArtTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 384;
+  canvas.width = 1024;
+  canvas.height = 768;
   const ctx = canvas.getContext("2d");
 
   // Minimalist ivory linen background
   ctx.fillStyle = "#F7F4ED";
-  ctx.fillRect(0, 0, 512, 384);
+  ctx.fillRect(0, 0, 1024, 768);
 
-  // Organic modern shapes
-  ctx.fillStyle = "#C9A66B"; // Gold leaf arc
+  // Subtle natural canvas texture grain
+  ctx.fillStyle = "rgba(228, 220, 208, 0.3)";
+  for (let i = 0; i < 1024; i += 4) {
+    ctx.fillRect(i, 0, 1, 768);
+  }
+  for (let j = 0; j < 768; j += 4) {
+    ctx.fillRect(0, j, 1024, 1);
+  }
+
+  // Organic modern architectural art shapes (Haven luxury palette)
+  // 1. Warm Golden Brass Arc
+  ctx.fillStyle = "#C9A66B";
   ctx.beginPath();
-  ctx.arc(220, 200, 110, 0, Math.PI * 1.6);
+  ctx.arc(440, 400, 220, 0, Math.PI * 1.6);
   ctx.fill();
 
-  ctx.fillStyle = "#1E262B"; // Charcoal arch
+  // 2. Rich Deep Charcoal Arch
+  ctx.fillStyle = "#1E262B";
   ctx.beginPath();
-  ctx.arc(310, 180, 85, Math.PI * 0.5, Math.PI * 1.8);
+  ctx.arc(620, 360, 170, Math.PI * 0.5, Math.PI * 1.8);
   ctx.fill();
 
-  ctx.fillStyle = "#8C5C38"; // Terracotta circle
+  // 3. Earthy Terracotta Sun
+  ctx.fillStyle = "#8C5C38";
   ctx.beginPath();
-  ctx.arc(170, 140, 50, 0, Math.PI * 2);
+  ctx.arc(340, 280, 100, 0, Math.PI * 2);
   ctx.fill();
 
-  ctx.strokeStyle = "rgba(30, 38, 43, 0.15)";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(16, 16, 480, 352);
+  // 4. Soft Sand Dune Curve
+  ctx.fillStyle = "rgba(201, 166, 107, 0.4)";
+  ctx.beginPath();
+  ctx.ellipse(512, 600, 350, 120, 0, 0, Math.PI * 2);
+  ctx.fill();
 
-  return new THREE.CanvasTexture(canvas);
+  // Fine architectural inner border
+  ctx.strokeStyle = "rgba(30, 38, 43, 0.2)";
+  ctx.lineWidth = 3;
+  ctx.strokeRect(32, 32, 960, 704);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.minFilter = THREE.LinearMipmapLinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = true;
+  return texture;
 }
 
 /**
@@ -184,62 +222,95 @@ function createArtTexture() {
 function createPottedPlant() {
   const plantGroup = new THREE.Group();
 
-  // Ceramic Pot
-  const potGeo = new THREE.CylinderGeometry(0.24, 0.19, 0.48, 24);
+  // 1. Ceramic Pot Body (Tapered architectural planter with open top to eliminate z-fighting)
   const potMat = new THREE.MeshStandardMaterial({
-    color: "#EFECE6",
-    roughness: 0.35,
+    color: "#F0ECE1",
+    roughness: 0.38,
     metalness: 0.05,
   });
+
+  // Hollow tapered cylinder (openEnded: true ensures NO coplanar top disc)
+  const potGeo = new THREE.CylinderGeometry(0.24, 0.18, 0.48, 32, 1, true);
   const pot = new THREE.Mesh(potGeo, potMat);
   pot.position.y = 0.24;
   pot.castShadow = true;
   pot.receiveShadow = true;
   plantGroup.add(pot);
 
-  // Pot rim brass band
-  const rimGeo = new THREE.CylinderGeometry(0.245, 0.245, 0.04, 24);
-  const rimMat = new THREE.MeshStandardMaterial({
+  // Closed base disc for pot
+  const baseGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.02, 32);
+  const base = new THREE.Mesh(baseGeo, potMat);
+  base.position.y = 0.01;
+  base.receiveShadow = true;
+  plantGroup.add(base);
+
+  // 2. Brass Architectural Rim Collar & Top Lip
+  const brassRimMat = new THREE.MeshStandardMaterial({
     color: "#C9A66B",
     roughness: 0.25,
-    metalness: 0.75,
+    metalness: 0.78,
   });
-  const rim = new THREE.Mesh(rimGeo, rimMat);
-  rim.position.y = 0.46;
-  plantGroup.add(rim);
 
-  // Soil
-  const soilGeo = new THREE.CylinderGeometry(0.23, 0.23, 0.02, 24);
-  const soilMat = new THREE.MeshStandardMaterial({ color: "#2B1E16", roughness: 0.95 });
+  // Brass outer band (open sleeve around the upper lip)
+  const rimBandGeo = new THREE.CylinderGeometry(0.244, 0.244, 0.04, 32, 1, true);
+  const rimBand = new THREE.Mesh(rimBandGeo, brassRimMat);
+  rimBand.position.y = 0.46;
+  rimBand.castShadow = true;
+  plantGroup.add(rimBand);
+
+  // Brass rounded top lip ring (ring geometry, only occupies radius [0.215, 0.246] at y = 0.481)
+  const lipGeo = new THREE.RingGeometry(0.215, 0.246, 32);
+  const lip = new THREE.Mesh(lipGeo, brassRimMat);
+  lip.rotation.x = -Math.PI / 2;
+  lip.position.y = 0.481;
+  lip.castShadow = true;
+  plantGroup.add(lip);
+
+  // 3. Recessed Dark Potting Soil (sits safely 36mm below the rim inside the pot at y = 0.445)
+  const soilGeo = new THREE.CylinderGeometry(0.21, 0.21, 0.03, 32);
+  const soilMat = new THREE.MeshStandardMaterial({
+    color: "#241810",
+    roughness: 0.95,
+  });
   const soil = new THREE.Mesh(soilGeo, soilMat);
-  soil.position.y = 0.47;
+  soil.position.y = 0.43; // top face is at 0.445m, safely 36mm below the brass lip at 0.481m
+  soil.receiveShadow = true;
   plantGroup.add(soil);
 
-  // Foliage: 6 broad Monstera leaves
+  // 4. Monstera Foliage (stems anchored firmly into the recessed soil at y = 0.445)
   const leafMat = new THREE.MeshStandardMaterial({
-    color: "#2D5A27",
-    roughness: 0.42,
+    color: "#274E23",
+    roughness: 0.38,
+    metalness: 0.08,
     side: THREE.DoubleSide,
   });
+
+  const stemMat = new THREE.MeshStandardMaterial({
+    color: "#1E3D1B",
+    roughness: 0.5,
+  });
+
   const leafAngles = [0, 1.05, 2.1, 3.14, 4.2, 5.25];
   leafAngles.forEach((ang, idx) => {
     const leafGroup = new THREE.Group();
     leafGroup.rotation.y = ang;
-    leafGroup.position.set(0, 0.47, 0);
+    leafGroup.position.set(0, 0.445, 0);
 
-    // Stem
-    const stemGeo = new THREE.CylinderGeometry(0.01, 0.015, 0.5 + idx * 0.05, 8);
-    const stem = new THREE.Mesh(stemGeo, leafMat);
-    stem.rotation.z = -0.35;
-    stem.position.set(0.12, 0.22, 0);
+    // Arching Stem
+    const stemH = 0.48 + idx * 0.04;
+    const stemGeo = new THREE.CylinderGeometry(0.008, 0.012, stemH, 8);
+    const stem = new THREE.Mesh(stemGeo, stemMat);
+    stem.rotation.z = -0.32 - (idx % 2) * 0.08;
+    stem.position.set(0.11, stemH * 0.45, 0);
+    stem.castShadow = true;
     leafGroup.add(stem);
 
     // Leaf Blade
-    const bladeGeo = new THREE.PlaneGeometry(0.26, 0.38);
+    const bladeGeo = new THREE.PlaneGeometry(0.25, 0.36);
     const blade = new THREE.Mesh(bladeGeo, leafMat);
-    blade.position.set(0.24, 0.44, 0);
-    blade.rotation.y = 0.4;
-    blade.rotation.z = -0.4;
+    blade.position.set(0.23, stemH * 0.85, 0);
+    blade.rotation.y = 0.35;
+    blade.rotation.z = -0.38;
     blade.castShadow = true;
     leafGroup.add(blade);
 
@@ -255,7 +326,12 @@ export default function Room3DCanvas({
   placedItems = [],
   selectedItemId = null,
   catalog = [],
+  overlappingItemIds = new Set(),
   onSelectItem,
+  onMoveItem,
+  onRotateItem,
+  onDuplicateItem,
+  onDeleteItem,
 }) {
   const { t, lang } = useLang();
   const rootRef = useRef(null);
@@ -278,6 +354,7 @@ export default function Room3DCanvas({
   const controlsRef = useRef(null);
   const roomGroupRef = useRef(null);
   const furnitureGroupRef = useRef(null);
+  const selectionGroupRef = useRef(null);
   const sunLightRef = useRef(null);
   const ambientLightRef = useRef(null);
   const pendantLightRef = useRef(null);
@@ -287,13 +364,39 @@ export default function Room3DCanvas({
   const skyPaneRef = useRef(null);
   const floorMeshRef = useRef(null);
 
+  // Dynamic props kept in sync for 3D event listeners
+  const placedItemsRef = useRef(placedItems);
+  placedItemsRef.current = placedItems;
+  const selectedItemIdRef = useRef(selectedItemId);
+  selectedItemIdRef.current = selectedItemId;
+  const catalogRef = useRef(catalog);
+  catalogRef.current = catalog;
+  const roomWidthRef = useRef(roomWidth);
+  roomWidthRef.current = roomWidth;
+  const roomLengthRef = useRef(roomLength);
+  roomLengthRef.current = roomLength;
+  const onMoveItemRef = useRef(onMoveItem);
+  onMoveItemRef.current = onMoveItem;
+  const onSelectItemRef = useRef(onSelectItem);
+  onSelectItemRef.current = onSelectItem;
+
+  // 3D Drag State Ref
+  const dragStateRef = useRef({
+    isDragging: false,
+    hasMoved: false,
+    itemId: null,
+    itemGroup: null,
+    dragOffset: { x: 0, z: 0 },
+    downPos: { x: 0, y: 0 },
+  });
+
   // Art texture memo
   const artTextureRef = useRef(null);
   if (!artTextureRef.current) {
     artTextureRef.current = createArtTexture();
   }
 
-  // 1. Initialize Scene & WebGL Renderer
+  // 1. Initialize Scene, WebGL Renderer & 3D Pointer Engine
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
@@ -305,7 +408,7 @@ export default function Room3DCanvas({
     scene.background = new THREE.Color("#F3EEE5");
     sceneRef.current = scene;
 
-    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.5, 60);
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({
@@ -341,6 +444,10 @@ export default function Room3DCanvas({
     scene.add(furnitureGroup);
     furnitureGroupRef.current = furnitureGroup;
 
+    const selectionGroup = new THREE.Group();
+    scene.add(selectionGroup);
+    selectionGroupRef.current = selectionGroup;
+
     // Lights
     const ambientLight = new THREE.AmbientLight("#FAF5EC", 1.45);
     scene.add(ambientLight);
@@ -352,14 +459,15 @@ export default function Room3DCanvas({
     sunLight.castShadow = true;
     sunLight.shadow.mapSize.width = 2048;
     sunLight.shadow.mapSize.height = 2048;
-    sunLight.shadow.bias = -0.0003;
-    sunLight.shadow.radius = 2.2;
+    sunLight.shadow.bias = -0.00008;
+    sunLight.shadow.normalBias = 0.03;
+    sunLight.shadow.radius = 2.0;
     sunLight.shadow.camera.near = 1;
-    sunLight.shadow.camera.far = 32;
-    sunLight.shadow.camera.left = -9;
-    sunLight.shadow.camera.right = 9;
-    sunLight.shadow.camera.top = 9;
-    sunLight.shadow.camera.bottom = -9;
+    sunLight.shadow.camera.far = 28;
+    sunLight.shadow.camera.left = -8;
+    sunLight.shadow.camera.right = 8;
+    sunLight.shadow.camera.top = 8;
+    sunLight.shadow.camera.bottom = -8;
     scene.add(sunLight);
     sunLightRef.current = sunLight;
 
@@ -373,13 +481,212 @@ export default function Room3DCanvas({
     rimLight.position.set(0, 6, 7);
     scene.add(rimLight);
 
-    // Center Ceiling Pendant Light
+    // Center Ceiling Pendant Light (warm ambient room illumination, no shadow acne on floor)
     const pendantLight = new THREE.PointLight("#FFAE42", 0.8, 9, 1.2);
     pendantLight.position.set(0, 2.1, 0);
-    pendantLight.castShadow = true;
-    pendantLight.shadow.bias = -0.002;
+    pendantLight.castShadow = false;
     scene.add(pendantLight);
     pendantLightRef.current = pendantLight;
+
+    // 3D Raycasting & Drag Interaction Handlers
+    const raycaster = new THREE.Raycaster();
+    const floorPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+    const onPointerDown = (e) => {
+      if (e.button !== 0) return; // Only primary left-click
+      const dom = renderer.domElement;
+      if (!dom || !cameraRef.current || !furnitureGroupRef.current) return;
+
+      const rect = dom.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+
+      raycaster.setFromCamera(mouse, cameraRef.current);
+      const intersects = raycaster.intersectObjects(furnitureGroupRef.current.children, true);
+
+      dragStateRef.current.downPos = { x: e.clientX, y: e.clientY };
+
+      if (intersects.length > 0) {
+        let curr = intersects[0].object;
+        let hitItemId = null;
+        let hitGroup = null;
+        while (curr && curr !== furnitureGroupRef.current) {
+          if (curr.userData && curr.userData.itemId) {
+            hitItemId = curr.userData.itemId;
+            hitGroup = curr;
+            break;
+          }
+          curr = curr.parent;
+        }
+
+        if (hitItemId && hitGroup) {
+          const planeIntersection = new THREE.Vector3();
+          if (raycaster.ray.intersectPlane(floorPlane, planeIntersection)) {
+            dragStateRef.current = {
+              isDragging: true,
+              hasMoved: false,
+              itemId: hitItemId,
+              itemGroup: hitGroup,
+              dragOffset: {
+                x: hitGroup.position.x - planeIntersection.x,
+                z: hitGroup.position.z - planeIntersection.z,
+              },
+              downPos: { x: e.clientX, y: e.clientY },
+            };
+
+            // Select this piece
+            onSelectItemRef.current?.(hitItemId);
+
+            // Temporarily disable orbit controls so dragging moves the piece instead of rotating camera
+            controls.enabled = false;
+            dom.style.cursor = "grabbing";
+            return;
+          }
+        }
+      }
+
+      dragStateRef.current.isDragging = false;
+    };
+
+    const onPointerMove = (e) => {
+      const dom = renderer.domElement;
+      if (!dom || !cameraRef.current) return;
+
+      const rect = dom.getBoundingClientRect();
+      const mouse = new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+
+      raycaster.setFromCamera(mouse, cameraRef.current);
+
+      if (dragStateRef.current.isDragging) {
+        const dx = Math.abs(e.clientX - dragStateRef.current.downPos.x);
+        const dy = Math.abs(e.clientY - dragStateRef.current.downPos.y);
+        if (dx > 3 || dy > 3) {
+          dragStateRef.current.hasMoved = true;
+        }
+
+        const planeIntersection = new THREE.Vector3();
+        if (raycaster.ray.intersectPlane(floorPlane, planeIntersection)) {
+          const rw = roomWidthRef.current;
+          const rl = roomLengthRef.current;
+          const itemId = dragStateRef.current.itemId;
+          const itemGroup = dragStateRef.current.itemGroup;
+          const currentItem = placedItemsRef.current.find((p) => p.id === itemId);
+          const cat = currentItem ? catalogRef.current.find((c) => c.id === currentItem.catId) : null;
+
+          if (currentItem && cat && itemGroup) {
+            const rawTargetX = planeIntersection.x + dragStateRef.current.dragOffset.x;
+            const rawTargetZ = planeIntersection.z + dragStateRef.current.dragOffset.z;
+
+            // Target center in 2D coordinates
+            const targetCx = rawTargetX + rw / 2;
+            const targetCy = rawTargetZ + rl / 2;
+
+            const targetItemX = targetCx - cat.wM / 2;
+            const targetItemY = targetCy - cat.dM / 2;
+
+            // Resolve non-overlapping position against room walls and all other furniture
+            const resolved = resolveSlidePosition({
+              item: currentItem,
+              targetX: targetItemX,
+              targetY: targetItemY,
+              placedItems: placedItemsRef.current,
+              catalog: catalogRef.current,
+              roomWidth: rw,
+              roomLength: rl,
+            });
+
+            const resolvedCx = resolved.x + cat.wM / 2;
+            const resolvedCy = resolved.y + cat.dM / 2;
+            const clampedPosX = resolvedCx - rw / 2;
+            const clampedPosZ = resolvedCy - rl / 2;
+
+            // Instant 120 FPS 3D mesh movement
+            itemGroup.position.x = clampedPosX;
+            itemGroup.position.z = clampedPosZ;
+
+            // Follow selection halo
+            if (selectionGroupRef.current) {
+              selectionGroupRef.current.position.x = clampedPosX;
+              selectionGroupRef.current.position.z = clampedPosZ;
+            }
+
+            // Sync with parent state
+            onMoveItemRef.current?.(itemId, resolved.x, resolved.y);
+          }
+        }
+      } else {
+        // Hover cursor feedback
+        const furnitureGroup = furnitureGroupRef.current;
+        if (furnitureGroup) {
+          const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
+          let hit = false;
+          if (intersects.length > 0) {
+            let curr = intersects[0].object;
+            while (curr && curr !== furnitureGroup) {
+              if (curr.userData && curr.userData.itemId) {
+                hit = true;
+                break;
+              }
+              curr = curr.parent;
+            }
+          }
+          dom.style.cursor = hit ? "grab" : "default";
+        }
+      }
+    };
+
+    const onPointerUp = (e) => {
+      const dom = renderer.domElement;
+      controls.enabled = true;
+      if (dom) {
+        dom.style.cursor = "default";
+      }
+
+      const dx = Math.abs(e.clientX - dragStateRef.current.downPos.x);
+      const dy = Math.abs(e.clientY - dragStateRef.current.downPos.y);
+
+      // If clicked without dragging (< 4px), perform selection / deselection
+      if (!dragStateRef.current.hasMoved && dx < 4 && dy < 4) {
+        const camera = cameraRef.current;
+        const furnitureGroup = furnitureGroupRef.current;
+        if (dom && camera && furnitureGroup) {
+          const rect = dom.getBoundingClientRect();
+          const mouse = new THREE.Vector2(
+            ((e.clientX - rect.left) / rect.width) * 2 - 1,
+            -((e.clientY - rect.top) / rect.height) * 2 + 1
+          );
+          raycaster.setFromCamera(mouse, camera);
+          const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
+          let hitId = null;
+          if (intersects.length > 0) {
+            let curr = intersects[0].object;
+            while (curr && curr !== furnitureGroup) {
+              if (curr.userData && curr.userData.itemId) {
+                hitId = curr.userData.itemId;
+                break;
+              }
+              curr = curr.parent;
+            }
+          }
+          // If clicked empty floor/space, hitId is null -> deselects cleanly!
+          onSelectItemRef.current?.(hitId);
+        }
+      }
+
+      dragStateRef.current.isDragging = false;
+      dragStateRef.current.hasMoved = false;
+    };
+
+    const domElement = renderer.domElement;
+    domElement.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
 
     // Resize Observer
     const resizeObserver = new ResizeObserver(() => {
@@ -412,6 +719,10 @@ export default function Room3DCanvas({
       cancelAnimationFrame(animId);
       resizeObserver.disconnect();
       document.removeEventListener("fullscreenchange", onFullscreenChange);
+      domElement.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
       controls.dispose();
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
@@ -539,12 +850,12 @@ export default function Room3DCanvas({
     // Hardwood / Stone Floor
     const floorGeo = new THREE.PlaneGeometry(rw, rl);
     const floorTex = createFloorTexture(floorFinish);
-    floorTex.repeat.set(rw * 0.9, rl * 0.9);
+    floorTex.repeat.set(rw * 0.35, rl * 0.35);
 
     const floorMat = new THREE.MeshStandardMaterial({
       map: floorTex,
-      roughness: floorFinish === "travertine" ? 0.28 : 0.38,
-      metalness: 0.05,
+      roughness: floorFinish === "travertine" ? 0.38 : 0.48,
+      metalness: 0.04,
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
@@ -553,11 +864,11 @@ export default function Room3DCanvas({
     roomGroup.add(floorMesh);
     floorMeshRef.current = floorMesh;
 
-    // Base Sub-Plinth (architectural concrete slab)
-    const slabGeo = new THREE.BoxGeometry(rw + 0.12, 0.15, rl + 0.12);
+    // Base Sub-Plinth (architectural concrete slab recessed safely below the floor)
+    const slabGeo = new THREE.BoxGeometry(rw + 0.14, 0.15, rl + 0.14);
     const slabMat = new THREE.MeshStandardMaterial({ color: "#D2C9BB", roughness: 0.85 });
     const slabMesh = new THREE.Mesh(slabGeo, slabMat);
-    slabMesh.position.y = -0.075;
+    slabMesh.position.y = -0.095; // Top face is at -0.095 + 0.075 = -0.020m, safely 20mm under floor
     slabMesh.receiveShadow = true;
     roomGroup.add(slabMesh);
 
@@ -576,29 +887,81 @@ export default function Room3DCanvas({
     roomGroup.add(backWall);
     backWallRef.current = backWall;
 
-    // Framed Abstract Art Canvas on Back Wall
+    // ==========================================
+    // Architectural Framed Art Assembly (Back Wall)
+    // Completely eliminates z-fighting and texture shifting/blinking
+    // ==========================================
     const artW = Math.min(2.0, rw * 0.4);
     const artH = 1.35;
+    const frameBorder = 0.036; // 3.6 cm outer brass moulding
+    const frameDepth = 0.04;   // 4.0 cm frame depth projecting off the wall
+    const wallFaceZ = -rl / 2;  // Front face of back wall
+
+    const artGroup = new THREE.Group();
+    artGroup.position.set(0, 1.55, wallFaceZ);
+
+    const brassFrameMat = new THREE.MeshStandardMaterial({
+      color: "#C9A66B",
+      roughness: 0.28,
+      metalness: 0.8,
+    });
+
+    // 1. Backboard (mounted directly on wall face, thin backing)
+    const backboardGeo = new THREE.BoxGeometry(artW + frameBorder * 2, artH + frameBorder * 2, 0.008);
+    const backboardMat = new THREE.MeshStandardMaterial({
+      color: "#1E1A16",
+      roughness: 0.85,
+    });
+    const backboard = new THREE.Mesh(backboardGeo, backboardMat);
+    backboard.position.set(0, 0, 0.004);
+    backboard.castShadow = true;
+    artGroup.add(backboard);
+
+    // 2. Four Frame Moulding Bars (Bordering the canvas with zero overlapping center face)
+    // Top Bar
+    const topBarGeo = new THREE.BoxGeometry(artW + frameBorder * 2, frameBorder, frameDepth);
+    const topBar = new THREE.Mesh(topBarGeo, brassFrameMat);
+    topBar.position.set(0, artH / 2 + frameBorder / 2, frameDepth / 2);
+    topBar.castShadow = true;
+    artGroup.add(topBar);
+
+    // Bottom Bar
+    const botBarGeo = new THREE.BoxGeometry(artW + frameBorder * 2, frameBorder, frameDepth);
+    const botBar = new THREE.Mesh(botBarGeo, brassFrameMat);
+    botBar.position.set(0, -artH / 2 - frameBorder / 2, frameDepth / 2);
+    botBar.castShadow = true;
+    artGroup.add(botBar);
+
+    // Left Bar
+    const leftBarGeo = new THREE.BoxGeometry(frameBorder, artH, frameDepth);
+    const leftBar = new THREE.Mesh(leftBarGeo, brassFrameMat);
+    leftBar.position.set(-artW / 2 - frameBorder / 2, 0, frameDepth / 2);
+    leftBar.castShadow = true;
+    artGroup.add(leftBar);
+
+    // Right Bar
+    const rightBarGeo = new THREE.BoxGeometry(frameBorder, artH, frameDepth);
+    const rightBar = new THREE.Mesh(rightBarGeo, brassFrameMat);
+    rightBar.position.set(artW / 2 + frameBorder / 2, 0, frameDepth / 2);
+    rightBar.castShadow = true;
+    artGroup.add(rightBar);
+
+    // 3. Gallery Canvas Artwork (recessed inside frame by 8mm, with its own dedicated depth)
     const artGeo = new THREE.PlaneGeometry(artW, artH);
     const artMat = new THREE.MeshStandardMaterial({
       map: artTextureRef.current,
-      roughness: 0.6,
+      roughness: 0.8,
+      metalness: 0.02,
+      polygonOffset: true,
+      polygonOffsetFactor: -1,
+      polygonOffsetUnits: -1,
     });
     const artMesh = new THREE.Mesh(artGeo, artMat);
-    artMesh.position.set(0, 1.55, -rl / 2 + 0.01);
-    roomGroup.add(artMesh);
+    artMesh.position.set(0, 0, frameDepth - 0.008);
+    artMesh.receiveShadow = false; // Prevent shadow acne/striping on canvas surface
+    artGroup.add(artMesh);
 
-    // Brass Art Frame
-    const frameThick = 0.04;
-    const frameGeo = new THREE.BoxGeometry(artW + 0.08, artH + 0.08, frameThick);
-    const brassFrameMat = new THREE.MeshStandardMaterial({
-      color: "#C9A66B",
-      roughness: 0.25,
-      metalness: 0.75,
-    });
-    const artFrame = new THREE.Mesh(frameGeo, brassFrameMat);
-    artFrame.position.set(0, 1.55, -rl / 2 - frameThick / 2 + 0.01);
-    roomGroup.add(artFrame);
+    roomGroup.add(artGroup);
 
     // Left Wall (-X) with Panoramic Window Opening
     const leftWallGeo = new THREE.BoxGeometry(wallThick, wallH, rl + wallThick);
@@ -673,12 +1036,12 @@ export default function Room3DCanvas({
     });
     const frontBorderGeo = new THREE.BoxGeometry(rw, 0.06, 0.03);
     const frontBorder = new THREE.Mesh(frontBorderGeo, lowSkirtMat);
-    frontBorder.position.set(0, 0.03, rl / 2);
+    frontBorder.position.set(0, 0.03, rl / 2 + 0.015);
     roomGroup.add(frontBorder);
 
     const rightBorderGeo = new THREE.BoxGeometry(0.03, 0.06, rl);
     const rightBorder = new THREE.Mesh(rightBorderGeo, lowSkirtMat);
-    rightBorder.position.set(rw / 2, 0.03, 0);
+    rightBorder.position.set(rw / 2 + 0.015, 0.03, 0);
     roomGroup.add(rightBorder);
 
     // Architectural Plant in the corner
@@ -732,6 +1095,9 @@ export default function Room3DCanvas({
 
   // 3. Build Parametric 3D Furniture Meshes with Contact Shadows
   useEffect(() => {
+    // When actively dragging a piece on the floor plane, do not rebuild geometries/meshes
+    if (dragStateRef.current.isDragging) return;
+
     const furnitureGroup = furnitureGroupRef.current;
     if (!furnitureGroup) return;
 
@@ -802,47 +1168,42 @@ export default function Room3DCanvas({
 
       const w = cat.wM;
       const d = cat.dM;
-      const isSelected = item.id === selectedItemId;
       const woodMat = cat.timber?.includes("Walnut") ? walnutWoodMat : teakWoodMat;
 
-      // Contact Ambient Occlusion Shadow Decal on Floor
-      const shadowGeo = new THREE.PlaneGeometry(w * 1.04, d * 1.04);
-      const shadowMat = new THREE.MeshBasicMaterial({
-        color: "#18120B",
-        transparent: true,
-        opacity: 0.22,
-      });
-      const contactShadow = new THREE.Mesh(shadowGeo, shadowMat);
-      contactShadow.rotation.x = -Math.PI / 2;
-      contactShadow.position.y = 0.003;
-      itemGroup.add(contactShadow);
+      // Contact Ambient Occlusion Shadow Decal on Floor (only for furniture pieces, not rugs)
+      if (cat.type !== "rug") {
+        const shadowGeo = new THREE.PlaneGeometry(w * 1.04, d * 1.04);
+        const shadowMat = new THREE.MeshBasicMaterial({
+          color: "#18120B",
+          transparent: true,
+          opacity: 0.18,
+          depthWrite: false,
+          polygonOffset: true,
+          polygonOffsetFactor: -1,
+          polygonOffsetUnits: -1,
+        });
+        const contactShadow = new THREE.Mesh(shadowGeo, shadowMat);
+        contactShadow.rotation.x = -Math.PI / 2;
+        contactShadow.position.y = 0.002;
+        itemGroup.add(contactShadow);
+      }
 
       // Model Dispatch
       if (cat.type === "sofa") {
+        const armW = 0.14;
+        const innerW = w - 2 * armW;
+
         // Wooden Plinth Base
-        const plinthGeo = new THREE.BoxGeometry(w, 0.08, d);
+        const plinthH = 0.08;
+        const plinthGeo = new THREE.BoxGeometry(w, plinthH, d);
         const plinth = new THREE.Mesh(plinthGeo, woodMat);
-        plinth.position.y = 0.04;
+        plinth.position.y = plinthH / 2;
         plinth.castShadow = true;
         itemGroup.add(plinth);
 
-        // Seat Cushion
-        const seatGeo = new THREE.BoxGeometry(w - 0.24, 0.3, d - 0.15);
-        const seat = new THREE.Mesh(seatGeo, boucléFabricMat);
-        seat.position.set(0, 0.23, 0.05);
-        seat.castShadow = true;
-        itemGroup.add(seat);
-
-        // Backrest with piping line
-        const backGeo = new THREE.BoxGeometry(w, 0.44, 0.18);
-        const back = new THREE.Mesh(backGeo, boucléFabricMat);
-        back.position.set(0, 0.45, -d / 2 + 0.1);
-        back.castShadow = true;
-        itemGroup.add(back);
-
-        // Armrests
-        const armW = 0.14;
-        const armGeo = new THREE.BoxGeometry(armW, 0.38, d);
+        // Solid Timber Side Armrests
+        const armH = 0.38;
+        const armGeo = new THREE.BoxGeometry(armW, armH, d);
         const leftArm = new THREE.Mesh(armGeo, woodMat);
         leftArm.position.set(-w / 2 + armW / 2, 0.27, 0);
         leftArm.castShadow = true;
@@ -853,17 +1214,39 @@ export default function Room3DCanvas({
         rightArm.castShadow = true;
         itemGroup.add(rightArm);
 
+        // Architectural Rear Timber Back Rail
+        const backRailGeo = new THREE.BoxGeometry(innerW, 0.42, 0.02);
+        const backRail = new THREE.Mesh(backRailGeo, woodMat);
+        backRail.position.set(0, 0.29, -d / 2 + 0.01);
+        backRail.castShadow = true;
+        itemGroup.add(backRail);
+
+        // Plush Seat Cushion
+        const seatGeo = new THREE.BoxGeometry(innerW - 0.01, 0.26, d - 0.15);
+        const seat = new THREE.Mesh(seatGeo, boucléFabricMat);
+        seat.position.set(0, 0.21, 0.05);
+        seat.castShadow = true;
+        itemGroup.add(seat);
+
+        // Tall, Elegant Architectural Backrest Cushion (restored to full tall luxury height)
+        const backH = 0.50;
+        const backGeo = new THREE.BoxGeometry(innerW - 0.01, backH, 0.18);
+        const back = new THREE.Mesh(backGeo, boucléFabricMat);
+        back.position.set(0, 0.47, -d / 2 + 0.1);
+        back.castShadow = true;
+        itemGroup.add(back);
+
         // Luxury Accent Throw Pillows
         const pillowMat = new THREE.MeshStandardMaterial({ color: "#C9A66B", roughness: 0.82 });
         const pillowGeo = new THREE.BoxGeometry(0.24, 0.22, 0.1);
         const lp = new THREE.Mesh(pillowGeo, pillowMat);
-        lp.position.set(-w / 2 + armW + 0.1, 0.38, -d / 2 + 0.18);
+        lp.position.set(-innerW / 2 + 0.18, 0.38, -d / 2 + 0.20);
         lp.rotation.y = 0.25;
         lp.castShadow = true;
         itemGroup.add(lp);
 
         const rp = new THREE.Mesh(pillowGeo, pillowMat);
-        rp.position.set(w / 2 - armW - 0.1, 0.38, -d / 2 + 0.18);
+        rp.position.set(innerW / 2 - 0.18, 0.38, -d / 2 + 0.20);
         rp.rotation.y = -0.25;
         rp.castShadow = true;
         itemGroup.add(rp);
@@ -917,27 +1300,82 @@ export default function Room3DCanvas({
         runner.position.set(0, frameH + matH + 0.02, d * 0.22);
         runner.castShadow = true;
         itemGroup.add(runner);
+      } else if (cat.id === "nightstand") {
+        // Dedicated Bedside Nightstand Cabinet
+        const nsH = 0.52;
+        const bodyH = 0.36;
+        const legH = nsH - bodyH;
 
-        // Floating Wooden Nightstands on Both Sides
-        const standW = 0.38;
-        const standD = 0.36;
-        const standH = 0.2;
-        const standGeo = new THREE.BoxGeometry(standW, standH, standD);
+        // Nightstand Cabinet Body
+        const bodyGeo = new THREE.BoxGeometry(w, bodyH, d);
+        const body = new THREE.Mesh(bodyGeo, woodMat);
+        body.position.y = legH + bodyH / 2;
+        body.castShadow = true;
+        body.receiveShadow = true;
+        itemGroup.add(body);
 
-        const leftStand = new THREE.Mesh(standGeo, woodMat);
-        leftStand.position.set(-w / 2 - standW / 2, 0.26, -d / 2 + standD / 2);
-        leftStand.castShadow = true;
-        itemGroup.add(leftStand);
+        // Top Drawer Groove & Brass Pull Knob
+        const knobGeo = new THREE.CylinderGeometry(0.015, 0.012, 0.02, 16);
+        const knob = new THREE.Mesh(knobGeo, brassMat);
+        knob.rotation.x = Math.PI / 2;
+        knob.position.set(0, legH + bodyH * 0.72, d / 2 + 0.01);
+        itemGroup.add(knob);
 
-        const rightStand = new THREE.Mesh(standGeo, woodMat);
-        rightStand.position.set(w / 2 + standW / 2, 0.26, -d / 2 + standD / 2);
-        rightStand.castShadow = true;
-        itemGroup.add(rightStand);
-      } else if (cat.type === "table") {
+        // 4 Tapered Legs
+        const legGeo = new THREE.CylinderGeometry(0.02, 0.012, legH, 12);
+        const legOffsets = [
+          [-w / 2 + 0.05, -d / 2 + 0.05],
+          [w / 2 - 0.05, -d / 2 + 0.05],
+          [-w / 2 + 0.05, d / 2 - 0.05],
+          [w / 2 - 0.05, d / 2 - 0.05],
+        ];
+        legOffsets.forEach(([lx, lz]) => {
+          const leg = new THREE.Mesh(legGeo, brassMat);
+          leg.position.set(lx, legH / 2, lz);
+          leg.castShadow = true;
+          itemGroup.add(leg);
+        });
+      } else if (cat.id === "wardrobe_3d" || (cat.type === "cabinet" && cat.id.includes("wardrobe"))) {
+        // Architectural Master Wardrobe (Full Height ~2.05m)
+        const wardH = 2.05;
+        const plinthH = 0.08;
+        const doorH = wardH - plinthH;
+
+        // Main Carcass
+        const carcassGeo = new THREE.BoxGeometry(w, wardH, d);
+        const carcass = new THREE.Mesh(carcassGeo, woodMat);
+        carcass.position.y = wardH / 2;
+        carcass.castShadow = true;
+        carcass.receiveShadow = true;
+        itemGroup.add(carcass);
+
+        // 3 Vertical Fluted Door Panels & Shadow Lines
+        const doorW = (w - 0.04) / 3;
+        for (let i = 0; i < 3; i++) {
+          const doorPosX = -w / 2 + 0.02 + doorW / 2 + i * doorW;
+          const doorGeo = new THREE.BoxGeometry(doorW - 0.015, doorH - 0.02, 0.015);
+          const doorMesh = new THREE.Mesh(doorGeo, woodMat);
+          doorMesh.position.set(doorPosX, plinthH + doorH / 2, d / 2 + 0.008);
+          itemGroup.add(doorMesh);
+
+          // Long Architectural Brass Pull
+          const handleGeo = new THREE.CylinderGeometry(0.008, 0.008, 0.35, 12);
+          const handle = new THREE.Mesh(handleGeo, brassMat);
+          const hOff = i === 1 ? -doorW * 0.3 : doorW * 0.3;
+          handle.position.set(doorPosX + hOff, plinthH + doorH * 0.52, d / 2 + 0.025);
+          itemGroup.add(handle);
+        }
+
+        // Top Crown Cornice Trim
+        const crownGeo = new THREE.BoxGeometry(w + 0.04, 0.04, d + 0.04);
+        const crown = new THREE.Mesh(crownGeo, brassMat);
+        crown.position.y = wardH + 0.02;
+        itemGroup.add(crown);
+      } else if (cat.type === "table" || cat.type === "dining_set") {
         // Tabletop (Timber or Smoked Glass for Coffee Table)
         const topH = 0.05;
-        const legH = cat.id.includes("coffee") ? 0.38 : 0.72;
         const isCoffee = cat.id.includes("coffee");
+        const legH = isCoffee ? 0.38 : 0.72;
 
         if (isCoffee) {
           // Timber Frame with Inset Smoked Glass Top
@@ -976,20 +1414,29 @@ export default function Room3DCanvas({
           itemGroup.add(leg);
         });
 
-        // Dining Chairs around Table (if dining suite)
-        if (cat.id.includes("dining")) {
+        // Dining Chairs around Table (if dining suite or table > 1.4m)
+        if (cat.id.includes("dining") || cat.type === "dining_set") {
           const chairSeats = [
-            [-w * 0.28, -d / 2 - 0.3],
-            [w * 0.28, -d / 2 - 0.3],
-            [-w * 0.28, d / 2 + 0.3],
-            [w * 0.28, d / 2 + 0.3],
+            [-w * 0.28, -d / 2 - 0.28],
+            [w * 0.28, -d / 2 - 0.28],
+            [-w * 0.28, d / 2 + 0.28],
+            [w * 0.28, d / 2 + 0.28],
           ];
+          if (w >= 2.0) {
+            chairSeats.push([0, -d / 2 - 0.28], [0, d / 2 + 0.28]);
+          }
           chairSeats.forEach(([cxPos, czPos]) => {
             const chairGeo = new THREE.BoxGeometry(0.44, 0.44, 0.44);
             const chair = new THREE.Mesh(chairGeo, woodMat);
             chair.position.set(cxPos, 0.22, czPos);
             chair.castShadow = true;
             itemGroup.add(chair);
+
+            const chairBackGeo = new THREE.BoxGeometry(0.44, 0.4, 0.06);
+            const chairBack = new THREE.Mesh(chairBackGeo, woodMat);
+            chairBack.position.set(cxPos, 0.58, czPos > 0 ? czPos + 0.19 : czPos - 0.19);
+            chairBack.castShadow = true;
+            itemGroup.add(chairBack);
           });
         }
       } else if (cat.type === "chair") {
@@ -1090,69 +1537,71 @@ export default function Room3DCanvas({
         itemGroup.add(genMesh);
       }
 
-      // Selected Glow Ring & 3D CAD Bounding Wireframe
-      if (isSelected) {
-        const ringGeo = new THREE.RingGeometry(
-          Math.max(w, d) * 0.52,
-          Math.max(w, d) * 0.62,
-          36
-        );
-        const ringMat = new THREE.MeshBasicMaterial({
-          color: "#C9A66B",
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.85,
-        });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.rotation.x = -Math.PI / 2;
-        ring.position.y = 0.012;
-        itemGroup.add(ring);
-
-        // Architectural CAD Selection Box
-        const boxGeo = new THREE.BoxGeometry(w + 0.08, 0.02, d + 0.08);
-        const wireMat = new THREE.MeshBasicMaterial({
-          color: "#E2BA78",
-          wireframe: true,
-        });
-        const wireBox = new THREE.Mesh(boxGeo, wireMat);
-        wireBox.position.y = 0.015;
-        itemGroup.add(wireBox);
-      }
-
       furnitureGroup.add(itemGroup);
     });
-  }, [placedItems, selectedItemId, catalog, roomWidth, roomLength]);
+  }, [placedItems, catalog, roomWidth, roomLength]);
 
-  // 4. Raycast Item Selection in 3D
-  const handlePointerDown = (e) => {
-    if (!onSelectItem || !sceneRef.current || !cameraRef.current) return;
-    const container = mountRef.current;
-    if (!container) return;
+  // 4. Dedicated Selection Highlight Engine (Glow Halo & Bounding Wireframe)
+  useEffect(() => {
+    const group = selectionGroupRef.current;
+    if (!group) return;
 
-    const rect = container.getBoundingClientRect();
-    const mouse = new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      -((e.clientY - rect.top) / rect.height) * 2 + 1
-    );
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, cameraRef.current);
-
-    const furnitureGroup = furnitureGroupRef.current;
-    if (!furnitureGroup) return;
-
-    const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
-    if (intersects.length > 0) {
-      let curr = intersects[0].object;
-      while (curr && curr !== furnitureGroup) {
-        if (curr.userData && curr.userData.itemId) {
-          onSelectItem(curr.userData.itemId);
-          break;
-        }
-        curr = curr.parent;
-      }
+    // Clear previous selection indicators
+    while (group.children.length > 0) {
+      const obj = group.children[0];
+      if (obj.geometry) obj.geometry.dispose();
+      group.remove(obj);
     }
-  };
+
+    if (!selectedItemId) return;
+
+    const currentItem = placedItems.find((p) => p.id === selectedItemId);
+    const cat = currentItem ? catalog.find((c) => c.id === currentItem.catId) : null;
+    if (!currentItem || !cat) return;
+
+    const rw = roomWidth;
+    const rl = roomLength;
+    const cx = currentItem.x + cat.wM / 2;
+    const cy = currentItem.y + cat.dM / 2;
+    const posX = cx - rw / 2;
+    const posZ = cy - rl / 2;
+
+    group.position.set(posX, 0, posZ);
+    group.rotation.y = -THREE.MathUtils.degToRad(currentItem.rot);
+
+    const w = cat.wM;
+    const d = cat.dM;
+
+    const isOverlapping = overlappingItemIds?.has(selectedItemId);
+    const ringColor = isOverlapping ? "#EF4444" : "#C9A66B";
+    const wireColor = isOverlapping ? "#FCA5A5" : "#E2BA78";
+
+    // Golden Glow Ring on Floor (or alert rose if overlapping)
+    const radius = Math.max(w, d) * 0.58;
+    const ringGeo = new THREE.RingGeometry(radius, radius + 0.08, 48);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: ringColor,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.88,
+      depthWrite: false,
+    });
+    const ring = new THREE.Mesh(ringGeo, ringMat);
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.006;
+    group.add(ring);
+
+    // Architectural Wireframe Bounding Box
+    const boxGeo = new THREE.BoxGeometry(w + 0.06, 0.02, d + 0.06);
+    const wireMat = new THREE.MeshBasicMaterial({
+      color: wireColor,
+      wireframe: true,
+      depthWrite: false,
+    });
+    const wireBox = new THREE.Mesh(boxGeo, wireMat);
+    wireBox.position.y = 0.01;
+    group.add(wireBox);
+  }, [selectedItemId, placedItems, catalog, roomWidth, roomLength, overlappingItemIds]);
 
   // 5. 1-Click High-Res 3D Snapshot with Camera Flash Animation
   const handleCaptureSnapshot = () => {
@@ -1189,18 +1638,22 @@ export default function Room3DCanvas({
     }
   };
 
+  const activeSelectedItem = placedItems.find((p) => p.id === selectedItemId);
+  const activeSelectedCat = activeSelectedItem
+    ? catalog.find((c) => c.id === activeSelectedItem.catId)
+    : null;
+
   return (
     <div
       ref={rootRef}
-      className={`relative w-full aspect-[4/3] sm:aspect-[16/10] bg-[#14171A] border-2 border-brass/35 rounded-sm overflow-hidden select-none shadow-2xl transition-all ${
-        isFullscreen ? "fixed inset-0 z-50 aspect-auto rounded-none border-0" : ""
+      className={`relative w-full h-[420px] xs:h-[480px] sm:h-auto sm:aspect-[16/10] bg-[#F3EEE5] border-2 border-brass/35 rounded-sm select-none shadow-2xl transition-all ${
+        isFullscreen ? "fixed inset-0 z-50 h-auto aspect-auto rounded-none border-0" : ""
       }`}
     >
       {/* 3D WebGL Canvas Mount Container */}
       <div
         ref={mountRef}
-        onPointerDown={handlePointerDown}
-        className="w-full h-full cursor-grab active:cursor-grabbing"
+        className="w-full h-full cursor-grab active:cursor-grabbing touch-none"
       />
 
       {/* DSLR Shutter Flash Effect */}
@@ -1210,77 +1663,103 @@ export default function Room3DCanvas({
         }`}
       />
 
-      {/* Top Floating Glassmorphism HUD Bar */}
-      <div className="absolute top-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none z-20">
-        {/* Left: Camera Angle Presets */}
-        <div className="flex items-center gap-1 bg-depth/85 backdrop-blur-xl p-1 rounded-full border border-bone/15 shadow-xl pointer-events-auto">
+      {/* Top Floating Luxury HUD Bar (Ultra-responsive single-row floating capsules) */}
+      <div className="absolute top-2.5 sm:top-3 left-2.5 sm:left-3 right-2.5 sm:right-3 flex items-center justify-between gap-1.5 pointer-events-none z-20">
+        {/* Left: Camera Angle Presets & Orbit Controls */}
+        <div className="flex items-center gap-0.5 sm:gap-1.5 bg-[#FAF8F5]/95 backdrop-blur-xl px-1.5 sm:px-2 py-1 sm:py-1.5 rounded-full border border-[#E5DFD5] shadow-[0_2px_12px_rgba(0,0,0,0.06)] pointer-events-auto shrink-0">
           <button
             type="button"
             onClick={() => setCameraPreset("iso")}
-            className={`px-3 py-1.5 rounded-full text-[0.65rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
+            className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-[0.68rem] sm:text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
               activeCamPreset === "iso"
-                ? "bg-brass text-depth font-bold shadow-md"
-                : "text-bone/70 hover:text-bone"
+                ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] shadow-2xs"
+                : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
             }`}
           >
-            {t("planner.camIso")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setCameraPreset("top")}
-            className={`px-3 py-1.5 rounded-full text-[0.65rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
-              activeCamPreset === "top"
-                ? "bg-brass text-depth font-bold shadow-md"
-                : "text-bone/70 hover:text-bone"
-            }`}
-          >
-            {t("planner.camTop")}
+            3D
           </button>
           <button
             type="button"
             onClick={() => setCameraPreset("front")}
-            className={`px-3 py-1.5 rounded-full text-[0.65rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
+            className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[0.68rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
               activeCamPreset === "front"
-                ? "bg-brass text-depth font-bold shadow-md"
-                : "text-bone/70 hover:text-bone"
+                ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] font-bold shadow-2xs"
+                : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
             }`}
           >
-            {t("planner.camFront")}
+            FRONT
+          </button>
+          <button
+            type="button"
+            onClick={() => setCameraPreset("top")}
+            className={`px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[0.68rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
+              activeCamPreset === "top"
+                ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] font-bold shadow-2xs"
+                : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
+            }`}
+          >
+            TOP
           </button>
           <button
             type="button"
             onClick={() => setCameraPreset("eye")}
-            className={`px-3 py-1.5 rounded-full text-[0.65rem] sm:text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
+            className={`p-1 sm:p-1.5 rounded-full transition-all cursor-pointer hidden xs:inline-flex ${
               activeCamPreset === "eye"
-                ? "bg-brass text-depth font-bold shadow-md"
-                : "text-bone/70 hover:text-bone"
+                ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] shadow-2xs"
+                : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
             }`}
+            title={lang === "bn" ? "আই-লেভেল ওয়াকথ্রু" : "Eye-Level Walkthrough"}
           >
-            {t("planner.camEye")}
+            <Eye className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+          </button>
+
+          {/* Subtle Vertical Divider */}
+          <div className="w-[1px] h-3 sm:h-4 bg-[#E2DDD5] mx-0.5" />
+
+          {/* Auto-Orbit 360° */}
+          <button
+            type="button"
+            onClick={() => setAutoRotate((prev) => !prev)}
+            className={`w-6 h-6 sm:w-7.5 sm:h-7.5 rounded-full flex items-center justify-center border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] transition-all cursor-pointer ${
+              autoRotate ? "shadow-2xs ring-2 ring-[#C2A478]/30" : "hover:brightness-95"
+            }`}
+            title={t("planner.autoRotate")}
+          >
+            <Rotate3d className={`h-3 w-3 sm:h-3.5 sm:w-3.5 ${autoRotate ? "animate-spin" : ""}`} />
+          </button>
+
+          {/* Reset Camera View */}
+          <button
+            type="button"
+            onClick={() => setCameraPreset("iso")}
+            className="w-6 h-6 sm:w-7.5 sm:h-7.5 rounded-full text-[#7A756D] hover:text-[#1F1E1B] hover:bg-[#EAE4D9]/60 flex items-center justify-center transition-all cursor-pointer"
+            title="Reset View"
+          >
+            <RefreshCw className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
           </button>
         </div>
 
-        {/* Right: Studio Atmosphere & Action Tools */}
-        <div className="flex items-center gap-1.5 pointer-events-auto">
+        {/* Right: Studio Atmosphere & Action Tools (Individual standalone floating luxury pills on desktop) */}
+        <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto shrink-0">
           {/* Day / Evening Mood Switcher */}
           <button
             type="button"
             onClick={() => setLightingMood((prev) => (prev === "day" ? "evening" : "day"))}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full backdrop-blur-xl border transition-all shadow-xl text-xs font-medium cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-xl border transition-all shadow-[0_2px_10px_rgba(0,0,0,0.06)] text-xs font-medium cursor-pointer ${
               lightingMood === "evening"
-                ? "bg-brass text-depth border-brass font-bold"
-                : "bg-depth/85 text-bone/90 border-bone/15 hover:text-bone"
+                ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] font-bold shadow-2xs"
+                : "bg-[#FAF8F5]/95 text-[#7A756D] border-[#E5DFD5] hover:text-[#1F1E1B] hover:bg-[#F2ECE1]"
             }`}
             title="Toggle Daylight / Evening Mood"
           >
             {lightingMood === "evening" ? (
               <>
-                <Moon className="h-3.5 w-3.5 fill-current" />
+                <Moon className="h-3.5 w-3.5 text-[#C2A478] fill-current" />
                 <span className="hidden sm:inline">{t("planner.moodNight")}</span>
               </>
             ) : (
               <>
-                <Sun className="h-3.5 w-3.5 text-brass" />
+                <Sun className="h-3.5 w-3.5 text-[#C2A478]" />
                 <span className="hidden sm:inline">{t("planner.moodDay")}</span>
               </>
             )}
@@ -1291,10 +1770,10 @@ export default function Room3DCanvas({
             <button
               type="button"
               onClick={() => setIsFloorMenuOpen((prev) => !prev)}
-              className="inline-flex items-center gap-1.5 bg-depth/85 hover:bg-depth text-bone px-3 py-1.5 rounded-full border border-bone/15 backdrop-blur-xl text-xs font-medium shadow-xl transition-all cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-[#FAF8F5]/95 hover:bg-[#F2ECE1] text-[#4A443D] hover:text-[#1F1E1B] p-1.5 sm:px-3 sm:py-1.5 rounded-full border border-[#E5DFD5] backdrop-blur-xl text-xs font-medium shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all cursor-pointer"
               title={t("planner.floorFinish")}
             >
-              <Layers className="h-3.5 w-3.5 text-brass" />
+              <Layers className="h-3.5 w-3.5 text-[#C2A478]" />
               <span className="hidden sm:inline">
                 {floorFinish === "teak_parquet"
                   ? t("planner.floorTeak")
@@ -1304,97 +1783,90 @@ export default function Room3DCanvas({
                   ? t("planner.floorOak")
                   : t("planner.floorStone")}
               </span>
-              <ChevronDown className="h-3 w-3 text-bone/60" />
+              <ChevronDown className="h-3 w-3 text-[#7A756D] hidden sm:inline" />
             </button>
 
             {/* Floor Finish Dropdown */}
             {isFloorMenuOpen && (
-              <div
-                onMouseLeave={() => setIsFloorMenuOpen(false)}
-                className="absolute right-0 top-full mt-2 w-44 bg-depth/95 backdrop-blur-2xl border border-bone/20 rounded-md p-1.5 shadow-2xl z-40 space-y-1"
-              >
-                <div className="px-2 py-1 text-[0.62rem] uppercase tracking-wider text-brass font-mono border-b border-bone/10 font-bold">
-                  {t("planner.floorFinish")}
+              <>
+                {/* Backdrop click-catcher for mobile touch screens */}
+                <div
+                  className="fixed inset-0 z-30"
+                  onClick={() => setIsFloorMenuOpen(false)}
+                />
+                <div
+                  onMouseLeave={() => setIsFloorMenuOpen(false)}
+                  className="absolute right-0 top-full mt-2 w-44 sm:w-48 max-w-[calc(100vw-24px)] bg-[#FAF8F5]/98 backdrop-blur-2xl border border-[#E5DFD5] rounded-xl p-1.5 shadow-2xl z-40 space-y-1"
+                >
+                  <div className="px-2.5 py-1 text-[0.62rem] uppercase tracking-wider text-[#A67C52] font-mono border-b border-[#EAE4D9] font-bold">
+                    {t("planner.floorFinish")}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFloorFinish("teak_parquet");
+                      setIsFloorMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                      floorFinish === "teak_parquet" ? "bg-[#EFE8DD] text-[#1F1E1B] font-bold border border-[#C2A478]/40" : "text-[#4A443D] hover:bg-[#F2ECE1]"
+                    }`}
+                  >
+                    <span>{t("planner.floorTeak")}</span>
+                    {floorFinish === "teak_parquet" && <span className="h-1.5 w-1.5 rounded-full bg-[#C2A478]" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFloorFinish("walnut_herringbone");
+                      setIsFloorMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                      floorFinish === "walnut_herringbone" ? "bg-[#EFE8DD] text-[#1F1E1B] font-bold border border-[#C2A478]/40" : "text-[#4A443D] hover:bg-[#F2ECE1]"
+                    }`}
+                  >
+                    <span>{t("planner.floorWalnut")}</span>
+                    {floorFinish === "walnut_herringbone" && <span className="h-1.5 w-1.5 rounded-full bg-[#C2A478]" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFloorFinish("white_oak");
+                      setIsFloorMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                      floorFinish === "white_oak" ? "bg-[#EFE8DD] text-[#1F1E1B] font-bold border border-[#C2A478]/40" : "text-[#4A443D] hover:bg-[#F2ECE1]"
+                    }`}
+                  >
+                    <span>{t("planner.floorOak")}</span>
+                    {floorFinish === "white_oak" && <span className="h-1.5 w-1.5 rounded-full bg-[#C2A478]" />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFloorFinish("travertine");
+                      setIsFloorMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-colors ${
+                      floorFinish === "travertine" ? "bg-[#EFE8DD] text-[#1F1E1B] font-bold border border-[#C2A478]/40" : "text-[#4A443D] hover:bg-[#F2ECE1]"
+                    }`}
+                  >
+                    <span>{t("planner.floorStone")}</span>
+                    {floorFinish === "travertine" && <span className="h-1.5 w-1.5 rounded-full bg-[#C2A478]" />}
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFloorFinish("teak_parquet");
-                    setIsFloorMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-xs text-xs flex items-center justify-between cursor-pointer transition-colors ${
-                    floorFinish === "teak_parquet" ? "bg-brass/20 text-brass font-bold" : "text-bone/80 hover:bg-white/10"
-                  }`}
-                >
-                  <span>{t("planner.floorTeak")}</span>
-                  {floorFinish === "teak_parquet" && <span className="h-1.5 w-1.5 rounded-full bg-brass" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFloorFinish("walnut_herringbone");
-                    setIsFloorMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-xs text-xs flex items-center justify-between cursor-pointer transition-colors ${
-                    floorFinish === "walnut_herringbone" ? "bg-brass/20 text-brass font-bold" : "text-bone/80 hover:bg-white/10"
-                  }`}
-                >
-                  <span>{t("planner.floorWalnut")}</span>
-                  {floorFinish === "walnut_herringbone" && <span className="h-1.5 w-1.5 rounded-full bg-brass" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFloorFinish("white_oak");
-                    setIsFloorMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-xs text-xs flex items-center justify-between cursor-pointer transition-colors ${
-                    floorFinish === "white_oak" ? "bg-brass/20 text-brass font-bold" : "text-bone/80 hover:bg-white/10"
-                  }`}
-                >
-                  <span>{t("planner.floorOak")}</span>
-                  {floorFinish === "white_oak" && <span className="h-1.5 w-1.5 rounded-full bg-brass" />}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFloorFinish("travertine");
-                    setIsFloorMenuOpen(false);
-                  }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-xs text-xs flex items-center justify-between cursor-pointer transition-colors ${
-                    floorFinish === "travertine" ? "bg-brass/20 text-brass font-bold" : "text-bone/80 hover:bg-white/10"
-                  }`}
-                >
-                  <span>{t("planner.floorStone")}</span>
-                  {floorFinish === "travertine" && <span className="h-1.5 w-1.5 rounded-full bg-brass" />}
-                </button>
-              </div>
+              </>
             )}
           </div>
-
-          {/* Auto-Orbit 360° Button */}
-          <button
-            type="button"
-            onClick={() => setAutoRotate((prev) => !prev)}
-            className={`p-2 rounded-full backdrop-blur-xl border transition-all shadow-xl cursor-pointer ${
-              autoRotate
-                ? "bg-brass text-depth border-brass"
-                : "bg-depth/85 text-bone/80 border-bone/15 hover:text-bone"
-            }`}
-            title={t("planner.autoRotate")}
-          >
-            <Rotate3d className="h-3.5 w-3.5" />
-          </button>
 
           {/* 3D 4K Photo Snapshot */}
           <button
             type="button"
             onClick={handleCaptureSnapshot}
             disabled={isSnapshotting}
-            className="inline-flex items-center gap-1.5 bg-depth/85 hover:bg-depth text-bone px-3 py-1.5 rounded-full border border-bone/15 backdrop-blur-xl text-xs font-medium shadow-xl transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-[#FAF8F5]/95 hover:bg-[#F2ECE1] text-[#4A443D] hover:text-[#1F1E1B] p-1.5 sm:px-3 sm:py-1.5 rounded-full border border-[#E5DFD5] backdrop-blur-xl text-xs font-medium shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-all cursor-pointer"
             title={t("planner.snapshot")}
           >
-            <Camera className="h-3.5 w-3.5 text-brass" />
+            <Camera className="h-3.5 w-3.5 text-[#C2A478]" />
             <span className="hidden sm:inline">{t("planner.snapshot")}</span>
           </button>
 
@@ -1402,7 +1874,7 @@ export default function Room3DCanvas({
           <button
             type="button"
             onClick={handleToggleFullscreen}
-            className="p-2 rounded-full bg-depth/85 hover:bg-depth text-bone/85 border border-bone/15 backdrop-blur-xl transition-all shadow-xl cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-full bg-[#FAF8F5]/95 hover:bg-[#F2ECE1] text-[#4A443D] hover:text-[#1F1E1B] border border-[#E5DFD5] backdrop-blur-xl transition-all shadow-[0_2px_10px_rgba(0,0,0,0.06)] cursor-pointer"
             title={t("planner.fullscreen")}
           >
             {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
@@ -1411,22 +1883,22 @@ export default function Room3DCanvas({
       </div>
 
       {/* Bottom Left Status Badge */}
-      <div className="absolute bottom-3 left-3 bg-depth/85 text-bone/90 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-bone/15 text-[0.62rem] font-mono pointer-events-none shadow-xl flex items-center gap-2 z-20">
-        <span className="flex h-2 w-2 relative">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+      <div className="absolute bottom-3 left-3 bg-[#FAF8F5]/95 text-[#2D2A26] backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-[#E5DFD5] text-[0.62rem] sm:text-[0.65rem] font-mono pointer-events-none shadow-xl flex items-center gap-2 z-20">
+        <span className="flex h-2 w-2 relative shrink-0">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
         </span>
-        <span className="text-brass font-bold tracking-wider">3D WEBGL STUDIO</span>
-        <span className="text-bone/40">·</span>
+        <span className="text-[#8C6239] font-bold tracking-wider shrink-0">3D WEBGL STUDIO</span>
+        <span className="text-[#A89F91]">·</span>
         <span>
           {roomWidth.toFixed(1)}m × {roomLength.toFixed(1)}m ({placedItems.length}{" "}
           {lang === "bn" ? "টি সামগ্রী" : "Pieces"})
         </span>
       </div>
 
-      {/* Bottom Center Interaction Guide */}
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-depth/85 text-bone/85 backdrop-blur-xl px-4 py-1.5 rounded-full border border-bone/15 text-[0.62rem] font-mono pointer-events-none shadow-xl hidden md:flex items-center gap-2 z-20">
-        <Sparkles className="h-3 w-3 text-brass" />
+      {/* Bottom Right Interaction Guide */}
+      <div className="absolute bottom-3 right-3 bg-[#FAF8F5]/95 text-[#5C554E] backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-[#E5DFD5] text-[0.62rem] font-mono pointer-events-none shadow-xl hidden md:flex items-center gap-1.5 z-20">
+        <Sparkles className="h-3 w-3 text-[#C2A478] shrink-0" />
         <span>
           {lang === "bn"
             ? "ঘোরাতে ড্র্যাগ করুন · জুম করতে স্ক্রোল · সিলেক্ট করতে ক্লিক করুন"

@@ -13,6 +13,7 @@ import {
   Ruler,
   Copy,
   Box,
+  X,
 } from "lucide-react";
 import Nav from "@/components/heaven/Nav";
 import Footer from "@/components/heaven/Footer";
@@ -24,6 +25,12 @@ import { useLang } from "@/components/heaven/LanguageProvider";
 import { useConsultation } from "@/components/heaven/ConsultationContext";
 import { WHATSAPP_URL, PHONE_DISPLAY, ADDRESS } from "@/components/heaven/constants";
 import Room3DCanvas from "@/components/heaven/Room3DCanvas";
+import {
+  resolveSlidePosition,
+  resolveRotateItem,
+  findNonOverlappingPosition,
+  getOverlappingItemIds,
+} from "@/utils/plannerCollision";
 
 // Room Templates
 const ROOM_TEMPLATES = [
@@ -432,6 +439,12 @@ export default function RoomPlanner() {
   const [pdfGenerating, setPdfGenerating] = useState(false);
   const [viewMode, setViewMode] = useState("3d"); // "3d" | "2d"
 
+  // Real-time overlap detection across all solid furniture
+  const overlappingItemIds = useMemo(
+    () => getOverlappingItemIds(placedItems, CATALOG),
+    [placedItems]
+  );
+
   // Dragging state
   const canvasRef = useRef(null);
   const [dragState, setDragState] = useState(null);
@@ -471,53 +484,105 @@ export default function RoomPlanner() {
     setSelectedItemId(null);
   };
 
-  // Add item from catalog (safely centered and clamped within room bounds)
+  // Add item from catalog into the nearest clear, non-overlapping spot
   const handleAddItem = (catItem) => {
-    const startX = Math.max(0, Math.min(roomWidth - catItem.wM, (roomWidth - catItem.wM) / 2));
-    const startY = Math.max(0, Math.min(roomLength - catItem.dM, (roomLength - catItem.dM) / 2));
+    const pos = findNonOverlappingPosition(
+      catItem.id,
+      0,
+      (roomWidth - catItem.wM) / 2,
+      (roomLength - catItem.dM) / 2,
+      placedItems,
+      CATALOG,
+      roomWidth,
+      roomLength
+    );
     const newItem = {
       id: `item-${Date.now()}`,
       catId: catItem.id,
-      x: Math.round(startX * 10) / 10,
-      y: Math.round(startY * 10) / 10,
+      x: pos.x,
+      y: pos.y,
       rot: 0,
     };
     setPlacedItems((prev) => [...prev, newItem]);
     setSelectedItemId(newItem.id);
   };
 
-  // Duplicate selected item with slight offset
+  // Duplicate selected item into the nearest clear adjacent space
   const handleDuplicateSelected = () => {
     if (!selectedItemId) return;
     const original = placedItems.find((p) => p.id === selectedItemId);
     if (!original) return;
     const cat = CATALOG.find((c) => c.id === original.catId);
     const isRot = original.rot % 180 !== 0;
-    const wM = cat ? (isRot ? cat.dM : cat.wM) : 1;
-    const dM = cat ? (isRot ? cat.wM : cat.dM) : 1;
+    const visualW = cat ? (isRot ? cat.dM : cat.wM) : 1;
 
-    const newX = Math.min(Math.max(0, roomWidth - wM * 0.5), original.x + 0.3);
-    const newY = Math.min(Math.max(0, roomLength - dM * 0.5), original.y + 0.3);
+    const preferredX = original.x + visualW + 0.25;
+    const preferredY = original.y;
+
+    const pos = findNonOverlappingPosition(
+      original.catId,
+      original.rot,
+      preferredX,
+      preferredY,
+      placedItems,
+      CATALOG,
+      roomWidth,
+      roomLength
+    );
 
     const newItem = {
       id: `item-${Date.now()}`,
       catId: original.catId,
-      x: Math.round(newX * 10) / 10,
-      y: Math.round(newY * 10) / 10,
+      x: pos.x,
+      y: pos.y,
       rot: original.rot,
     };
     setPlacedItems((prev) => [...prev, newItem]);
     setSelectedItemId(newItem.id);
   };
 
-  // Rotate selected item
+  // Move placed item with non-overlap collision resolution (used by both 2D and 3D)
+  const handleMoveItem = useCallback(
+    (id, newX, newY) => {
+      setPlacedItems((prev) => {
+        const item = prev.find((p) => p.id === id);
+        if (!item) return prev;
+        const resolved = resolveSlidePosition({
+          item,
+          targetX: newX,
+          targetY: newY,
+          placedItems: prev,
+          catalog: CATALOG,
+          roomWidth,
+          roomLength,
+        });
+        return prev.map((p) =>
+          p.id === id
+            ? {
+                ...p,
+                x: Math.round(resolved.x * 100) / 100,
+                y: Math.round(resolved.y * 100) / 100,
+              }
+            : p
+        );
+      });
+    },
+    [roomWidth, roomLength]
+  );
+
+  // Rotate selected item with collision clearance check
   const handleRotateSelected = () => {
     if (!selectedItemId) return;
-    setPlacedItems((prev) =>
-      prev.map((item) =>
-        item.id === selectedItemId ? { ...item, rot: (item.rot + 90) % 360 } : item
-      )
-    );
+    setPlacedItems((prev) => {
+      const item = prev.find((p) => p.id === selectedItemId);
+      if (!item) return prev;
+      const resolved = resolveRotateItem(item, prev, CATALOG, roomWidth, roomLength);
+      if (!resolved) {
+        // Blocked - cannot rotate without overlapping other furniture
+        return prev;
+      }
+      return prev.map((p) => (p.id === selectedItemId ? resolved : p));
+    });
   };
 
   // Delete selected item
@@ -544,7 +609,7 @@ export default function RoomPlanner() {
     setSelectedItemId(null);
   };
 
-  // Room dimension update handlers with boundary clamping
+  // Room dimension update handlers with accurate rotated boundary clamping
   const clampItemsWithinBounds = (newW, newL) => {
     setPlacedItems((prev) =>
       prev.map((item) => {
@@ -552,8 +617,8 @@ export default function RoomPlanner() {
         const isRot = item.rot % 180 !== 0;
         const wM = cat ? (isRot ? cat.dM : cat.wM) : 1;
         const dM = cat ? (isRot ? cat.wM : cat.dM) : 1;
-        const maxX = Math.max(0, newW - wM * 0.5);
-        const maxY = Math.max(0, newL - dM * 0.5);
+        const maxX = Math.max(0, newW - wM);
+        const maxY = Math.max(0, newL - dM);
         const clampedX = Math.min(Math.max(0, item.x), maxX);
         const clampedY = Math.min(Math.max(0, item.y), maxY);
         return item.x !== clampedX || item.y !== clampedY
@@ -641,17 +706,58 @@ export default function RoomPlanner() {
       const deltaX = (clientX - dragState.startX) / pixelsPerMeter;
       const deltaY = (clientY - dragState.startY) / pixelsPerMeter;
 
-      const newX = Math.max(0, Math.min(roomWidth - dragState.wM * 0.5, dragState.origItemX + deltaX));
-      const newY = Math.max(0, Math.min(roomLength - dragState.dM * 0.5, dragState.origItemY + deltaY));
+      const targetX = dragState.origItemX + deltaX;
+      const targetY = dragState.origItemY + deltaY;
 
-      setPlacedItems((prev) =>
-        prev.map((item) =>
-          item.id === dragState.itemId ? { ...item, x: newX, y: newY } : item
-        )
-      );
+      handleMoveItem(dragState.itemId, targetX, targetY);
     },
-    [dragState, pixelsPerMeter, roomWidth, roomLength]
+    [dragState, pixelsPerMeter, handleMoveItem]
   );
+
+  // Global Keyboard Shortcuts for selected item (R = rotate, Delete = remove, Esc = deselect, Arrows = nudge)
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = document.activeElement?.tagName?.toLowerCase();
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+
+      if (e.key === "Escape") {
+        setSelectedItemId(null);
+        return;
+      }
+
+      if (!selectedItemId) return;
+
+      if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        handleRotateSelected();
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        e.preventDefault();
+        handleDeleteSelected();
+      } else if (e.key === "d" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        handleDuplicateSelected();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        const curr = placedItems.find((it) => it.id === selectedItemId);
+        if (curr) handleMoveItem(selectedItemId, curr.x - 0.1, curr.y);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        const curr = placedItems.find((it) => it.id === selectedItemId);
+        if (curr) handleMoveItem(selectedItemId, curr.x + 0.1, curr.y);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        const curr = placedItems.find((it) => it.id === selectedItemId);
+        if (curr) handleMoveItem(selectedItemId, curr.x, curr.y - 0.1);
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        const curr = placedItems.find((it) => it.id === selectedItemId);
+        if (curr) handleMoveItem(selectedItemId, curr.x, curr.y + 0.1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedItemId, placedItems, handleMoveItem]);
 
   const handlePointerUp = useCallback(() => {
     setDragState(null);
@@ -1094,7 +1200,12 @@ export default function RoomPlanner() {
                   placedItems={placedItems}
                   selectedItemId={selectedItemId}
                   catalog={CATALOG}
+                  overlappingItemIds={overlappingItemIds}
                   onSelectItem={(id) => setSelectedItemId(id)}
+                  onMoveItem={handleMoveItem}
+                  onRotateItem={handleRotateSelected}
+                  onDuplicateItem={handleDuplicateSelected}
+                  onDeleteItem={handleDeleteSelected}
                 />
               ) : (
                 <div
@@ -1169,6 +1280,7 @@ export default function RoomPlanner() {
                       if (!cat) return null;
 
                       const isSelected = selectedItemId === item.id;
+                      const isOverlapping = overlappingItemIds.has(item.id);
                       const isDark = cat.fill === "#5C3A21" || cat.fill === "#9C6B3C" || cat.fill === "#6D2E1F" || cat.fill === "#4A3528";
                       const itemWidthPx = cat.wM * pixelsPerMeter;
                       const itemDepthPx = cat.dM * pixelsPerMeter;
@@ -1191,11 +1303,18 @@ export default function RoomPlanner() {
                             zIndex: cat.category === "accents" ? 5 : isSelected ? 30 : 15,
                           }}
                           className={`absolute cursor-move transition-shadow touch-none select-none ${
-                            isSelected
+                            isOverlapping
+                              ? "ring-2 ring-rose-500 shadow-rose-500/50"
+                              : isSelected
                               ? "ring-2 ring-brass shadow-2xl scale-[1.02]"
                               : "hover:ring-1 hover:ring-bronze/50 shadow-md"
                           }`}
                         >
+                          {isOverlapping && (
+                            <span className="absolute -top-1.5 -right-1.5 bg-rose-600 text-white text-[0.55rem] font-bold px-1 rounded-full shadow-md pointer-events-none z-50">
+                              !
+                            </span>
+                          )}
                           <CADFurniturePiece
                             cat={cat}
                             isSelected={isSelected}
@@ -1219,12 +1338,13 @@ export default function RoomPlanner() {
               <AnimatePresence>
                 {selectedItemData && (
                   <motion.div
+                    key={selectedItemId}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="p-3 sm:p-4 rounded-sm bg-bone border border-brass/40 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
+                    className="p-3 sm:p-4 rounded-sm bg-bone border border-brass/40 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 relative"
                   >
-                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-7 sm:pr-0">
                       <div
                         className="h-8 w-8 sm:h-9 sm:w-9 rounded-sm border flex items-center justify-center font-bold text-xs shadow-inner shrink-0"
                         style={{ backgroundColor: selectedItemData.cat.fill, color: selectedItemData.cat.color }}
@@ -1241,33 +1361,48 @@ export default function RoomPlanner() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    {/* Quick Deselect / Dismiss Button on mobile */}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedItemId(null)}
+                      className="absolute top-2.5 right-2.5 sm:hidden p-1 rounded-full text-ink/40 hover:text-ink hover:bg-sand/30 transition-colors cursor-pointer"
+                      title={lang === "bn" ? "বন্ধ করুন" : "Deselect"}
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+
+                    {/* Action buttons: 3-column equal grid on mobile, inline flex row on desktop */}
+                    <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto shrink-0">
                       <button
                         type="button"
                         onClick={handleDuplicateSelected}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-[0.72rem] sm:text-xs text-ink transition-colors cursor-pointer whitespace-nowrap h-8 sm:h-9 font-medium"
                         title={lang === "bn" ? "কপি করুন" : "Duplicate Piece"}
                       >
-                        <Copy className="h-3.5 w-3.5 text-bronze" />
+                        <Copy className="h-3.5 w-3.5 text-bronze shrink-0" />
                         <span>{lang === "bn" ? "কপি" : "Duplicate"}</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={handleRotateSelected}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-xs text-ink transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-ink/15 hover:border-brass bg-sand/40 text-[0.72rem] sm:text-xs text-ink transition-colors cursor-pointer whitespace-nowrap h-8 sm:h-9 font-medium"
+                        title="Rotate 90°"
                       >
-                        <RotateCw className="h-3.5 w-3.5 text-bronze" />
-                        <span>{t("planner.rotate")}</span>
+                        <RotateCw className="h-3.5 w-3.5 text-bronze shrink-0" />
+                        <span className="sm:hidden">{lang === "bn" ? "ঘোরান" : "Rotate"}</span>
+                        <span className="hidden sm:inline">{t("planner.rotate")}</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={handleDeleteSelected}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 sm:py-2 rounded-full border border-red-200 hover:bg-red-50 text-xs text-red-600 transition-colors cursor-pointer"
+                        className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-red-200 hover:bg-red-50 text-[0.72rem] sm:text-xs text-red-600 transition-colors cursor-pointer whitespace-nowrap h-8 sm:h-9 font-medium"
+                        title={t("planner.delete")}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        <span>{t("planner.delete")}</span>
+                        <Trash2 className="h-3.5 w-3.5 shrink-0" />
+                        <span className="sm:hidden">{lang === "bn" ? "মুছুন" : "Delete"}</span>
+                        <span className="hidden sm:inline">{t("planner.delete")}</span>
                       </button>
                     </div>
                   </motion.div>

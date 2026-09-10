@@ -562,7 +562,7 @@ export default function Furniture3DCanvas({
       addMesh(armGeo, fabricMat, [-W / 2 + armW / 2, topOfBase + armH / 2, 0]);
 
       // Plush Multi-Segment Seat Cushions
-      const seatW = W - 2 * armW;
+      const seatW = W - 2 * armW - 0.016;
       const seatH = 0.22;
       const seatD = D - 0.14;
       const segCount = seatW > 1.8 ? 3 : 2;
@@ -574,7 +574,7 @@ export default function Furniture3DCanvas({
         addMesh(segGeo, fabricMat, [segX, topOfBase + seatH / 2, 0.07]);
       }
 
-      // Slanted Ergonomic Backrest
+      // Slanted Ergonomic Backrest (nestled inside armrests with clear reveal)
       const backH = Math.max(0.38, H - topOfBase);
       const backD = 0.18;
       const backGeo = new THREE.BoxGeometry(seatW, backH, backD);
@@ -1447,16 +1447,16 @@ export default function Furniture3DCanvas({
         </>
       )}
 
-      {/* Bottom Right Camera Presets & Orbit Action Controls */}
-      <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 flex items-center gap-1 z-10 bg-bone/90 backdrop-blur-md p-1 rounded-full border border-ink/10 shadow-sm">
+      {/* Bottom Right Camera Presets & Orbit Action Controls (matches reference image) */}
+      <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 flex items-center gap-1 sm:gap-1.5 z-10 bg-[#FAF8F5]/95 backdrop-blur-xl px-2 py-1.5 rounded-full border border-[#E5DFD5] shadow-[0_2px_12px_rgba(0,0,0,0.06)]">
         <button
           type="button"
           onClick={() => setCameraPreset("perspective")}
           title="3D Showcase Perspective"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
+          className={`px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
             activePreset === "perspective"
-              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
-              : "border-transparent text-ink/65 hover:text-ink font-medium"
+              ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] shadow-2xs"
+              : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B] font-medium"
           }`}
         >
           3D
@@ -1466,63 +1466,61 @@ export default function Furniture3DCanvas({
           type="button"
           onClick={() => setCameraPreset("front")}
           title="Front Profile View"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
+          className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
             activePreset === "front"
-              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
-              : "border-transparent text-ink/65 hover:text-ink font-medium"
+              ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] font-bold shadow-2xs"
+              : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
           }`}
         >
-          Front
+          FRONT
         </button>
 
         <button
           type="button"
           onClick={() => setCameraPreset("top")}
           title="Top-Down Plan View"
-          className={`px-2.5 py-1 rounded-full text-[0.62rem] uppercase font-mono transition-all cursor-pointer border ${
+          className={`px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider transition-all cursor-pointer ${
             activePreset === "top"
-              ? "bg-brass/20 border-brass text-ink font-semibold shadow-xs"
-              : "border-transparent text-ink/65 hover:text-ink font-medium"
+              ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] font-bold shadow-2xs"
+              : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
           }`}
         >
-          Top
+          TOP
         </button>
 
         <button
           type="button"
           onClick={() => setCameraPreset("detail")}
           title="Close-Up Detail View"
-          className={`p-1.5 rounded-full transition-all cursor-pointer border ${
+          className={`p-1.5 rounded-full transition-all cursor-pointer ${
             activePreset === "detail"
-              ? "bg-brass/20 border-brass text-ink shadow-xs"
-              : "border-transparent text-ink/65 hover:text-ink"
+              ? "border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] shadow-2xs"
+              : "border border-transparent text-[#7A756D] hover:text-[#1F1E1B]"
           }`}
         >
-          <Eye className="h-3 w-3" />
+          <Eye className="h-3.5 w-3.5" />
         </button>
 
-        <div className="w-[1px] h-3.5 bg-ink/10 mx-0.5" />
+        <div className="w-[1px] h-3.5 sm:h-4 bg-[#E2DDD5] mx-0.5" />
 
         <button
           type="button"
           onClick={() => setAutoRotate((v) => !v)}
           title={autoRotate ? "Pause Auto-Rotation" : "Start Auto-Rotation"}
-          className={`p-1.5 rounded-full transition-all cursor-pointer border ${
-            autoRotate
-              ? "bg-brass/20 border-brass text-ink shadow-xs"
-              : "border-transparent text-ink/65 hover:text-ink"
+          className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full flex items-center justify-center border border-[#C2A478] bg-[#EFE8DD] text-[#1F1E1B] transition-all cursor-pointer ${
+            autoRotate ? "shadow-2xs ring-2 ring-[#C2A478]/30" : "hover:brightness-95"
           }`}
         >
-          <Rotate3d className="h-3 w-3" />
+          <Rotate3d className={`h-3.5 w-3.5 ${autoRotate ? "animate-spin" : ""}`} />
         </button>
 
         <button
           type="button"
           onClick={() => setCameraPreset("perspective")}
           title="Reset Camera View"
-          className="p-1.5 rounded-full text-ink/65 hover:text-ink transition-all cursor-pointer"
+          className="w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-full flex items-center justify-center text-[#7A756D] hover:text-[#1F1E1B] hover:bg-[#EAE4D9]/60 transition-all cursor-pointer"
         >
-          <RefreshCw className="h-3 w-3" />
+          <RefreshCw className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>
