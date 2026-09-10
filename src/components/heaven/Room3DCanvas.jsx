@@ -23,6 +23,52 @@ import { useLang } from "./LanguageProvider";
 import { resolveSlidePosition } from "@/utils/plannerCollision";
 
 /**
+ * Deep Recursive WebGL Resource Disposer
+ * Prevents VRAM and buffer memory leaks across room updates and piece edits
+ */
+function disposeObjectTree(obj) {
+  if (!obj) return;
+  obj.traverse((child) => {
+    if (child.geometry) {
+      child.geometry.dispose();
+    }
+    if (child.material) {
+      if (Array.isArray(child.material)) {
+        child.material.forEach(disposeSingleMaterial);
+      } else {
+        disposeSingleMaterial(child.material);
+      }
+    }
+  });
+}
+
+function disposeSingleMaterial(mat) {
+  if (!mat) return;
+  for (const key of Object.keys(mat)) {
+    const val = mat[key];
+    if (val && typeof val === "object" && val.isTexture && !val.userData?.persistent) {
+      val.dispose();
+    }
+  }
+  mat.dispose();
+}
+
+/**
+ * Persistent Procedural Flooring Texture Cache
+ */
+const floorTextureCache = new Map();
+
+function getCachedFloorTexture(type = "teak_parquet") {
+  if (floorTextureCache.has(type)) {
+    return floorTextureCache.get(type);
+  }
+  const tex = createFloorTexture(type);
+  tex.userData = { persistent: true };
+  floorTextureCache.set(type, tex);
+  return tex;
+}
+
+/**
  * Procedural Luxury Flooring Texture Generator
  * Supports: Teak Parquet, Walnut Herringbone, White Oak, and Travertine Stone
  */
@@ -363,6 +409,7 @@ export default function Room3DCanvas({
   const leftWallRef = useRef(null);
   const skyPaneRef = useRef(null);
   const floorMeshRef = useRef(null);
+  const renderTriggerRef = useRef(null);
 
   // Dynamic props kept in sync for 3D event listeners
   const placedItemsRef = useRef(placedItems);
@@ -418,11 +465,13 @@ export default function Room3DCanvas({
       powerPreference: "high-performance",
     });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.2;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.shadowMap.autoUpdate = false; // Demand-driven: eliminates heavy 2048x2048 shadow recalculation on every orbit frame
+    renderer.shadowMap.needsUpdate = true;
     rendererRef.current = renderer;
 
     container.appendChild(renderer.domElement);
@@ -615,30 +664,46 @@ export default function Room3DCanvas({
               selectionGroupRef.current.position.z = clampedPosZ;
             }
 
+            // Demand-update shadows and frames during dragging
+            if (rendererRef.current) {
+              rendererRef.current.shadowMap.needsUpdate = true;
+            }
+            triggerRender(4);
+
             // Sync with parent state
             onMoveItemRef.current?.(itemId, resolved.x, resolved.y);
           }
         }
       } else {
-        // Hover cursor feedback
-        const furnitureGroup = furnitureGroupRef.current;
-        if (furnitureGroup) {
-          const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
-          let hit = false;
-          if (intersects.length > 0) {
-            let curr = intersects[0].object;
-            while (curr && curr !== furnitureGroup) {
-              if (curr.userData && curr.userData.itemId) {
-                hit = true;
-                break;
+        // Throttled hover cursor feedback (at most once per animation frame)
+        if (!hoverRafPending) {
+          hoverRafPending = true;
+          requestAnimationFrame(() => {
+            hoverRafPending = false;
+            const furnitureGroup = furnitureGroupRef.current;
+            const cam = cameraRef.current;
+            if (furnitureGroup && cam && dom && !dragStateRef.current.isDragging) {
+              raycaster.setFromCamera(mouse, cam);
+              const intersects = raycaster.intersectObjects(furnitureGroup.children, true);
+              let hit = false;
+              if (intersects.length > 0) {
+                let curr = intersects[0].object;
+                while (curr && curr !== furnitureGroup) {
+                  if (curr.userData && curr.userData.itemId) {
+                    hit = true;
+                    break;
+                  }
+                  curr = curr.parent;
+                }
               }
-              curr = curr.parent;
+              dom.style.cursor = hit ? "grab" : "default";
             }
-          }
-          dom.style.cursor = hit ? "grab" : "default";
+          });
         }
       }
     };
+
+    let hoverRafPending = false;
 
     const onPointerUp = (e) => {
       const dom = renderer.domElement;
@@ -646,6 +711,7 @@ export default function Room3DCanvas({
       if (dom) {
         dom.style.cursor = "default";
       }
+      triggerRender(10);
 
       const dx = Math.abs(e.clientX - dragStateRef.current.downPos.x);
       const dy = Math.abs(e.clientY - dragStateRef.current.downPos.y);
@@ -697,21 +763,36 @@ export default function Room3DCanvas({
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      triggerRender(6);
     });
     resizeObserver.observe(container);
 
     // Fullscreen change listener
     const onFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
+      triggerRender(6);
     };
     document.addEventListener("fullscreenchange", onFullscreenChange);
 
-    // Animation Loop
+    // Smart Demand-Driven Animation Loop (Preserves battery and GPU, 0% CPU when idle)
     let animId;
+    let framesToRender = 25; // Render initial frames for scene settlement
+    const triggerRender = (count = 4) => {
+      framesToRender = Math.max(framesToRender, count);
+    };
+    renderTriggerRef.current = triggerRender;
+
+    controls.addEventListener("change", () => {
+      triggerRender(3);
+    });
+
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
+      const isControlsActive = controls.update(); // returns true while damping or autoRotate is actively moving
+      if (isControlsActive || dragStateRef.current.isDragging || framesToRender > 0) {
+        if (framesToRender > 0) framesToRender--;
+        renderer.render(scene, camera);
+      }
     };
     animate();
 
@@ -724,6 +805,12 @@ export default function Room3DCanvas({
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointercancel", onPointerUp);
       controls.dispose();
+
+      // Deep recursive cleanup of scene meshes, geometries and materials
+      if (roomGroupRef.current) disposeObjectTree(roomGroupRef.current);
+      if (furnitureGroupRef.current) disposeObjectTree(furnitureGroupRef.current);
+      if (selectionGroupRef.current) disposeObjectTree(selectionGroupRef.current);
+
       renderer.dispose();
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
@@ -736,6 +823,7 @@ export default function Room3DCanvas({
     if (controlsRef.current) {
       controlsRef.current.autoRotate = autoRotate;
       controlsRef.current.autoRotateSpeed = 1.0;
+      renderTriggerRef.current?.(10);
     }
   }, [autoRotate]);
 
@@ -761,6 +849,7 @@ export default function Room3DCanvas({
       }
       controls.update();
       setActiveCamPreset(preset);
+      renderTriggerRef.current?.(20);
     },
     [roomWidth, roomLength]
   );
@@ -828,6 +917,10 @@ export default function Room3DCanvas({
         sky.material.color.set("#D2E6F5");
       }
     }
+    if (rendererRef.current) {
+      rendererRef.current.shadowMap.needsUpdate = true;
+    }
+    renderTriggerRef.current?.(10);
   }, [lightingMood]);
 
   // 2. Build Architectural Room (Floor, Panoramic Window, Art Canvas, Plant & Pendant)
@@ -835,11 +928,11 @@ export default function Room3DCanvas({
     const roomGroup = roomGroupRef.current;
     if (!roomGroup) return;
 
-    // Clear old room geometry
+    // Clear old room geometry and materials properly
     while (roomGroup.children.length > 0) {
       const obj = roomGroup.children[0];
-      if (obj.geometry) obj.geometry.dispose();
       roomGroup.remove(obj);
+      disposeObjectTree(obj);
     }
 
     const rw = Math.max(3, roomWidth);
@@ -849,7 +942,7 @@ export default function Room3DCanvas({
 
     // Hardwood / Stone Floor
     const floorGeo = new THREE.PlaneGeometry(rw, rl);
-    const floorTex = createFloorTexture(floorFinish);
+    const floorTex = getCachedFloorTexture(floorFinish);
     floorTex.repeat.set(rw * 0.35, rl * 0.35);
 
     const floorMat = new THREE.MeshStandardMaterial({
@@ -1091,6 +1184,11 @@ export default function Room3DCanvas({
     ground.position.y = -0.16;
     ground.receiveShadow = true;
     roomGroup.add(ground);
+
+    if (rendererRef.current) {
+      rendererRef.current.shadowMap.needsUpdate = true;
+    }
+    renderTriggerRef.current?.(10);
   }, [roomWidth, roomLength, floorFinish, lightingMood]);
 
   // 3. Build Parametric 3D Furniture Meshes with Contact Shadows
@@ -1101,11 +1199,11 @@ export default function Room3DCanvas({
     const furnitureGroup = furnitureGroupRef.current;
     if (!furnitureGroup) return;
 
-    // Clear old furniture
+    // Clear old furniture properly with deep recursive disposal
     while (furnitureGroup.children.length > 0) {
       const obj = furnitureGroup.children[0];
-      if (obj.geometry) obj.geometry.dispose();
       furnitureGroup.remove(obj);
+      disposeObjectTree(obj);
     }
 
     const rw = roomWidth;
@@ -1539,6 +1637,11 @@ export default function Room3DCanvas({
 
       furnitureGroup.add(itemGroup);
     });
+
+    if (rendererRef.current) {
+      rendererRef.current.shadowMap.needsUpdate = true;
+    }
+    renderTriggerRef.current?.(10);
   }, [placedItems, catalog, roomWidth, roomLength]);
 
   // 4. Dedicated Selection Highlight Engine (Glow Halo & Bounding Wireframe)
@@ -1546,14 +1649,17 @@ export default function Room3DCanvas({
     const group = selectionGroupRef.current;
     if (!group) return;
 
-    // Clear previous selection indicators
+    // Clear previous selection indicators properly
     while (group.children.length > 0) {
       const obj = group.children[0];
-      if (obj.geometry) obj.geometry.dispose();
       group.remove(obj);
+      disposeObjectTree(obj);
     }
 
-    if (!selectedItemId) return;
+    if (!selectedItemId) {
+      renderTriggerRef.current?.(4);
+      return;
+    }
 
     const currentItem = placedItems.find((p) => p.id === selectedItemId);
     const cat = currentItem ? catalog.find((c) => c.id === currentItem.catId) : null;
@@ -1601,13 +1707,19 @@ export default function Room3DCanvas({
     const wireBox = new THREE.Mesh(boxGeo, wireMat);
     wireBox.position.y = 0.01;
     group.add(wireBox);
+
+    renderTriggerRef.current?.(6);
   }, [selectedItemId, placedItems, catalog, roomWidth, roomLength, overlappingItemIds]);
 
   // 5. 1-Click High-Res 3D Snapshot with Camera Flash Animation
   const handleCaptureSnapshot = () => {
-    if (!rendererRef.current) return;
+    if (!rendererRef.current || !sceneRef.current || !cameraRef.current) return;
     setFlashEffect(true);
     setIsSnapshotting(true);
+
+    // Force shadow update and render for full-fidelity photo capture
+    rendererRef.current.shadowMap.needsUpdate = true;
+    rendererRef.current.render(sceneRef.current, cameraRef.current);
 
     setTimeout(() => {
       try {
